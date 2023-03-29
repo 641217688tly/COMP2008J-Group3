@@ -21,7 +21,6 @@ pass(行动次数没使用完前可以跳过自己的回合)
     再抽三张
     改变房产颜色
     ....
-
 */
 public class Player {
     private String name;
