@@ -1,4 +1,7 @@
 package Module.Cards;
+
+import java.awt.*;
+
 /*
 Cards:
     Properties (28):
@@ -24,6 +27,7 @@ Cards:
 
 属性:
 x,y坐标(用于被展示)
+碰撞体积
 价值
 
 方法:
@@ -32,8 +36,11 @@ x,y坐标(用于被展示)
 
 
 */
-public class Card {
+public class Card { //所有Card的顶级父类
 
     private int x;
     private int y;
+    private Rectangle area;
+    private int value;
+
 }

@@ -1,4 +1,10 @@
 package Module;
+
+import Module.Cards.Card;
+
+import java.awt.*;
+import java.util.ArrayList;
+
 /*
 Bank类将主要为玩家提供服务(每个玩家都有自己的Bank),它应该具有如下属性和功能:
 属性:
@@ -18,6 +24,12 @@ Bank类将主要为玩家提供服务(每个玩家都有自己的Bank),它应该
 
 */
 public class Bank {
+    private Player owner; //主人
+    ArrayList<Card> cardWarehouse;
+    private int sumMoney;
+    private int x;
+    private int y;
+    private Rectangle area;
 
 
     public Bank(){
