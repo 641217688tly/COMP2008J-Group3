@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 /*
 该类中不应该涉及到
  */
-public class PlayerListenr implements KeyListener {
+public class PlayerListener implements KeyListener {
 
 
     @Override
