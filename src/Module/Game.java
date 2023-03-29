@@ -8,15 +8,18 @@ import java.util.ArrayList;
 属性:
 玩家集合
 
+方法:
+切换到被选中的玩家(切人)
+
  */
 
 
 public class Game {
-    public static ArrayList<Card> cardsWarehouse = new ArrayList<>();
+    public CardsPile cardsPile; //中央牌区
+    public static ArrayList<Card> cardsWarehouse = new ArrayList<>(); //所有的玩家
 
-    static{
-        //拿牌,洗牌
-    }
+
+
 
 
 }
