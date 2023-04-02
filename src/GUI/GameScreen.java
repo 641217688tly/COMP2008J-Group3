@@ -1,6 +1,9 @@
 package GUI;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+
 /*
 游戏的主界面
 在游戏开始前,玩家应该被要求设置玩家的总人数以及每个玩家的名字
@@ -8,4 +11,32 @@ import javax.swing.*;
 
  */
 public class GameScreen extends JPanel {
+    public GameScreen(ActionListener backListener) {
+        setLayout(new BorderLayout());// 设置布局管理器为BorderLayout
+
+        // 创建并设置文本区域以显示游戏信息
+        JTextArea gameTextArea = new JTextArea();
+        gameTextArea.setEditable(false);
+        gameTextArea.setText("游戏面板说明...");
+        gameTextArea.setLineWrap(true);
+        gameTextArea.setWrapStyleWord(true);
+        add(new JScrollPane(gameTextArea), BorderLayout.CENTER);
+
+        // 创建并设置用于返回主菜单的按钮
+        JPanel buttonPanel = new JPanel(); // 创建一个JPanel对象
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));// 设置布局管理器为BoxLayout，水平排列
+
+        buttonPanel.add(Box.createHorizontalGlue()); // 添加一个可调大小的间距组件，使得所有组件在水平方向上保持居中
+
+        JButton backButton = new JButton("Back"); // 创建一个名为"Back"的按钮
+        backButton.setMaximumSize(new Dimension(120, 30));// 设置按钮的最大尺寸为120x30
+        backButton.addActionListener(backListener);// 为按钮添加事件监听器
+        buttonPanel.add(backButton); // 将按钮添加到面板中
+
+        buttonPanel.add(Box.createHorizontalGlue());// 添加一个可调大小的间距组件，使得所有组件在水平方向上保持居中
+
+
+        add(buttonPanel, BorderLayout.SOUTH);// 将按钮面板添加到主面板的南（下）部
+    }
+
 }
