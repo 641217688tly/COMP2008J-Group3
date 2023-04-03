@@ -44,3 +44,54 @@ public class Player {
     }
 
 }
+/*
+ * public class Player {
+    private String name;
+    private List<Card> hand;
+    private int money;
+    private boolean isTurn;
+
+    public Player(String name) {
+        this.name = name;
+        this.hand = new ArrayList<Card>();
+        this.money = 0;
+        this.isTurn = false;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public List<Card> getHand() {
+        return this.hand;
+    }
+
+    public void addCard(Card card) {
+        this.hand.add(card);
+    }
+
+    public void removeCard(Card card) {
+        this.hand.remove(card);
+    }
+
+    public int getMoney() {
+        return this.money;
+    }
+
+    public void addMoney(int amount) {
+        this.money += amount;
+    }
+
+    public void removeMoney(int amount) {
+        this.money -= amount;
+    }
+
+    public boolean isTurn() {
+        return this.isTurn;
+    }
+
+    public void setTurn(boolean isTurn) {
+        this.isTurn = isTurn;
+    }
+}
+ */
