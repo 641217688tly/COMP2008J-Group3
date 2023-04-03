@@ -45,3 +45,59 @@ public class Card { //所有Card的顶级父类
     private int value;
 
 }
+/*public Card(String name, String type, String color, int value, int x, int y, int width, int height) {
+    this.name = name;
+    this.type = type;
+    this.color = color;
+    this.value = value;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+}
+
+public String getName() {
+    return name;
+}
+
+public String getType() {
+    return type;
+}
+
+public String getColor() {
+    return color;
+}
+
+public int getValue() {
+    return value;
+}
+
+public int getX() {
+    return x;
+}
+
+public int getY() {
+    return y;
+}
+
+public int getWidth() {
+    return width;
+}
+
+public int getHeight() {
+    return height;
+}
+
+public void setX(int x) {
+    this.x = x;
+}
+
+public void setY(int y) {
+    this.y = y;
+}
+
+//实现打出牌的方法
+public void playCard() {
+    //TODO
+}
+} */
