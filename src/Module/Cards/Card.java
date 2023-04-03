@@ -43,9 +43,13 @@ public class Card { //所有Card的顶级父类
     private int y;
     private Rectangle area;
     private int value;
+    private String name;
+    private String type;
+    private int width;
+    private int height;
+    private String color;
 
-}
-/*public Card(String name, String type, String color, int value, int x, int y, int width, int height) {
+    public Card(String name, String type, String color, int value, int x, int y, int width, int height) {
     this.name = name;
     this.type = type;
     this.color = color;
@@ -54,7 +58,8 @@ public class Card { //所有Card的顶级父类
     this.y = y;
     this.width = width;
     this.height = height;
-}
+    
+        }
 
 public String getName() {
     return name;
@@ -100,4 +105,5 @@ public void setY(int y) {
 public void playCard() {
     //TODO
 }
-} */
+}
+

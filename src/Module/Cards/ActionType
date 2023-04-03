@@ -1,0 +1,9 @@
+package Module.Cards;
+
+public interface ActionType {
+    String MONEY,
+    RENT,
+    DRAW,
+    ADD_PROPERTY,
+    STEAL;
+}

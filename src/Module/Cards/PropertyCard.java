@@ -1,9 +1,7 @@
 package Module.Cards;
 
-public class PropertyCard extends Card{
-}
-/*
- * public class PropertyCard extends Card {
+
+public class PropertyCard extends Card {
     private int rentValue;
     private int houseValue;
     private int hotelValue;
@@ -42,4 +40,3 @@ public class PropertyCard extends Card{
         player.addCard(this);
     }
 }
- */

@@ -1,9 +1,6 @@
 package Module.Cards;
 
-public class ActionCard extends Card{
-}
-/*
- * public class ActionCard extends Card {
+public class ActionCard extends Card {
     private ActionType actionType;
     private int actionValue;
 
@@ -48,4 +45,3 @@ public class ActionCard extends Card{
         }
     }
 }
- */

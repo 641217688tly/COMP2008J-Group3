@@ -1,5 +1,5 @@
 package Module.Cards;
-/* 
+
 public class MoneyCard extends Card {
     private int value;
 
@@ -16,4 +16,4 @@ public class MoneyCard extends Card {
     public void playCard(Player player, Player targetPlayer, Card targetCard) {
         player.addMoney(this.value);
     }
-}*/
+}
