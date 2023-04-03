@@ -36,3 +36,79 @@ public class Bank {
 
     }
 }
+/*
+ * public class Bank {
+    private List<Card> cardDeck;
+    private int totalSavings;
+    private int x;
+    private int y;
+    private int collisionVolume;
+    private Player owner;
+
+    public Bank(Player owner, int x, int y, int collisionVolume) {
+        this.owner = owner;
+        this.cardDeck = new ArrayList<Card>();
+        this.totalSavings = 0;
+        this.x = x;
+        this.y = y;
+        this.collisionVolume = collisionVolume;
+    }
+
+    public List<Card> getCardDeck() {
+        return this.cardDeck;
+    }
+
+    public int getTotalSavings() {
+        return this.totalSavings;
+    }
+
+    public void addSavings(int amount) {
+        this.totalSavings += amount;
+    }
+
+    public void subtractSavings(int amount) {
+        this.totalSavings -= amount;
+    }
+
+    public void addCard(Card card) {
+        this.cardDeck.add(card);
+    }
+
+    public void removeCard(Card card) {
+        this.cardDeck.remove(card);
+    }
+
+    public void displayMoneyCards() {
+        for (Card card : this.cardDeck) {
+            if (card instanceof MoneyCard) {
+                System.out.println(card.getName());
+            }
+        }
+    }
+
+    public void displayTotalSavings() {
+        System.out.println("Total savings: " + this.totalSavings);
+    }
+
+    public void autoPayRent() {
+        // Implement algorithm to automatically pay rent in the most optimal way
+    }
+}
+ */
+/*public class RankedCard extends Card {
+    private int rank;
+
+    public RankedCard(String name, CardType cardType, int rank, int collisionVolume, int x, int y) {
+        super(name, cardType, rank, collisionVolume, x, y);
+        this.rank = rank;
+    }
+
+    public int getRank() {
+        return this.rank;
+    }
+
+    @Override
+    public void playCard(Player player, Player targetPlayer, Card targetCard) {
+        player.addMoney(this.rank);
+    }
+} */
