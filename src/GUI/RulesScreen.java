@@ -11,7 +11,7 @@ public class RulesScreen extends JPanel {
         // 创建并设置文本区域以显示游戏规则
         JTextArea rulesTextArea = new JTextArea(); // 创建一个JTextArea对象
         rulesTextArea.setEditable(false);// 设置文本区域不可编辑
-        rulesTextArea.setText("游戏规则说明...");// 在文本区域中设置游戏规则文本
+        rulesTextArea.setText("游戏规则说明...123");// 在文本区域中设置游戏规则文本
         rulesTextArea.setLineWrap(true); // 设置文本区域自动换行
         rulesTextArea.setWrapStyleWord(true);// 设置文本区域在单词边界处换行
         add(new JScrollPane(rulesTextArea), BorderLayout.CENTER); // 将文本区域添加到面板中间，并添加滚动条
