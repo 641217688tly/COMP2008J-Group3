@@ -9,6 +9,7 @@ import java.awt.*;
 
 public class ApplicationStart extends JFrame {
     private JPanel mainPanel;
+    //666
 
     public ApplicationStart() {
 
