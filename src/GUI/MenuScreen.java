@@ -21,27 +21,29 @@ public class MenuScreen extends JPanel {
         }
 
         // 创建并设置按钮
+        add(Box.createRigidArea(new Dimension(0, 100)));
+
+        JButton gameButton = new JButton("Start Game");// 创建一个名为"Start Game"的按钮
+        gameButton.setMaximumSize(new Dimension(200, 150)); // 设置按钮的最大尺寸为120x30
+        gameButton.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置按钮在水平方向上居中对齐
+        gameButton.addActionListener(settingsListener);// 为按钮添加事件监听器
+        add(gameButton);// 将按钮添加到面板中
+
+        add(Box.createRigidArea(new Dimension(0, 100)));// 添加一个固定大小的间距组件，垂直间距为10
+
         JButton rulesButton = new JButton("Rules");// 创建一个名为"Rules"的按钮
-        rulesButton.setMaximumSize(new Dimension(120, 30));// 设置按钮的最大尺寸为120x30
+        rulesButton.setMaximumSize(new Dimension(200, 150));// 设置按钮的最大尺寸为120x30
         rulesButton.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置按钮在水平方向上居中对齐
         rulesButton.addActionListener(rulesListener); // 为按钮添加事件监听器
         add(rulesButton);// 将按钮添加到面板中
 
-        add(Box.createRigidArea(new Dimension(0, 10)));// 添加一个固定大小的间距组件，垂直间距为10
+        add(Box.createRigidArea(new Dimension(0, 100)));
 
-        JButton settingsButton = new JButton("Settings");// 创建一个名为"Settings"的按钮
-        settingsButton.setMaximumSize(new Dimension(120, 30));// 设置按钮的最大尺寸为120x30
-        settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);// 设置按钮在水平方向上居中对齐
-        settingsButton.addActionListener(settingsListener);// 为按钮添加事件监听器
-        add(settingsButton);// 将按钮添加到面板中
-
-        add(Box.createRigidArea(new Dimension(0, 10)));// 添加一个固定大小的间距组件，垂直间距为10
-
-        JButton gameButton = new JButton("Start Game");// 创建一个名为"Start Game"的按钮
-        gameButton.setMaximumSize(new Dimension(120, 30)); // 设置按钮的最大尺寸为120x30
-        gameButton.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置按钮在水平方向上居中对齐
-        gameButton.addActionListener(gameListener);// 为按钮添加事件监听器
-        add(gameButton);// 将按钮添加到面板中
+        JButton exitButton = new JButton("Exit");
+        exitButton.setMaximumSize(new Dimension(200, 150));
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitButton.addActionListener(e -> System.exit(0));
+        add(exitButton);
 
         add(Box.createVerticalGlue()); // 添加一个可调大小的间距组件，使得所有组件在垂直方向上保持居中
     }

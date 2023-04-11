@@ -4,6 +4,7 @@ import Listener.PlayerListener;
 import Module.Cards.Card;
 
 import java.util.ArrayList;
+import java.util.List;
 /*
 该类应该负责管理整个游戏
 属性:
@@ -20,14 +21,24 @@ playerListener(用于监控玩家鼠标或键盘的行为以实现拖拽牌等�
 
  */
 
-
 public class Game {
-    public CardsPile cardsPile; //中央牌区
-    public static ArrayList<Card> cardsWarehouse = new ArrayList<>(); //所有的玩家
+    public static CardsPile cardsPile; //中央牌区
+    public static ArrayList<Card> cardsWarehouse = new ArrayList<>();
+    public static ArrayList<Player> players = new ArrayList<>();
     public PlayerListener playerListener;
 
 
+    public Game(){
 
+    }
+
+    public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
+        players.clear();
+        for (String playerName : playerNames) {
+            Player player = new Player(playerName);
+            players.add(player);
+        }
+    }
 
 
 }

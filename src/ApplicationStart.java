@@ -5,14 +5,14 @@ import GUI.SettingsScreen;
 
 import javax.swing.*;
 import java.awt.*;
-
+import Module.Game;
 
 public class ApplicationStart extends JFrame {
     private JPanel mainPanel;
-    //666
-    //666
+
 
     public ApplicationStart() {
+        Game game = new Game();
 
         mainPanel = new JPanel(new CardLayout());// 初始化主面板，并设置布局管理器为CardLayout
         MenuScreen menuPanel = new MenuScreen(// 创建一个MenuScreen对象
@@ -21,7 +21,7 @@ public class ApplicationStart extends JFrame {
                 e -> showPanel("Game") // 当游戏按钮被点击时，显示游戏面板
         );
         RulesScreen rulesPanel = new RulesScreen(e -> showPanel("Menu"));// 创建一个RulesScreen对象，并设置返回按钮的事件监听器
-        SettingsScreen settingsPanel = new SettingsScreen(e -> showPanel("Menu"));// 创建一个SettingsScreen对象，并设置返回按钮的事件监听器
+        SettingsScreen settingsPanel = new SettingsScreen(e -> showPanel("Menu"), e -> showPanel("Game"),game);// 创建一个SettingsScreen对象，并设置返回按钮的事件监听器
         GameScreen gamePanel = new GameScreen(e -> showPanel("Menu"));// 创建一个GameScreen对象，并设置返回按钮的事件监听器
 
         mainPanel.add(menuPanel, "Menu"); // 将MenuScreen对象添加到主面板中
