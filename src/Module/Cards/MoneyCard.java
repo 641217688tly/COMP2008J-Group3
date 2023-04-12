@@ -1,4 +1,6 @@
+/*
 package Module.Cards;
+import Module.Player;
 
 public class MoneyCard extends Card {
     private int value;
@@ -17,3 +19,4 @@ public class MoneyCard extends Card {
         player.addMoney(this.value);
     }
 }
+*/

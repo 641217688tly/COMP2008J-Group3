@@ -39,8 +39,8 @@ public class Player {
     private int countDown = 180; //倒计时
 
 
-    public Player(){
-
+    public Player(String name){
+        this.name = name;
     }
 
 }
