@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.awt.event.ActionEvent;
 
 public class MenuScreen extends JPanel {
     private Image backgroundImage; // 用于存储背景图像
@@ -28,12 +29,18 @@ public class MenuScreen extends JPanel {
         add(rulesButton);// 将按钮添加到面板中
 
         add(Box.createRigidArea(new Dimension(0, 10)));// 添加一个固定大小的间距组件，垂直间距为10
+        JButton exitButton = new JButton("Exit");// 创建一个名为"Settings"的按钮
+        exitButton.setMaximumSize(new Dimension(120, 30));// 设置按钮的最大尺寸为120x30
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);// 设置按钮在水平方向上居中对齐
+        exitButton.addActionListener (new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+                
+            }
+        });
 
-        JButton settingsButton = new JButton("Settings");// 创建一个名为"Settings"的按钮
-        settingsButton.setMaximumSize(new Dimension(120, 30));// 设置按钮的最大尺寸为120x30
-        settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);// 设置按钮在水平方向上居中对齐
-        settingsButton.addActionListener(settingsListener);// 为按钮添加事件监听器
-        add(settingsButton);// 将按钮添加到面板中
+        add(exitButton);// 将按钮添加到面板中
 
         add(Box.createRigidArea(new Dimension(0, 10)));// 添加一个固定大小的间距组件，垂直间距为10
 
@@ -44,6 +51,10 @@ public class MenuScreen extends JPanel {
         add(gameButton);// 将按钮添加到面板中
 
         add(Box.createVerticalGlue()); // 添加一个可调大小的间距组件，使得所有组件在垂直方向上保持居中
+    }
+    public void actionPerformed(ActionEvent e) {
+        System.exit(0);;
+        
     }
 
     // 重写paintComponent方法以绘制背景图像
