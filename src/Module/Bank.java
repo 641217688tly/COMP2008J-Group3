@@ -23,6 +23,7 @@ Bank类将主要为玩家提供服务(每个玩家都有自己的Bank),它应该
 
 
 */
+/* 
 public class Bank {
     private Player owner; //主人
     ArrayList<Card> cardWarehouse;
@@ -36,9 +37,10 @@ public class Bank {
 
     }
 }
-/*
- * public class Bank {
-    private List<Card> cardDeck;
+*/
+
+  public class Bank {
+    private ArrayList<Card> cardDeck;
     private int totalSavings;
     private int x;
     private int y;
