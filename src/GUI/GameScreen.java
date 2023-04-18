@@ -14,14 +14,17 @@ public class GameScreen extends JPanel {
     public GameScreen(ActionListener backListener) {
         setLayout(new BorderLayout());// 设置布局管理器为BorderLayout
 
-        setBackground(new Color(139, 69, 19));
+    setBackground(new Color(139, 69, 19));
         //创建并设置文本区域以显示游戏信息
-        JButton button = new JButton("bank");
-        button.setMaximumSize(new Dimension(120, 30));
-
-
-        // 将按钮添加到面板中央
-        add(button, BorderLayout.CENTER);
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        JButton button = new JButton();
+        button.setBounds(50,100,80,30);
+        button.setText("Bank");// 创建一个名为"Rules"的按钮
+        panel.add(button);
+    
+        
+        
         // 创建并设置用于返回主菜单的按钮
         JPanel buttonPanel = new JPanel(); // 创建一个JPanel对象
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));// 设置布局管理器为BoxLayout，水平排列
