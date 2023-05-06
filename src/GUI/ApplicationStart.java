@@ -11,9 +11,12 @@ import java.awt.*;
 
 public class ApplicationStart extends JFrame {
     private JPanel mainPanel;
+    public static int screenWidth; // 屏幕的宽度
+    public static int screenHeight; // 屏幕的高度
 
     public ApplicationStart() {
         Game game = new Game();
+        obtainScreenSize();
         setupMainPanel();
         setupMenuScreen();
         setupRulesScreen();
@@ -21,8 +24,16 @@ public class ApplicationStart extends JFrame {
         setupGameScreen();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setVisible(true);
+        setUndecorated(true); // 添加这一行来隐藏标题栏
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = env.getDefaultScreenDevice();
+        device.setFullScreenWindow(this); // 添加这一行来设置全屏
+    }
+
+    private void obtainScreenSize(){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        screenWidth = screenSize.width;
+        screenHeight = screenSize.height;
     }
 
     // 设置主面板（使用CardLayout）
@@ -59,7 +70,7 @@ public class ApplicationStart extends JFrame {
 
     // 设置游戏屏幕
     private void setupGameScreen() {
-        GameScreen gamePanel = new GameScreen(new ApplicationStartListener.ShowPanelActionListener(this, "Menu"));
+        GameScreen gamePanel = new GameScreen();
         mainPanel.add(gamePanel, "Game");
     }
 
