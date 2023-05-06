@@ -1,9 +1,5 @@
 package Module;
 
-import Module.Cards.Card;
-
-import java.util.ArrayList;
-
 /*
 Player类应该主管玩家的一系列动作;同时应该具有如玩家的房产,玩家的银行,玩家的手牌等属性:
 属性:
@@ -26,72 +22,20 @@ pass(行动次数没使用完前可以跳过自己的回合)
     再抽三张
     say no(不消耗行动次数)
     ....
-
 */
+
 public class Player {
     private String name;
     private int x;
     private int y;
+    private PlayerCards playerCards;
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
-    private ArrayList<Card> cardsWarehouse; //玩家的手牌堆
     private int actionsNumber = 3; //行动次数
     private int countDown = 180; //倒计时
-
 
     public Player(String name){
         this.name = name;
     }
 
 }
-/*
- * public class Player {
-    private String name;
-    private List<Card> hand;
-    private int money;
-    private boolean isTurn;
-
-    public Player(String name) {
-        this.name = name;
-        this.hand = new ArrayList<Card>();
-        this.money = 0;
-        this.isTurn = false;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public List<Card> getHand() {
-        return this.hand;
-    }
-
-    public void addCard(Card card) {
-        this.hand.add(card);
-    }
-
-    public void removeCard(Card card) {
-        this.hand.remove(card);
-    }
-
-    public int getMoney() {
-        return this.money;
-    }
-
-    public void addMoney(int amount) {
-        this.money += amount;
-    }
-
-    public void removeMoney(int amount) {
-        this.money -= amount;
-    }
-
-    public boolean isTurn() {
-        return this.isTurn;
-    }
-
-    public void setTurn(boolean isTurn) {
-        this.isTurn = isTurn;
-    }
-}
- */

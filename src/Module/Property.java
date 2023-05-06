@@ -2,6 +2,7 @@ package Module;
 
 import Module.Cards.Card;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,15 +25,9 @@ Property类将主要为玩家提供服务,它应该具有如下属性和功能:
 (被)交出房产
 (被)安置房产
 ...
-
 */
-public class Property {
-    private Player owner; //主人
-    private HashMap<Card, ArrayList<Card>> cardsWarehouse;
-    private int x;
-    private int y;
-    private Rectangle area;
-    private int wholePropertiesNumber; //完整的房产数
 
+public class Property extends JDialog { //房产类
+    public static ArrayList<Card> propertyCards;
 
 }

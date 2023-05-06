@@ -8,52 +8,83 @@ import java.io.File;
 import java.io.IOException;
 
 public class MenuScreen extends JPanel {
-    private Image backgroundImage; // 用于存储背景图像
+    private Image backgroundImage; // 存储背景图像的变量
 
-    public MenuScreen(ActionListener rulesListener, ActionListener settingsListener, ActionListener gameListener) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // 设置布局管理器为BoxLayout，垂直排列
+    // 构造函数，初始化MenuScreen
+    public MenuScreen(ActionListener rulesButtonListener, ActionListener settingsButtonListener, ActionListener gameButtonListener) {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // 设置布局为垂直排列的BoxLayout
+        loadAndSetBackgroundImage(); // 加载并设置背景图片
+        createAndAddButtons(rulesButtonListener, settingsButtonListener, gameButtonListener); // 创建并添加按钮
+    }
 
-        try { // 加载并设置背景图像
-            // 从指定路径加载背景图像
+    // 加载并设置背景图片
+    private void loadAndSetBackgroundImage() {
+        try {
+            // 从文件中读取背景图片
             backgroundImage = ImageIO.read(new File("images/background.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        // 创建并设置按钮
+    // 创建并添加按钮
+    private void createAndAddButtons(ActionListener rulesListener, ActionListener settingsListener, ActionListener gameListener) {
+        // 添加间距
         add(Box.createRigidArea(new Dimension(0, 100)));
 
-        JButton gameButton = new JButton("Start Game");// 创建一个名为"Start Game"的按钮
-        gameButton.setMaximumSize(new Dimension(200, 150)); // 设置按钮的最大尺寸为120x30
-        gameButton.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置按钮在水平方向上居中对齐
-        gameButton.addActionListener(settingsListener);// 为按钮添加事件监听器
-        add(gameButton);// 将按钮添加到面板中
+        // 创建并添加开始游戏按钮
+        createAndAddStartGameButton(settingsListener);
 
-        add(Box.createRigidArea(new Dimension(0, 100)));// 添加一个固定大小的间距组件，垂直间距为10
-
-        JButton rulesButton = new JButton("Rules");// 创建一个名为"Rules"的按钮
-        rulesButton.setMaximumSize(new Dimension(200, 150));// 设置按钮的最大尺寸为120x30
-        rulesButton.setAlignmentX(Component.CENTER_ALIGNMENT); // 设置按钮在水平方向上居中对齐
-        rulesButton.addActionListener(rulesListener); // 为按钮添加事件监听器
-        add(rulesButton);// 将按钮添加到面板中
-
+        // 添加间距
         add(Box.createRigidArea(new Dimension(0, 100)));
 
+        // 创建并添加规则按钮
+        createAndAddRulesButton(rulesListener);
+
+        // 添加间距
+        add(Box.createRigidArea(new Dimension(0, 100)));
+
+        // 创建并添加退出按钮
+        createAndAddExitButton();
+
+        // 添加可调整大小的垂直间距，使组件保持居中
+        add(Box.createVerticalGlue());
+    }
+
+    // 创建并添加开始游戏按钮
+    private void createAndAddStartGameButton(ActionListener settingsListener) {
+        JButton gameButton = new JButton("Start Game");
+        gameButton.setMaximumSize(new Dimension(200, 150));
+        gameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        gameButton.addActionListener(settingsListener);
+        add(gameButton);
+    }
+
+    // 创建并添加规则按钮
+    private void createAndAddRulesButton(ActionListener rulesListener) {
+        JButton rulesButton = new JButton("Rules");
+        rulesButton.setMaximumSize(new Dimension(200, 150));
+        rulesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rulesButton.addActionListener(rulesListener);
+        add(rulesButton);
+    }
+
+    // 创建并添加退出按钮
+    private void createAndAddExitButton() {
         JButton exitButton = new JButton("Exit");
         exitButton.setMaximumSize(new Dimension(200, 150));
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.addActionListener(e -> System.exit(0));
         add(exitButton);
-
-        add(Box.createVerticalGlue()); // 添加一个可调大小的间距组件，使得所有组件在垂直方向上保持居中
     }
 
-    // 重写paintComponent方法以绘制背景图像
+    // 重写paintComponent方法以在面板上绘制背景图片
     @Override
-    protected void paintComponent(Graphics g) {// 重写paintComponent方法以自定义绘图操作
-        super.paintComponent(g);// 调用父类的paintComponent方法以确保正常绘制
-        if (backgroundImage != null) {// 如果背景图像已加载
-            g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);// 在面板上绘制背景图像，使其填充整个面板
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        if (backgroundImage != null) { // 如果背景图片已加载
+            // 在面板上绘制背景图片，使其填充整个面板
+            g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
         }
     }
 }

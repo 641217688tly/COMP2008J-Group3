@@ -24,86 +24,21 @@ Cards:
     Money Cards(20):
         6 cards of 1M, 5 cards of 2M, 3 cards of 3M,
         3 cards of 4M, 2 cards of 5M, 1 card of 10M.
-
-属性:
-x,y坐标(用于被展示)
-碰撞体积
-价值
-
-方法:
-用按钮的方式实现打出牌
-先不做被拖动(被鼠标选中后可以拖动到桌面上)
-
-
-
 */
-public class Card { //所有Card的顶级父类
+import javax.swing.*;
 
-    private int x;
-    private int y;
-    private Rectangle area;
-    private int value;
+public abstract class Card extends JPanel {
     private String name;
-    private String type;
-    private int width;
-    private int height;
-    private String color;
+    private ImageIcon cardImage;
+    private JLabel cardLabel;
+    private JButton playButton;
+    private JButton putBackButton;
 
-    public Card(String name, String type, String color, int value, int x, int y, int width, int height) {
-    this.name = name;
-    this.type = type;
-    this.color = color;
-    this.value = value;
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    
-        }
+    public Card() {
 
-public String getName() {
-    return name;
+    }
+
+
 }
 
-public String getType() {
-    return type;
-}
-
-public String getColor() {
-    return color;
-}
-
-public int getValue() {
-    return value;
-}
-
-public int getX() {
-    return x;
-}
-
-public int getY() {
-    return y;
-}
-
-public int getWidth() {
-    return width;
-}
-
-public int getHeight() {
-    return height;
-}
-
-public void setX(int x) {
-    this.x = x;
-}
-
-public void setY(int y) {
-    this.y = y;
-}
-
-//实现打出牌的方法
-public void playCard() {
-    //TODO
-}
-}
 
