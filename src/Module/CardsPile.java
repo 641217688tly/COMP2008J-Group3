@@ -15,33 +15,22 @@ CardsPile类应该负责发牌功能,所有未发的牌和已经打出来的牌�
 
  */
 
+import GUI.ApplicationStart;
 import Module.Cards.Card;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Stack;
 
 public class CardsPile extends JPanel {
-    private Stack<Card> drawPile; // 抽牌堆
-    private Stack<Card> discardPile; // 废牌堆
+    public Stack<Card> drawPile = new Stack<>(); // 抽牌堆
+    public Stack<Card> discardPile = new Stack<>(); // 废牌堆
+    public int drawPileX = ApplicationStart.screenWidth;
+    public int drawPileY;
+    public int discardPileX;
+    public int discardPileY;
 
     public CardsPile() {
-        drawPile = new Stack<>();
-        discardPile = new Stack<>();
 
-        setLayout(new GridLayout(1, 2)); // 设置布局为1行2列，以容纳抽牌区和废牌区
-
-        // 设置抽牌区
-        JPanel drawPilePanel = new JPanel();
-        drawPilePanel.setBackground(Color.BLUE); // 设置背景颜色
-        drawPilePanel.setBorder(BorderFactory.createTitledBorder("Draw Pile")); // 设置边框和标题
-        add(drawPilePanel);
-
-        // 设置废牌区
-        JPanel discardPilePanel = new JPanel();
-        discardPilePanel.setBackground(Color.RED); // 设置背景颜色
-        discardPilePanel.setBorder(BorderFactory.createTitledBorder("Discard Pile")); // 设置边框和标题
-        add(discardPilePanel);
     }
 
     public void addToDrawPile(Card card) {
