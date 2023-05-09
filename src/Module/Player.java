@@ -26,14 +26,18 @@ pass(行动次数没使用完前可以跳过自己的回合)
 
 import GUI.ApplicationStart;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class Player extends JPanel {
     public String name;
     public int playerX;
     public int playerY;
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
-    public static int cardWeight = (ApplicationStart.screenWidth) / 12;
+    public static int cardWidth = (ApplicationStart.screenWidth) / 12;
     private int actionsNumber = 3; //行动次数
     private int countDown = 180; //倒计时
     //组件:
@@ -41,10 +45,54 @@ public class Player extends JPanel {
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
 
+    private Image[] images =  [player1,player2,player3,player4,player5];
+    private Image playerBackground;
+    public void setPlayerBackground(int i){
+        this.playerBackground = images[i];
+    }
+
 
 
     public Player(String name) {
         this.name = name;
+    }
+    private void loadAndSetPlayerImage() {
+        try {
+            // 从文件中读取背景图片
+            player1 = ImageIO.read(new File("images/player1.jpeg"));
+            player2=ImageIO.read(new File("images/player2.jpeg"));
+            player3=ImageIO.read(new File("images/player3.jpeg"));
+            player4=ImageIO.read(new File("images/player4.jpeg"));
+            player5=ImageIO.read(new File("images/player5.jpeg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void drawPlayer(Graphics g) {
+        if (player1 != null) { // 如果背景图片已加载
+            // 在面板上绘制背景图片，使其填充整个面板
+            g.drawImage(player1, playerX, playerY, cardWidth, cardHeight, this);
+        }
+        if (player2 !=null){
+            g.drawImage(player2, playerX, playerY, cardWidth, cardHeight, this);
+        }
+        if (player3 !=null){
+            g.drawImage(player3, playerX, playerY, cardWidth, cardHeight, this);
+        }
+        if (player4 !=null){
+            g.drawImage(player4, playerX, playerY, cardWidth, cardHeight, this);
+        }
+        if (player5 !=null){
+            g.drawImage(player5, playerX, playerY, cardWidth, cardHeight, this);
+        }
+    }
+
+    // 重写paintComponent方法以在面板上绘制背景图片
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        drawPlayer(g);
+
     }
 
     //TODO 加载玩家的背景图片并呈现到游戏界面中(这一步需要玩家的坐标先被成功分配)
