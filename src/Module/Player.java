@@ -24,19 +24,26 @@ pass(行动次数没使用完前可以跳过自己的回合)
     ....
 */
 
+import GUI.ApplicationStart;
+
 import javax.swing.*;
 
 public class Player extends JPanel {
-    private String name;
-    private int x;
-    private int y;
+    public String name;
+    public int playerX;
+    public int playerY;
+    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
+    public static int cardWeight = (ApplicationStart.screenWidth) / 12;
+    private int actionsNumber = 3; //行动次数
+    private int countDown = 180; //倒计时
+    //组件:
     private PlayerCards playerCards;
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
-    private int actionsNumber = 3; //行动次数
-    private int countDown = 180; //倒计时
 
-    public Player(String name){
+
+
+    public Player(String name) {
         this.name = name;
     }
 

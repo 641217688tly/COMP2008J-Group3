@@ -22,6 +22,9 @@ Cards:
         3 cards of 4M, 2 cards of 5M, 1 card of 10M.
 */
 package Module.Cards;
+
+import GUI.ApplicationStart;
+
 import javax.swing.*;
 
 public abstract class Card extends JPanel {
@@ -30,6 +33,10 @@ public abstract class Card extends JPanel {
     private JLabel cardLabel;
     private JButton playButton;
     private JButton putBackButton;
+    public int cardX;
+    public int cardY;
+    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
+    public static int cardWeight = (ApplicationStart.screenWidth) / 12;
 
     public Card() {
 
