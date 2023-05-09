@@ -24,7 +24,9 @@ pass(行动次数没使用完前可以跳过自己的回合)
     ....
 */
 
-public class Player {
+import javax.swing.*;
+
+public class Player extends JPanel {
     private String name;
     private int x;
     private int y;
@@ -37,5 +39,7 @@ public class Player {
     public Player(String name){
         this.name = name;
     }
+
+    //TODO 加载玩家的背景图片并呈现到游戏界面中(这一步需要玩家的坐标先被成功分配)
 
 }

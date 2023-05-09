@@ -44,7 +44,7 @@ public class Game {
     public PlayerListener playerListener;
 
 
-    public Game(){
+    public Game() {
 
     }
 
@@ -54,6 +54,16 @@ public class Game {
             Player player = new Player(playerName);
             players.add(player);
         }
+    }
+
+    //TODO 为每个玩家完成坐标分配
+    private void distributeCoordinate() {
+
+    }
+
+    //TODO 为初始牌堆加牌,并且洗牌
+    private void initializeCardsPile() {
+
     }
 
 

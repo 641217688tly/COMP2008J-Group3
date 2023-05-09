@@ -1,7 +1,3 @@
-package Module.Cards;
-
-import java.awt.*;
-
 /*
 Cards:
     Properties (28):
@@ -25,6 +21,7 @@ Cards:
         6 cards of 1M, 5 cards of 2M, 3 cards of 3M,
         3 cards of 4M, 2 cards of 5M, 1 card of 10M.
 */
+package Module.Cards;
 import javax.swing.*;
 
 public abstract class Card extends JPanel {
