@@ -46,14 +46,6 @@ public class Player extends JPanel {
     private Property property; //玩家的房产区
 
     private final Image[] images = new Image[5];
-    for (int i=0; i<5;i++){
-        try{
-            images[i]=new ImageIO.read(new File("images/player1.jpeg"));
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
     private Image playerBackground;
     public void setPlayerBackground(int i){
         this.playerBackground = images[i];
@@ -65,31 +57,21 @@ public class Player extends JPanel {
         this.name = name;
     }
     private void loadAndSetPlayerImage() {
-        try {
-            // 从文件中读取背景图片
-            player1 = ImageIO.read(new File("images/player1.jpeg"));
-            player2=ImageIO.read(new File("images/player2.jpeg"));
-            player3=ImageIO.read(new File("images/player3.jpeg"));
-            player4=ImageIO.read(new File("images/player4.jpeg"));
-            player5=ImageIO.read(new File("images/player5.jpeg"));
+        for (int i=0; i<5;i++){
+            try{
+                images[i]= ImageIO.read(new File("images/player"+i+".jpeg"));
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
     private void drawPlayer(Graphics g) {
-        if (player1 != null) { // 如果背景图片已加载
-            // 在面板上绘制背景图片，使其填充整个面板
-            g.drawImage(player1, playerX, playerY, cardWidth, cardHeight, this);
-        }
-        if (player2 !=null){
-            g.drawImage(player2, playerX, playerY, cardWidth, cardHeight, this);
-        }
-        if (player3 !=null){
-            g.drawImage(player3, playerX, playerY, cardWidth, cardHeight, this);
-        }
-        if (player4 !=null){
-            g.drawImage(player4, playerX, playerY, cardWidth, cardHeight, this);
-        }
-        if (player5 !=null){
-            g.drawImage(player5, playerX, playerY, cardWidth, cardHeight, this);
+        for (int i=0; i<5;i++) {
+            if (images[i] != null) { // 如果背景图片已加载
+                // 在面板上绘制背景图片，使其填充整个面板
+                g.drawImage(images[i], playerX, playerY, cardWidth, cardHeight, this);
+            }
         }
     }
 
