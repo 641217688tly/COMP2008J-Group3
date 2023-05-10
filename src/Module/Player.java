@@ -101,6 +101,23 @@ public class Player extends JPanel {
 
     }
 
+    public int getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
+    public void setX(int newX){
+        x = newX;
+    }
+
+    public void setY(int newY){
+        y = newY;
+    }
+
+
     //TODO 加载玩家的背景图片并呈现到游戏界面中(这一步需要玩家的坐标先被成功分配)
 
 }

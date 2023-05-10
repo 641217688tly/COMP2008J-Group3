@@ -38,8 +38,9 @@ public abstract class Card extends JPanel {
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
     public static int cardWeight = (ApplicationStart.screenWidth) / 12;
 
-    public Card() {
-
+    public Card(String name) {
+        this.name = name;
+        this.cardImage = cardImage;
     }
 
 
