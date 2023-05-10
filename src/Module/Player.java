@@ -45,7 +45,15 @@ public class Player extends JPanel {
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
 
-    private Image[] images =  [player1,player2,player3,player4,player5];
+    private final Image[] images = new Image[5];
+    for (int i=0; i<5;i++){
+        try{
+            images[i]=new ImageIO.read(new File("images/player1.jpeg"));
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
     private Image playerBackground;
     public void setPlayerBackground(int i){
         this.playerBackground = images[i];
@@ -64,8 +72,6 @@ public class Player extends JPanel {
             player3=ImageIO.read(new File("images/player3.jpeg"));
             player4=ImageIO.read(new File("images/player4.jpeg"));
             player5=ImageIO.read(new File("images/player5.jpeg"));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
     private void drawPlayer(Graphics g) {
