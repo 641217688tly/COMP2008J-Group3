@@ -1,4 +1,4 @@
-package Module;
+package Module.PlayerAndComponents;
 
 import Module.Cards.Card;
 

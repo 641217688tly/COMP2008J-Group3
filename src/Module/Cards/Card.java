@@ -28,15 +28,16 @@ import GUI.ApplicationStart;
 import javax.swing.*;
 
 public abstract class Card extends JPanel {
+    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
+    public static int cardWidth = (ApplicationStart.screenWidth) / 12;
+    public int cardX;
+    public int cardY;
     private String name;
     private ImageIcon cardImage;
     private JLabel cardLabel;
     private JButton playButton;
     private JButton putBackButton;
-    public int cardX;
-    public int cardY;
-    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
-    public static int cardWeight = (ApplicationStart.screenWidth) / 12;
+
 
     public Card(String name) {
         this.name = name;

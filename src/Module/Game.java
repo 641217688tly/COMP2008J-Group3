@@ -1,8 +1,8 @@
 package Module;
 
-import Listener.ModuleListener.PlayerListener;
-import Module.Cards.Card;
-import Module.Cards.CardsWarehouse;
+import GUI.ApplicationStart;
+import Listener.ModuleListener.GameListener;
+import Module.PlayerAndComponents.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +39,13 @@ playerListener(用于监控玩家鼠标或键盘的行为以实现拖拽牌等�
 */
 
 public class Game {
-    public static CardsPile cardsPile; //中央牌区
-    public static List<Card> cardsWarehouse = new ArrayList<>();
+    public static CardsPile cardsPile = new CardsPile(); //中央牌区
     public static ArrayList<Player> players = new ArrayList<>();
-    public PlayerListener playerListener;
-
+    private GameListener gameListener;
 
     public Game() {
-
+        this.gameListener = new GameListener();
+        distributeCoordinateForPlayers();
     }
 
     public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
@@ -57,62 +56,54 @@ public class Game {
         }
     }
 
-    //TODO 为每个玩家完成坐标分配
-    private void distributeCoordinate() {
-        if (players.size() == 2){
+    private void distributeCoordinateForPlayers() {
+        if (players.size() == 2) {
             //第一个玩家
-            players.get(0).setX((ApplicationStart.screenWeight) / 2);
-            players.get(0).setY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家
-            players.get(1).setX((ApplicationStart.screenWeight) / 2);
-            players.get(1).setY((ApplicationStart.screenHeight) * 7) / 8);
+            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
+            //第二个玩家Player
+            players.get(1).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(1).setPlayerY((ApplicationStart.screenHeight / 8) * 7);
         } else if (players.size() == 3) {
-            //第一个玩家
-            players.get(0).setX((ApplicationStart.screenWeight) / 2);
-            players.get(0).setY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家
-            players.get(1).setX((ApplicationStart.screenWeight) * 23) / 24);
-            players.get(1).setY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家
-            players.get(3).setX((ApplicationStart.screenWeight) / 24);
-            players.get(3).setY((ApplicationStart.screenHeight) / 2);
+            //第一个玩家Player
+            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
+            //第二个玩家Player
+            players.get(1).setPlayerX((ApplicationStart.screenWidth / 24) * 23);
+            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
+            //第三个玩家Player
+            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 24);
+            players.get(3).setPlayerY((ApplicationStart.screenHeight) / 2);
         } else if (players.size() == 4) {
-            //第一个玩家
-            players.get(0).setX((ApplicationStart.screenWeight) / 2);
-            players.get(0).setY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家
-            players.get(1).setX((ApplicationStart.screenWeight) * 23) / 24);
-            players.get(1).setY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家
-            players.get(2).setX((ApplicationStart.screenWeight) / 2);
-            players.get(2).setY((ApplicationStart.screenHeight) * 7) / 8);
-            //第四个玩家
-            players.get(3).setX((ApplicationStart.screenWeight) / 24);
-            players.get(3).setY((ApplicationStart.screenHeight) / 2);
+            //第一个玩家Player
+            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
+            //第二个玩家Player
+            players.get(1).setPlayerX((ApplicationStart.screenWidth * 23) / 24);
+            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
+            //第三个玩家Player
+            players.get(2).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(2).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
+            //第四个玩家Player
+            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 24);
+            players.get(3).setPlayerY((ApplicationStart.screenHeight) / 2);
         } else if (players.size() == 5) {
-            //第一个玩家
-            players.get(0).setX((ApplicationStart.screenWeight) / 2);
-            players.get(0).setY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家
-            players.get(1).setX((ApplicationStart.screenWeight) * 23) / 24);
-            players.get(1).setY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家
-            players.get(2).setX((ApplicationStart.screenWeight) * 2) / 3);
-            players.get(2).setY((ApplicationStart.screenHeight) * 7) / 8);
-            //第四个玩家
-            players.get(3).setX((ApplicationStart.screenWeight) / 3);
-            players.get(3).setY((ApplicationStart.screenHeight) * 7) / 8);
-            //第五个玩家
-            players.get(4).setX((ApplicationStart.screenWeight) / 24);
-            players.get(4).setY((ApplicationStart.screenHeight) / 2);
+            //第一个玩家Player
+            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
+            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
+            //第二个玩家Player
+            players.get(1).setPlayerX((ApplicationStart.screenWidth * 23) / 24);
+            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
+            //第三个玩家Player
+            players.get(2).setPlayerX((ApplicationStart.screenWidth * 2) / 3);
+            players.get(2).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
+            //第四个玩家Player
+            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 3);
+            players.get(3).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
+            //第五个玩家Player
+            players.get(4).setPlayerX((ApplicationStart.screenWidth) / 24);
+            players.get(4).setPlayerY((ApplicationStart.screenHeight) / 2);
         }
-    }
-
-    //TODO 为初始牌堆加牌,并且洗牌
-    private void initializeCardsPile() {
-        var cardWarehouse = new CardsWarehouse();
-        cardsWarehouse = cardWarehouse.getCards();
-        Collections.shuffle(cardsWarehouse);
     }
 
 

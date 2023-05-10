@@ -1,5 +1,4 @@
-package Module;
-
+package Module.PlayerAndComponents;
 /*
 Player类应该主管玩家的一系列动作;同时应该具有如玩家的房产,玩家的银行,玩家的手牌等属性:
 属性:
@@ -25,42 +24,38 @@ pass(行动次数没使用完前可以跳过自己的回合)
 */
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
 
 import javax.swing.*;
 
 public class Player extends JPanel {
+    public static int playerHeight = (ApplicationStart.screenHeight) / 5;
+    public static int playerWidth = (ApplicationStart.screenWidth) / 12;
     public String name;
     public int playerX;
     public int playerY;
-    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
-    public static int cardWeight = (ApplicationStart.screenWidth) / 12;
     private int actionsNumber = 3; //行动次数
     private int countDown = 180; //倒计时
     //组件:
-    private PlayerCards playerCards;
+    private PlayerListener playerListener;
+    private PlayerCards playerCards; //玩家的手牌区
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
 
-
-
     public Player(String name) {
         this.name = name;
+        this.playerListener = new PlayerListener();
+        this.playerCards = new PlayerCards();
+        this.bank = new Bank();
+        this.property = new Property();
     }
 
-    public int getX(){
-        return x;
+    public void setPlayerX(int playerX) {
+        this.playerX = playerX;
     }
 
-    public int getY(){
-        return y;
-    }
-
-    public void setX(int newX){
-        x = newX;
-    }
-
-    public void setY(int newY){
-        y = newY;
+    public void setPlayerY(int playerY) {
+        this.playerY = playerY;
     }
 
 
