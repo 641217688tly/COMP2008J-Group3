@@ -1,5 +1,4 @@
-package Module;
-
+package Module.PlayerAndComponents;
 /*
 Player类应该主管玩家的一系列动作;同时应该具有如玩家的房产,玩家的银行,玩家的手牌等属性:
 属性:
@@ -25,6 +24,7 @@ pass(行动次数没使用完前可以跳过自己的回合)
 */
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -33,28 +33,26 @@ import java.io.File;
 import java.io.IOException;
 
 public class Player extends JPanel {
+    public static int playerHeight = (ApplicationStart.screenHeight) / 5;
+    public static int playerWidth = (ApplicationStart.screenWidth) / 12;
     public String name;
     public int playerX;
     public int playerY;
-    public static int cardHeight = (ApplicationStart.screenHeight) / 5;
-    public static int cardWidth = (ApplicationStart.screenWidth) / 12;
     private int actionsNumber = 3; //行动次数
     private int countDown = 180; //倒计时
     //组件:
-    private PlayerCards playerCards;
+    private PlayerListener playerListener;
+    private PlayerCards playerCards; //玩家的手牌区
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
-
     private final Image[] images = new Image[5];
-    private Image playerBackground;
-    public void setPlayerBackground(int i){
-        this.playerBackground = images[i];
-    }
-
-
 
     public Player(String name) {
         this.name = name;
+        this.playerListener = new PlayerListener();
+        this.playerCards = new PlayerCards();
+        this.bank = new Bank();
+        this.property = new Property();
     }
     private void loadAndSetPlayerImage() {
         for (int i=0; i<5;i++){
@@ -70,7 +68,7 @@ public class Player extends JPanel {
         for (int i=0; i<5;i++) {
             if (images[i] != null) { // 如果背景图片已加载
                 // 在面板上绘制背景图片，使其填充整个面板
-                g.drawImage(images[i], playerX, playerY, cardWidth, cardHeight, this);
+                g.drawImage(images[i], playerX, playerY, playerWidth, playerHeight, this);
             }
         }
     }
@@ -83,20 +81,12 @@ public class Player extends JPanel {
 
     }
 
-    public int getX(){
-        return x;
+    public void setPlayerX(int playerX) {
+        this.playerX = playerX;
     }
 
-    public int getY(){
-        return y;
-    }
-
-    public void setX(int newX){
-        x = newX;
-    }
-
-    public void setY(int newY){
-        y = newY;
+    public void setPlayerY(int playerY) {
+        this.playerY = playerY;
     }
 
 
