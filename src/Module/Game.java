@@ -57,52 +57,22 @@ public class Game {
     }
 
     private void distributeCoordinateForPlayers() {
-        if (players.size() == 2) {
-            //第一个玩家
-            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家Player
-            players.get(1).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(1).setPlayerY((ApplicationStart.screenHeight / 8) * 7);
-        } else if (players.size() == 3) {
-            //第一个玩家Player
-            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家Player
-            players.get(1).setPlayerX((ApplicationStart.screenWidth / 24) * 23);
-            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家Player
-            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 24);
-            players.get(3).setPlayerY((ApplicationStart.screenHeight) / 2);
-        } else if (players.size() == 4) {
-            //第一个玩家Player
-            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家Player
-            players.get(1).setPlayerX((ApplicationStart.screenWidth * 23) / 24);
-            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家Player
-            players.get(2).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(2).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
-            //第四个玩家Player
-            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 24);
-            players.get(3).setPlayerY((ApplicationStart.screenHeight) / 2);
-        } else if (players.size() == 5) {
-            //第一个玩家Player
-            players.get(0).setPlayerX((ApplicationStart.screenWidth) / 2);
-            players.get(0).setPlayerY((ApplicationStart.screenHeight) / 8);
-            //第二个玩家Player
-            players.get(1).setPlayerX((ApplicationStart.screenWidth * 23) / 24);
-            players.get(1).setPlayerY((ApplicationStart.screenHeight) / 2);
-            //第三个玩家Player
-            players.get(2).setPlayerX((ApplicationStart.screenWidth * 2) / 3);
-            players.get(2).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
-            //第四个玩家Player
-            players.get(3).setPlayerX((ApplicationStart.screenWidth) / 3);
-            players.get(3).setPlayerY((ApplicationStart.screenHeight * 7) / 8);
-            //第五个玩家Player
-            players.get(4).setPlayerX((ApplicationStart.screenWidth) / 24);
-            players.get(4).setPlayerY((ApplicationStart.screenHeight) / 2);
+        int[] playersX = new int[5];
+        int[] playersY = new int[5];
+        playersX[0] = (ApplicationStart.screenWidth) / 2;
+        playersX[1] = (ApplicationStart.screenWidth * 23) / 24;
+        playersX[2] = (ApplicationStart.screenWidth * 2) / 3;
+        playersX[3] = (ApplicationStart.screenWidth) / 3;
+        playersX[4] = (ApplicationStart.screenWidth) / 24;
+        playersY[0] = (ApplicationStart.screenHeight) / 8;
+        playersY[1] = (ApplicationStart.screenHeight) / 2;
+        playersY[2] = (ApplicationStart.screenHeight * 7) / 8;
+        playersY[3] = (ApplicationStart.screenHeight * 7) / 8;
+        playersY[4] = (ApplicationStart.screenHeight) / 2;
+        for (int i = 0; i < Game.players.size();i++) {
+            players.get(i).setPlayerX(playersX[i]);
+            players.get(i).setPlayerY(playersY[i]);
+            players.get(i).setPlayerImage(players.get(i).images()[i]);
         }
     }
 

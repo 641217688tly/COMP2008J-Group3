@@ -39,7 +39,7 @@ public class CardsPile extends JPanel {
     private Image cardsPileBackground;
 
     public CardsPile() {
-        initializeCardsPile();
+        initializeCardsPile(); //向抽牌堆中加入所有的卡牌
         loadAndSetBackgroundImage();
 
     }
