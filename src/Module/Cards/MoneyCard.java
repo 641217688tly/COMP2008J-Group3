@@ -3,8 +3,25 @@ package Module.Cards;
 import java.util.ArrayList;
 
 public class MoneyCard extends Card {
-    public MoneyCard(String name) {
-        super(name);
+    private int value;
+
+    public MoneyCard(String name, ImageIcon cardImage, int value) {
+        super(name, cardImage);
+        this.value = value;
+    }
+
+    @Override
+    public void play() {
+        // TODO: 实现 play 方法
+    }
+
+    @Override
+    public void putBack() {
+        // TODO: 实现 putBack 方法
+    }
+
+    public int getValue() {
+        return value;
     }
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
