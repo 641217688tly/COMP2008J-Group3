@@ -2,7 +2,7 @@ package Module.Cards;
 
 import java.util.ArrayList;
 
-public class MoneyCard extends Card {
+public class MoneyCard extends Card implements CardImplement {
     private int value;
 
     public MoneyCard(String name, ImageIcon cardImage, int value) {
