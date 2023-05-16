@@ -21,7 +21,7 @@ public class MenuScreen extends JPanel {
     private void loadAndSetBackgroundImage() {
         try {
             // 从文件中读取背景图片
-            menuScreenBackground = ImageIO.read(new File("images/MenuScreenBackground.jpg"));
+            menuScreenBackground = ImageIO.read(new File("images/GUI/MenuScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
