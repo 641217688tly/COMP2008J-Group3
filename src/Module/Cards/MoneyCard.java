@@ -1,5 +1,6 @@
 package Module.Cards;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class MoneyCard extends Card implements CardImplement {
