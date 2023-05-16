@@ -16,11 +16,12 @@ public class SettingsScreen extends JPanel {
     private JButton startGameButton; // 开始游戏按钮
     private Image settingsScreenBackground; // 存储背景图像的变量
     private Game game; // 游戏对象
+    private GameScreen gameScreen; // GameScreen对象,添加它的目的是为了之后将Player对象和CardsPile对象添加到GameScreen这一JPanel上
 
-    // 构造函数，初始化SettingsScreen
-    public SettingsScreen(ActionListener backButtonListener, ActionListener showPanelActionListener, Game game) {
-        this.game = game;
+    public SettingsScreen(ActionListener backButtonListener, ActionListener showPanelActionListener, Game game, GameScreen gameScreen) {
         setLayout(new BorderLayout()); // 设置布局为边界布局
+        this.game = game;
+        this.gameScreen = gameScreen;
         loadAndSetBackgroundImage();
         setupPlayerCountPanel(); // 设置玩家数量选择面板
         setupPlayerNamePanel(); // 设置玩家名称输入面板
@@ -32,7 +33,7 @@ public class SettingsScreen extends JPanel {
     private void loadAndSetBackgroundImage() {
         try {
             // 从文件中读取背景图片
-            settingsScreenBackground = ImageIO.read(new File("images/SettingsScreenBackground.jpg"));
+            settingsScreenBackground = ImageIO.read(new File("images/GUI/SettingsScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,7 +50,7 @@ public class SettingsScreen extends JPanel {
     private void setupButtonsPanel(ActionListener backListener, ActionListener gameListener) {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // 创建按钮面板，使用流式布局，靠右对齐
         startGameButton = new JButton("Start Game"); // 创建开始游戏按钮
-        startGameButton.addActionListener(new SettingsScreenListener.StartGameButtonListener(game, playerNamePanel, gameListener));
+        startGameButton.addActionListener(new SettingsScreenListener.StartGameButtonListener(game, gameScreen, playerNamePanel, gameListener));
         startGameButton.setEnabled(false); // 初始时设置为禁用
         buttonPanel.add(startGameButton); // 将开始游戏按钮添加到按钮面板
 
@@ -71,7 +72,6 @@ public class SettingsScreen extends JPanel {
         playerCountPanel.add(playerCountComboBox); // 将下拉框添加到面板
         add(playerCountPanel, BorderLayout.NORTH); // 将玩家数量选择面板添加到面板的北部（上方）
     }
-
 
     // 创建玩家名称输入框
     public void createPlayerNameInputs() {
@@ -103,6 +103,5 @@ public class SettingsScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
         drawBackground(g); //TODO 无法正常加载背景图
-
     }
 }
