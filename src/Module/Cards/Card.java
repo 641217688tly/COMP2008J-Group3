@@ -39,7 +39,7 @@ public abstract class Card extends JPanel {
     private JButton putBackButton;
 
 
-    public Card(String name) {
+    public Card(String name,ImageIcon cardImage) {
         this.name = name;
         this.cardImage = cardImage;
     }

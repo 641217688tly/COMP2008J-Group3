@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class MoneyCard extends Card {
-    public MoneyCard(String name) {
-        super(name);
+    public MoneyCard(String name,ImageIcon cardImage,int value) {
+        super(name,cardImage);
+        
     }
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
