@@ -34,13 +34,13 @@ public abstract class Card extends JPanel implements CardImplement{
     public int cardX;
     public int cardY;
     private String name;
-    private Image cardImage;
+    private ImageIcon cardImage;
     private JLabel cardLabel;
     private JButton playButton;
     private JButton putBackButton;
 
 
-    public Card(String name,Image cardImage) {
+    public Card(String name,ImageIcon cardImage) {
         this.name = name;
         this.cardImage = cardImage;
     }
