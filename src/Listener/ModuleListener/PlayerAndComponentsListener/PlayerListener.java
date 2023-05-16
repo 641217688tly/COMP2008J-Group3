@@ -1,30 +1,37 @@
 package Listener.ModuleListener.PlayerAndComponentsListener;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-/*
-该类中不应该涉及到对物体(牌库,银行,牌等)坐标的更改,而是单纯的监听鼠标的行为,对坐标的更改将在JavaBean类中被实现
-属性:
-鼠标是否单击
-鼠标是否移动
-鼠标是否长按
-....
- */
-public class PlayerListener implements KeyListener {
+import Module.PlayerAndComponents.Bank;
+import Module.PlayerAndComponents.PlayerCardsPile;
+import Module.PlayerAndComponents.Property;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+public class PlayerListener  {
+    public ActionListener playerCardsButtonListener(PlayerCardsPile playerCardsPile) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playerCardsPile.setVisible(true);
+            }
+        };
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-
+    public ActionListener bankButtonListener(Bank bank) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                bank.setVisible(true);
+            }
+        };
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
+    public ActionListener propertyButtonListener(Property property) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                property.setVisible(true);
+            }
+        };
     }
 }

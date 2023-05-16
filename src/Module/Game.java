@@ -1,11 +1,3 @@
-package Module;
-
-import GUI.ApplicationStart;
-import Listener.ModuleListener.GameListener;
-import Module.PlayerAndComponents.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 /*
 该类应该负责管理整个游戏
 属性:
@@ -37,44 +29,33 @@ playerListener(用于监控玩家鼠标或键盘的行为以实现拖拽牌等�
             按钮1：打出，点击后卡牌被打出
             按钮2：放回，点击后卡牌被放回
 */
+package Module;
+
+import GUI.ApplicationStart;
+import Listener.ModuleListener.GameListener;
+import Module.PlayerAndComponents.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
+    public static int[] playersJPanelXCoordinate = {(ApplicationStart.screenWidth * 11) / 12, 0, (ApplicationStart.screenWidth * 2) / 12, (ApplicationStart.screenWidth * 9) / 12, (ApplicationStart.screenWidth * 11) / 12};
+    public static int[] playersJPanelYCoordinate = {(ApplicationStart.screenHeight * 4) / 5, (ApplicationStart.screenHeight * 2) / 5, 0, 0, (ApplicationStart.screenHeight * 2) / 5};
     public static CardsPile cardsPile = new CardsPile(); //中央牌区
     public static ArrayList<Player> players = new ArrayList<>();
     private GameListener gameListener;
 
     public Game() {
         this.gameListener = new GameListener();
-        distributeCoordinateForPlayers();
     }
 
     public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
-        players.clear();
-        for (String playerName : playerNames) {
-            Player player = new Player(playerName);
+        Game.players.clear();
+        for (int i = 0; i < playerNames.size(); i++) {
+            Player player = new Player(playerNames.get(i), Player.images[i], Game.playersJPanelXCoordinate[i], Game.playersJPanelYCoordinate[i]);
             players.add(player);
         }
+        Game.players.get(0).setTurn(true); //从一号玩家开始开启回合
     }
-
-    private void distributeCoordinateForPlayers() {
-        int[] playersX = new int[5];
-        int[] playersY = new int[5];
-        playersX[0] = (ApplicationStart.screenWidth) / 2;
-        playersX[1] = (ApplicationStart.screenWidth * 23) / 24;
-        playersX[2] = (ApplicationStart.screenWidth * 2) / 3;
-        playersX[3] = (ApplicationStart.screenWidth) / 3;
-        playersX[4] = (ApplicationStart.screenWidth) / 24;
-        playersY[0] = (ApplicationStart.screenHeight) / 8;
-        playersY[1] = (ApplicationStart.screenHeight) / 2;
-        playersY[2] = (ApplicationStart.screenHeight * 7) / 8;
-        playersY[3] = (ApplicationStart.screenHeight * 7) / 8;
-        playersY[4] = (ApplicationStart.screenHeight) / 2;
-        for (int i = 0; i < Game.players.size();i++) {
-            players.get(i).setPlayerX(playersX[i]);
-            players.get(i).setPlayerY(playersY[i]);
-            players.get(i).setPlayerImage(players.get(i).images()[i]);
-        }
-    }
-
 
 }

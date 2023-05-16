@@ -1,15 +1,15 @@
 package Listener.GUIListener;
 
 import GUI.ApplicationStart;
+import GUI.GameScreen;
 import GUI.SettingsScreen;
+import Module.Game;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import Module.Game;
 
 // 这个类包含了处理设置屏幕上各种按钮事件的内部类
 public class SettingsScreenListener {
@@ -49,12 +49,14 @@ public class SettingsScreenListener {
     // 内部类：处理"Start Game"按钮的事件
     public static class StartGameButtonListener implements ActionListener {
         private Game game; // Game对象的引用，用于添加玩家
+        private GameScreen gameScreen;
         private JPanel playerNamePanel; // 包含玩家名字输入框的面板
         private ActionListener gameListener; // 处理游戏开始后的监听器
 
         // 构造方法，接收Game对象、玩家名字输入框所在面板和游戏开始后的监听器
-        public StartGameButtonListener(Game game, JPanel playerNamePanel, ActionListener gameListener) {
+        public StartGameButtonListener(Game game, GameScreen gameScreen, JPanel playerNamePanel, ActionListener gameListener) {
             this.game = game;
+            this.gameScreen = gameScreen;
             this.playerNamePanel = playerNamePanel;
             this.gameListener = gameListener;
         }
@@ -77,6 +79,7 @@ public class SettingsScreenListener {
                 }
             }
             game.addPlayers(playerNames); // 将玩家名字列表传递给Game对象，添加玩家
+            gameScreen.addComponentsIntoJPanel();
             gameListener.actionPerformed(e); // 调用游戏开始后的监听器，处理游戏开始后的动作
         }
     }

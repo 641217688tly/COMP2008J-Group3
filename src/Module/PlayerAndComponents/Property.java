@@ -1,12 +1,3 @@
-package Module.PlayerAndComponents;
-
-import Module.Cards.Card;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /*
 Property类将主要为玩家提供服务,它应该具有如下属性和功能:
 属性:
@@ -26,6 +17,12 @@ Property类将主要为玩家提供服务,它应该具有如下属性和功能:
 (被)安置房产
 ...
 */
+package Module.PlayerAndComponents;
+
+import Module.Cards.Card;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 public class Property extends JDialog { //房产类
     public static ArrayList<Card> propertyCards;
