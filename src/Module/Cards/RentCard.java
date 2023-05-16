@@ -1,12 +1,11 @@
 package Module.Cards;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
-public class RentCard extends Card implements CardImplement {
-    public RentCard(String name, ImageIcon cardImage) {
-        super(name, cardImage);
+public class RentCard extends Card  {
+    public RentCard(String name, Image image) {
+        super(name,image);
     }
 
     public static ArrayList<Card> initializeCardsForCardsPile() {

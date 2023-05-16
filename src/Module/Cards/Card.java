@@ -26,8 +26,9 @@ package Module.Cards;
 import GUI.ApplicationStart;
 
 import javax.swing.*;
+import java.awt.*;
 
-public abstract class Card extends JPanel {
+public abstract class Card extends JPanel implements CardImplement{
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
     public static int cardWidth = (ApplicationStart.screenWidth) / 12;
     public int cardX;
