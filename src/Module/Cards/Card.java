@@ -26,8 +26,12 @@ package Module.Cards;
 import GUI.ApplicationStart;
 
 import javax.swing.*;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public abstract class Card extends JPanel {
+
+public abstract class Card extends JPanel implements CardImplement {
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
     public static int cardWidth = (ApplicationStart.screenWidth) / 12;
     public int cardX;
@@ -39,12 +43,45 @@ public abstract class Card extends JPanel {
     private JButton putBackButton;
 
 
-    public Card(String name) {
+    public Card(String name, ImageIcon cardImage) {
         this.name = name;
         this.cardImage = cardImage;
+
+        // 初始化 cardLabel
+        cardLabel = new JLabel(cardImage);
+        cardLabel.setBounds(0, 0, cardWidth, cardHeight);
+        add(cardLabel);
+
+        // 初始化 playButton
+        playButton = new JButton("Play");
+        playButton.setBounds(0, cardHeight, cardWidth / 2, cardHeight / 5);
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                play();
+            }
+        });
+        add(playButton);
+
+        // 初始化 putBackButton
+        putBackButton = new JButton("Put Back");
+        putBackButton.setBounds(cardWidth / 2, cardHeight, cardWidth / 2, cardHeight / 5);
+        putBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                putBack();
+            }
+        });
+        add(putBackButton);
     }
+    public abstract void play();
 
-
+    public abstract void putBack();
 }
+//将这张卡牌放回牌堆的操作
+
+//初始化了 cardLabel、playButton 和 putBackButton，并为 playButton 和 putBackButton 添加了监听器
+
+
 
 

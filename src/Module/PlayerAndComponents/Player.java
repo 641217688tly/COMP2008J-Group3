@@ -45,7 +45,8 @@ public class Player extends JPanel {
     private PlayerCards playerCards; //玩家的手牌区
     private Bank bank; //玩家的银行
     private Property property; //玩家的房产区
-    private final Image[] images = new Image[5];
+    private Image[] images = new Image[5];
+    private Image playerImage;
 
     public Player(String name) {
         this.name = name;
@@ -53,32 +54,17 @@ public class Player extends JPanel {
         this.playerCards = new PlayerCards();
         this.bank = new Bank();
         this.property = new Property();
+        loadAndSetPlayerImage();
     }
+
     private void loadAndSetPlayerImage() {
-        for (int i=0; i<5;i++){
-            try{
-                images[i]= ImageIO.read(new File("images/player"+i+".jpeg"));
-            }catch (IOException e) {
+        for (int i = 0; i < 5; i++) {
+            try {
+                images[i] = ImageIO.read(new File("images/Players/player" + i + ".jpeg"));
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-    }
-    private void drawPlayer(Graphics g) {
-        for (int i=0; i<5;i++) {
-            if (images[i] != null) { // 如果背景图片已加载
-                // 在面板上绘制背景图片，使其填充整个面板
-                g.drawImage(images[i], playerX, playerY, playerWidth, playerHeight, this);
-            }
-        }
-    }
-
-    // 重写paintComponent方法以在面板上绘制背景图片
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawPlayer(g);
-
     }
 
     public void setPlayerX(int playerX) {
@@ -89,7 +75,24 @@ public class Player extends JPanel {
         this.playerY = playerY;
     }
 
+    public void setPlayerImage(Image image) {
+        this.playerImage = image;
+    }
 
-    //TODO 加载玩家的背景图片并呈现到游戏界面中(这一步需要玩家的坐标先被成功分配)
+    public Image[] images() {
+        return this.images;
+    }
 
+    private void drawPlayer(Graphics g) {
+        if (playerImage != null) { // 如果背景图片已加载
+            g.drawImage(playerImage, playerX, playerY, playerWidth, playerHeight, this);
+        }
+    }
+
+    // 重写paintComponent方法以在面板上绘制背景图片
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        drawPlayer(g);
+    }
 }

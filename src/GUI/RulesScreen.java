@@ -24,7 +24,7 @@ public class RulesScreen extends JPanel {
     private void loadAndSetBackgroundImage() {
         try {
             // 从文件中读取背景图片
-            rulesScreenBackground = ImageIO.read(new File("images/RulesScreenBackground.jpg"));
+            rulesScreenBackground = ImageIO.read(new File("images/GUI/RulesScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
