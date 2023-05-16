@@ -28,10 +28,10 @@ import java.util.Stack;
 public class CardsPile extends JPanel {
     public Stack<Card> drawPile; // 抽牌堆
     public Stack<Card> discardPile; // 废牌堆
-    public static int drawPileX = (ApplicationStart.screenWidth / 12) * 5;
-    public static int drawPileY = (ApplicationStart.screenWidth / 5) * 2;
-    public static int discardPileX = (ApplicationStart.screenWidth / 12) * 6;
-    public static int discardPileY = (ApplicationStart.screenWidth / 5) * 2;
+    public int drawPileX = 0; //抽排堆相对于CardsPile的JPanel的X坐标
+    public int drawPileY = 0; //抽排堆相对于CardsPile的JPanel的Y坐标
+    public int discardPileX = (ApplicationStart.screenWidth) / 12; //废牌堆相对于CardsPile的JPanel的X坐标
+    public int discardPileY = 0; //废牌堆相对于CardsPile的JPanel的Y坐标
     public static int drawPileHeight = (ApplicationStart.screenHeight) / 5;
     public static int drawPileWidth = (ApplicationStart.screenWidth) / 12;
     public static int discardPileHeight = (ApplicationStart.screenHeight) / 5;
@@ -39,9 +39,10 @@ public class CardsPile extends JPanel {
     private Image cardsPileBackground;
 
     public CardsPile() {
-        initializeCardsPile();
+        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.setBounds((ApplicationStart.screenWidth * 5) / 12, (ApplicationStart.screenHeight * 2) / 5, (ApplicationStart.screenWidth * 2) / 12, drawPileHeight); // 设置CardsPile这一JPanel的大小和位置
         loadAndSetBackgroundImage();
-
+        initializeCardsPile(); //向抽牌堆中加入所有的卡牌
     }
 
     public void initializeCardsPile() {
@@ -59,7 +60,7 @@ public class CardsPile extends JPanel {
     private void loadAndSetBackgroundImage() {
         try {
             // 从文件中读取背景图片
-            cardsPileBackground = ImageIO.read(new File("images/CardsPileBackground.jpg"));
+            cardsPileBackground = ImageIO.read(new File("images/PlayerCardsPileBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,18 +82,18 @@ public class CardsPile extends JPanel {
         //TODO 将抽牌堆和废牌堆中最上方的牌给画出
     }
 
-    private void drawBackground(Graphics g) {
+    public void drawCardsPile(Graphics g) {
         if (cardsPileBackground != null) { // 如果背景图片已加载
             // 在面板上绘制背景图片，使其填充整个面板
-            g.drawImage(cardsPileBackground, drawPileX, drawPileY, drawPileWidth, drawPileHeight, this);
-            g.drawImage(cardsPileBackground, discardPileX, discardPileY, discardPileWidth, discardPileHeight, this);
+            g.drawImage(cardsPileBackground, drawPileX, drawPileY, drawPileWidth, drawPileHeight, null);
+            g.drawImage(cardsPileBackground, discardPileX, discardPileY, discardPileWidth, discardPileHeight, null);
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawBackground(g);
+        drawCardsPile(g);
     }
 }
 
