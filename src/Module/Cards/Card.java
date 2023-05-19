@@ -40,9 +40,9 @@ public abstract class Card extends JPanel implements CardImplement{
     private JButton putBackButton;
 
 
-    public Card(String name,ImageIcon cardImage) {
+    public Card(String name,ImageIcon image) {
         this.name = name;
-        this.cardImage = cardImage;
+        this.cardImage = image;
     }
 
 
