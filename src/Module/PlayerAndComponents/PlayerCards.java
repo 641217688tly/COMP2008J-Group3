@@ -17,12 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PlayerCardsPile extends JDialog {
+public class PlayerCards extends JDialog {
     //属性:
     public static ArrayList<Card> playerCards;
     private Image playerCardsPileImage;
 
-    public PlayerCardsPile(){
+    public PlayerCards(){
         loadAndSetPlayerCardsPileBackground();
     }
 
