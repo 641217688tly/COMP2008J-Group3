@@ -1,64 +1,59 @@
 package Module.Cards;
 
-import java.awt.*;
+import Module.Cards.CardsEnum.ActionCardType;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 public class ActionCard extends Card {
-    public ActionCard(String name, ImageIcon image) {
-        super(name,image);
-    }
+    public ActionCardType type;
 
+    public ActionCard(ActionCardType type, ImageIcon image, int value) {
+        super(image, value);
+        this.type = type;
+    }
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> actionCards = new ArrayList<>();
-        ImageIcon doubleIcon = new ImageIcon("images/Card/ADouble.pic.jpg");
-        ImageIcon dealIcon = new ImageIcon("images/Card/ADeal.pic.jpg");
-        actionCards.add(new ActionCard("Double The Rent Cards",doubleIcon));
-        actionCards.add(new ActionCard("Double The Rent Cards",doubleIcon));
-        actionCards.add(new ActionCard("Deal Breaker",dealIcon));
-        actionCards.add(new ActionCard("Deal Breaker",dealIcon));
-        
-
+        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCardType/ActionCardDoubleRent.jpg"), 1));
+        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCardType/ActionCardDoubleRent.jpg"), 1));
+        actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCardType/ActionCardDealBreaker.jpg"), 5));
+        actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCardType/ActionCardDealBreaker.jpg"), 5));
         for (int i = 0; i < 3; i++) {
-            var justIcon = new ImageIcon("images/Card/AJustno.pic.jpg");
-            actionCards.add(new ActionCard("Just Say No",justIcon));  
+            actionCards.add(new ActionCard(ActionCardType.JUST_SAY_NO, new ImageIcon("images/Card/ActionCardType/ActionCardType/ActionCardSayNo.jpg"), 4));
         }
         for (int i = 0; i < 4; i++) {
-            var icon= new ImageIcon("images/Card/AForce.pic.jpg");
-            actionCards.add(new ActionCard("Force Deal",null));
+            actionCards.add(new ActionCard(ActionCardType.FORCE_DEAL, new ImageIcon("images/Card/ActionCardType/ActionCardForcedDeal.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
-            var icon= new ImageIcon("images/Card/ADebt.pic.jpg");
-            actionCards.add(new ActionCard("Debt Collector",icon));
+            actionCards.add(new ActionCard(ActionCardType.DEBT_COLLECTOR, new ImageIcon("images/Card/ActionCardType/ActionCardDebtCollector.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
-            var icon= new ImageIcon("images/Card/ABirthday.pic.jpg");
-            actionCards.add(new ActionCard("It's My Birthday",icon));
+            actionCards.add(new ActionCard(ActionCardType.BIRTHDAY, new ImageIcon("images/Card/ActionCardType/ActionCardBirthday.jpg"), 2));
         }
         for (int i = 0; i < 10; i++) {
-            var icon= new ImageIcon("images/Card/APass.pic.jpg");
-            actionCards.add(new ActionCard("Pass Go",icon));
+            actionCards.add(new ActionCard(ActionCardType.PASS_GO, new ImageIcon("images/Card/ActionCardType/ActionCardPassGo.jpg"), 1));
         }
         for (int i = 0; i < 3; i++) {
-            var icon= new ImageIcon("images/Card/AHouse.pic.jpg");
-            actionCards.add(new ActionCard("House",icon));
+            actionCards.add(new ActionCard(ActionCardType.HOUSE, new ImageIcon("images/Card/ActionCardType/ActionCardHouse.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
-            var icon= new ImageIcon("images/Card/AHotel.pic.jpg");
-            actionCards.add(new ActionCard("Hotel",icon));
+            actionCards.add(new ActionCard(ActionCardType.HOTEL, new ImageIcon("images/Card/ActionCardType/ActionCardHotel.jpg"), 4));
+        }
+        for (int i = 0; i < 3; i++) {
+            actionCards.add(new ActionCard(ActionCardType.SLY_DEAL, new ImageIcon("images/Card/ActionCardType/ActionCardSlyDeal.jpg"), 3));
         }
         return actionCards;
     }
 
+
     @Override
-    public void play() {
+    public void deposit() {
 
     }
 
     @Override
-    public void putBack() {
+    public void play() {
 
     }
 }

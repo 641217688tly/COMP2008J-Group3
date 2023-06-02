@@ -1,44 +1,41 @@
 package Module.Cards;
 
-import java.awt.*;
+import Module.Cards.CardsEnum.PropertyWildCardType;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-
 public class PropertyWildCard extends Card {
-    public String color1;
-    public String color2;
-    public PropertyWildCard(String name, ImageIcon cardImage, String color1, String color2) {
-    super(name, cardImage);
-    this.color1=color1;
-    this.color2=color2;
-    }
-    
-    @Override
-    public void play() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'play'");
-    }
-    @Override
-    public void putBack() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'putBack'");
+    public PropertyWildCardType type;
+
+    public PropertyWildCard(PropertyWildCardType type, ImageIcon cardImage, int value) {
+        super(cardImage, value);
+        this.type = type;
     }
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> propertyWildCards = new ArrayList<>();
-        // var icon=new ImageIcon("images/Card/PBlue.pic.jpg") ;
-        // propertyWildCards.add(new PropertyWildCard("Blue", icon,));
-        propertyWildCards.add(new PropertyWildCard("Green/Railroad",new ImageIcon("images/Card/PGBL.pic.jpg"),"Green","Black"));
-        propertyWildCards.add(new PropertyWildCard("Utility/Railroad",new ImageIcon("images/Card/PLBBL.pic.jpg"),"Utility","Black"));
-        propertyWildCards.add(new PropertyWildCard("LightBlue/Railroad",new ImageIcon("images/Card/PCBL.pic.jpg"),"LightBlue","Black"));
-        propertyWildCards.add(new PropertyWildCard("Light Blue/Brown",new ImageIcon("images/Card/PCB.pic.jpg"),"LightBlue","Brown"));
-        propertyWildCards.add(new PropertyWildCard("Pink/Orange",new ImageIcon("images/Card/POP.pic.jpg"),"Pink","Orange"));
-        propertyWildCards.add(new PropertyWildCard("Pink/Orange",new ImageIcon("images/Card/POP.pic.jpg"),"Pink","Orange"));
-        propertyWildCards.add(new PropertyWildCard("Red/Yellow",new ImageIcon("images/Card/PYR.pic.jpg"),"Red","Yellow"));
-        propertyWildCards.add(new PropertyWildCard("Red/Yellow",new ImageIcon("images/Card/PYR.pic.jpg"),"Red","Yellow"));
-        propertyWildCards.add(new PropertyWildCard("multi-colour Property Wildcards",new ImageIcon("images/Card/PALL.pic.jpg"),null,null));
-        propertyWildCards.add(new PropertyWildCard("multi-colour Property Wildcards",new ImageIcon("images/Card/PALL.pic.jpg"),null,null));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.BLUE_GREEN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.GREEN_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.UTILITY_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_BROWN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown.jpg"), 1));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow.jpg"), 3));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow.jpg"), 3));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
         return propertyWildCards;
+    }
+
+    @Override
+    public void deposit() {
+
+    }
+
+    @Override
+    public void play() {
+
     }
 }

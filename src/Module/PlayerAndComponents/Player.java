@@ -37,11 +37,12 @@ public class Player extends JPanel {
     public static int playerHeight = (ApplicationStart.screenHeight) / 5;
     public static int playerWidth = (ApplicationStart.screenWidth) / 12;
     public static Image[] images = new Image[5];
+
+    public String name;
     public int playerJPanelX;
     public int playerJPanelY;
-    public String name;
-    private int actionsNumber = 3; //行动次数
-    private int countDown = 180; //倒计时
+    private final int actionsNumber = 3; //行动次数
+    private final int countDown = 180; //倒计时
     private boolean isMyTurn = false;
     //组件:
     private Image playerImage;

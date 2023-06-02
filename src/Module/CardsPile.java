@@ -28,19 +28,27 @@ import java.util.Stack;
 public class CardsPile extends JPanel {
     public Stack<Card> drawPile; // 抽牌堆
     public Stack<Card> discardPile; // 废牌堆
+
+    public int cardsPileJPanelX = (ApplicationStart.screenWidth * 5) / 12;
+    public int cardsPileJPanelY = (ApplicationStart.screenHeight * 2) / 5;
+    public int cardsPileJPanelWidth = (ApplicationStart.screenWidth * 2) / 12;
+    public int cardsPileJPanelHeight = (ApplicationStart.screenHeight) / 5;
+
     public int drawPileX = 0; //抽排堆相对于CardsPile的JPanel的X坐标
     public int drawPileY = 0; //抽排堆相对于CardsPile的JPanel的Y坐标
     public int discardPileX = (ApplicationStart.screenWidth) / 12; //废牌堆相对于CardsPile的JPanel的X坐标
     public int discardPileY = 0; //废牌堆相对于CardsPile的JPanel的Y坐标
+
     public static int drawPileHeight = (ApplicationStart.screenHeight) / 5;
     public static int drawPileWidth = (ApplicationStart.screenWidth) / 12;
     public static int discardPileHeight = (ApplicationStart.screenHeight) / 5;
     public static int discardPileWidth = (ApplicationStart.screenWidth) / 12;
+
     private Image cardsPileBackground;
 
     public CardsPile() {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
-        this.setBounds((ApplicationStart.screenWidth * 5) / 12, (ApplicationStart.screenHeight * 2) / 5, (ApplicationStart.screenWidth * 2) / 12, drawPileHeight); // 设置CardsPile这一JPanel的大小和位置
+        this.setBounds(cardsPileJPanelX, cardsPileJPanelY, cardsPileJPanelWidth, cardsPileJPanelHeight); // 设置CardsPile这一JPanel的大小和位置
         loadAndSetBackgroundImage();
         initializeCardsPile(); //向抽牌堆中加入所有的卡牌
     }
