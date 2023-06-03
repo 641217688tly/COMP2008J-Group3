@@ -25,6 +25,10 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Property extends JDialog { //房产类
-    public static ArrayList<Card> propertyCards;
+    private ArrayList<Card> propertyCards;
+    private Player owner;
 
+    public Property(Player owner) {
+        this.owner = owner;
+    }
 }

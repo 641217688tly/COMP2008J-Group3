@@ -1,11 +1,10 @@
 package Module.Cards;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class MoneyCard extends Card {
-
-
     public MoneyCard(ImageIcon cardImage, int value) {
         super(cardImage, value);
     }
@@ -33,7 +32,6 @@ public class MoneyCard extends Card {
         return moneyCards;
     }
 
-
     @Override
     public void deposit() {
 
@@ -42,5 +40,16 @@ public class MoneyCard extends Card {
     @Override
     public void play() {
 
+    }
+
+    @Override
+    public void drawCard(Graphics g) {
+        if (isDisplayable) {
+            if (isCardFront) { //牌的正面
+                g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+            } else {
+                g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+            }
+        }
     }
 }

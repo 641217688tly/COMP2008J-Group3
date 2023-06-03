@@ -20,8 +20,12 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class Bank extends JDialog {
-    public static ArrayList<Card> moneyCards;
+    private ArrayList<Card> moneyCards;
+    private Player owner;
 
+    public Bank(Player owner) {
+        this.owner = owner;
+    }
 }
 
 

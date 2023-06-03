@@ -3,6 +3,7 @@ package Module.Cards;
 import Module.Cards.CardsEnum.ActionCardType;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class ActionCard extends Card {
@@ -55,5 +56,16 @@ public class ActionCard extends Card {
     @Override
     public void play() {
 
+    }
+
+    @Override
+    public void drawCard(Graphics g) {
+        if (isDisplayable) {
+            if (isCardFront) { //牌的正面
+                g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+            } else {
+                g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+            }
+        }
     }
 }

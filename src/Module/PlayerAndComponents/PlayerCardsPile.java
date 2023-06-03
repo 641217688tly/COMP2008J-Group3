@@ -17,12 +17,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PlayerCardsPile extends JDialog {
+public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下玩家手上的卡牌
     //属性:
     public static ArrayList<Card> playerCards;
+    public static int playerCardsPileJPanelX = 0;
+    public static int playerCardsPileJPanelY = (ApplicationStart.screenHeight * 4) / 5;
+    public static int playerCardsPileJPanelWidth = (ApplicationStart.screenWidth * 10) / 12;
+    public static int playerCardsPileJPanelHeight = (ApplicationStart.screenHeight) / 5;
+    private Player owner;
     private Image playerCardsPileImage;
 
-    public PlayerCardsPile(){
+    public PlayerCardsPile(Player owner) {
+        this.owner = owner;
         loadAndSetPlayerCardsPileBackground();
     }
 
@@ -35,11 +41,21 @@ public class PlayerCardsPile extends JDialog {
         }
     }
 
-    public void drawPlayerCardsPile(Graphics g) { //TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
+    public void drawPlayerCardsPile(Graphics g) {
         if (playerCardsPileImage != null) {
-            for (int i = 0; i < 10; i++) {
-                g.drawImage(playerCardsPileImage, (ApplicationStart.screenWidth * i) / 12, (ApplicationStart.screenHeight * 4) / 5, Player.playerWidth, Player.playerHeight, null);
+            if (owner.isPlayerTurn()) {
+                for (int i = 0; i < 11; i++) {
+                    g.drawImage(playerCardsPileImage, (ApplicationStart.screenWidth / 12) * i, 0, ApplicationStart.screenWidth / 12, playerCardsPileJPanelHeight, null);
+                }
             }
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        if (owner.isPlayerTurn()) {
+            super.paintComponent(g); // 调用父类方法以确保正常绘制
+            drawPlayerCardsPile(g);
         }
     }
 }

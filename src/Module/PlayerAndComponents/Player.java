@@ -41,15 +41,16 @@ public class Player extends JPanel {
     public String name;
     public int playerJPanelX;
     public int playerJPanelY;
-    private final int actionsNumber = 3; //行动次数
-    private final int countDown = 180; //倒计时
-    private boolean isMyTurn = false;
-    //组件:
+    private final int actionNumbers = 3; //行动次数
+    private final int countDown = 30; //倒计时
+    private boolean isPlayerTurn = false;
     private Image playerImage;
-    private PlayerListener playerListener;
+    //组件:
+    public HandCards handCards; //玩家的手牌
+    public Bank bank; //玩家的银行
+    public Property property; //玩家的房产区
     private PlayerCardsPile playerCardsPile; //玩家的手牌区
-    private Bank bank; //玩家的银行
-    private Property property; //玩家的房产区
+    private PlayerListener playerListener;
     private JButton playerCardsButton;
     private JButton bankButton;
     private JButton propertyButton;
@@ -76,10 +77,11 @@ public class Player extends JPanel {
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
 
+        this.handCards = new HandCards(this);
+        this.bank = new Bank(this);
+        this.property = new Property(this);
+        this.playerCardsPile = new PlayerCardsPile(this);
         this.playerListener = new PlayerListener();
-        this.playerCardsPile = new PlayerCardsPile();
-        this.bank = new Bank();
-        this.property = new Property();
 
         this.setBounds(this.playerJPanelX, this.playerJPanelY, playerWidth, playerHeight); // 设置Player的大小和位置
         initButtons();
@@ -121,12 +123,6 @@ public class Player extends JPanel {
         }
     }
 
-    public void drawPlayerCardsPile(Graphics g) { //TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
-        if (isMyTurn) {
-            playerCardsPile.drawPlayerCardsPile(g);
-        }
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
@@ -134,12 +130,16 @@ public class Player extends JPanel {
         drawPlayerName(g);
     }
 
-    public boolean isMyTurn(){
-        return isMyTurn;
+    public PlayerCardsPile getPlayerCardsPile() {
+        return this.playerCardsPile;
     }
 
-    public void setTurn(boolean isMyTurn) {
-        this.isMyTurn = isMyTurn;
+    public boolean isPlayerTurn() {
+        return isPlayerTurn;
+    }
+
+    public void setPlayerTurn(boolean isPlayerTurn) {
+        this.isPlayerTurn = isPlayerTurn;
     }
 
 }

@@ -1,4 +1,3 @@
-package Module;
 /*
 CardsPile类应该负责发牌功能,所有未发的牌和已经打出来的牌都应该放在牌堆中
 属性:
@@ -12,6 +11,7 @@ CardsPile类应该负责发牌功能,所有未发的牌和已经打出来的牌�
 回收打出的牌
 牌不够时洗牌库2装牌库1
  */
+package Module;
 
 import GUI.ApplicationStart;
 import Module.Cards.*;
@@ -43,7 +43,6 @@ public class CardsPile extends JPanel {
     public static int drawPileWidth = (ApplicationStart.screenWidth) / 12;
     public static int discardPileHeight = (ApplicationStart.screenHeight) / 5;
     public static int discardPileWidth = (ApplicationStart.screenWidth) / 12;
-
     private Image cardsPileBackground;
 
     public CardsPile() {
@@ -53,7 +52,7 @@ public class CardsPile extends JPanel {
         initializeCardsPile(); //向抽牌堆中加入所有的卡牌
     }
 
-    public void initializeCardsPile() {
+    private void initializeCardsPile() {
         this.drawPile = new Stack<Card>(); //抽牌堆
         this.discardPile = new Stack<Card>(); //废牌回收堆
         drawPile.addAll(ActionCard.initializeCardsForCardsPile());
@@ -62,6 +61,17 @@ public class CardsPile extends JPanel {
         drawPile.addAll(PropertyWildCard.initializeCardsForCardsPile());
         drawPile.addAll(RentCard.initializeCardsForCardsPile());
         Collections.shuffle(drawPile);
+
+        for (int i = 0; i < drawPile.size(); i++) {
+            this.addCardComponentsAndSetCardBounds(drawPile.get(i), drawPileX, drawPileY, false, false);
+        }
+    }
+
+    private void addCardComponentsAndSetCardBounds(Card card, int x, int y, boolean isDisplayable, boolean isCardFront) {
+        this.add(card); //将Card添加到CardsPile这一JPanel中
+        card.setCardJPanelBounds(x, y); //为Card重新分配它在该JPanel下的坐标
+        card.setIsCardFront(isCardFront);
+        card.setIsDisplayable(isDisplayable);
     }
 
     // 加载并设置背景图片
@@ -77,17 +87,36 @@ public class CardsPile extends JPanel {
     public ArrayList<Card> drawCardFromDrawPile(int number) { //抽牌
         ArrayList<Card> drawnCards = new ArrayList<>();
         for (int i = 0; i < number; i++) {
+            if (drawPile.size() <= 0) {
+                recycleCardsFromDiscardPile();
+            }
+            drawPile.peek().setIsDisplayable(false);
             drawnCards.add(this.drawPile.pop());
         }
         return drawnCards;
     }
 
+    private void recycleCardsFromDiscardPile() { //牌堆没有牌时从废牌堆里拿牌
+        drawPile.addAll(discardPile);
+        Collections.shuffle(drawPile);
+        for (int i = 0; i < drawPile.size(); i++) {
+            drawPile.get(i).setIsCardFront(false);
+            drawPile.get(i).setIsDisplayable(false);
+        }
+    }
+
     public void pushCardIntoDiscardPile(Card card) { //回收废牌
         this.discardPile.push(card);
+        addCardComponentsAndSetCardBounds(card, discardPileX, discardPileY, false, true); //卡牌不允许被展示且正面朝上
     }
 
     private void drawPeekCard() {
-        //TODO 将抽牌堆和废牌堆中最上方的牌给画出
+        if (drawPile.size() > 0) {
+            drawPile.peek().setIsDisplayable(true); //将栈顶的牌设置为允许被展示
+        }
+        if (discardPile.size() > 0) {
+            discardPile.peek().setIsDisplayable(true); //将栈顶的牌设置为允许被展示
+        }
     }
 
     public void drawCardsPile(Graphics g) {
@@ -102,6 +131,7 @@ public class CardsPile extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
         drawCardsPile(g);
+        drawPeekCard();
     }
 }
 
