@@ -10,11 +10,13 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import Module.GameEngine;
+
 public class GameScreen extends JPanel {
     private Image gameScreenBackground; // 存储背景图像的变量
     private GameScreenListener gameScreenListener;
     private Game game;
-
+    public GameEngine gameEngine;
 
     public GameScreen(Game game) {
         setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
@@ -22,7 +24,7 @@ public class GameScreen extends JPanel {
         loadAndSetBackgroundImage();
         setPreferredSize(new Dimension(ApplicationStart.screenWidth, ApplicationStart.screenHeight)); // 设置GameScreen的理想大小
         this.game = game;
-
+        this.gameEngine = new GameEngine(game, this);
         gameScreenListener = new GameScreenListener(game);
         this.addKeyListener(gameScreenListener);  //添加键盘监听器到这个面板
         this.setFocusable(true); //设置面板可以获取焦点

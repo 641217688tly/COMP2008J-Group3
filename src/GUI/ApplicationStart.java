@@ -16,10 +16,9 @@ public class ApplicationStart extends JFrame {
     private RulesScreen rulesScreen;
     private SettingsScreen settingsScreen;
     private GameScreen gameScreen;
-    public GameEngine gameEngine;
+
     public static int screenWidth; // 屏幕的宽度
     public static int screenHeight; // 屏幕的高度
-    public static boolean isGameStart = false;
 
     static {
         obtainScreenSize();
@@ -38,7 +37,6 @@ public class ApplicationStart extends JFrame {
         setupRulesScreen(); // 规则面板
         setupGameScreen(game); // 游戏面板
         setupSettingsScreen(game, gameScreen); // 设置面板
-        this.gameEngine = new GameEngine(game, gameScreen);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true); // 添加这一行来隐藏标题栏
@@ -93,15 +91,9 @@ public class ApplicationStart extends JFrame {
         layout.show(mainPanel, panelName);
     }
 
-    public static void setIsGameStart(boolean flag){
-        isGameStart = flag;
-    }
 
     // 程序入口
     public static void main(String[] args) {
         ApplicationStart newGame = new ApplicationStart();
-        if (ApplicationStart.isGameStart) {
-            newGame.gameEngine.run();
-        }
     }
 }

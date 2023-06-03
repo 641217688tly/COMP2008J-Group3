@@ -14,10 +14,11 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class HandCards extends JDialog { //该类为玩家边框上的按钮,用于查看玩家的手牌
-    public ArrayList<Card> playerCards;
+    private ArrayList<Card> playerCards;
     private Player owner;
 
     public HandCards(Player owner) {
+        this.playerCards = new ArrayList<>();
         this.owner = owner;
     }
 

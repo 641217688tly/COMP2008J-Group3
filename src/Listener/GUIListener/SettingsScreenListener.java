@@ -81,7 +81,7 @@ public class SettingsScreenListener {
             game.addPlayers(playerNames); // 将玩家名字列表传递给Game对象，添加玩家
             gameScreen.addComponentsIntoJPanel();
             gameListener.actionPerformed(e); // 调用游戏开始后的监听器，处理游戏开始后的动作
-            ApplicationStart.setIsGameStart(true);
+            gameScreen.gameEngine.run();
         }
     }
 }

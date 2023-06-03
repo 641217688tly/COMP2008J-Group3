@@ -16,6 +16,7 @@ public final class GameEngine {
     }
 
     public void run() {
+        System.out.println("gameEngine run");
         new Thread() {
             public void run() {
                 try {
