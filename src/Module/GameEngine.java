@@ -16,7 +16,6 @@ public final class GameEngine {
     }
 
     public void run() {
-        System.out.println("gameEngine run");
         new Thread() {
             public void run() {
                 try {
@@ -37,7 +36,6 @@ public final class GameEngine {
             if (game.isGameOver()) {
                 exitGame();
             } else {
-                System.out.println(1);
                 if (!game.isPaused()) {
                     int updateCount = 0;
                     while (now - lastUpdateTime > TARGET_TIME_BETWEEN_UPDATES && updateCount < MAX_UPDATES_BEFORE_RENDER) {

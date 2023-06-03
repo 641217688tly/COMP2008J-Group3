@@ -27,7 +27,7 @@ public class Game implements IGame {
 
     public void initPlayersCards() {
         for (int i = 0; i < Game.players.size(); i++) {
-            Game.players.get(i).handCards.drawCardFromCardsPile(cardsPile.drawCardFromDrawPile(5));
+            Game.players.get(i).drawCards(cardsPile.drawCardFromDrawPile(5));
         }
     }
 

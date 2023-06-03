@@ -110,6 +110,8 @@ public class CardsPile extends JPanel {
         addCardComponentsAndSetCardBounds(card, discardPileX, discardPileY, false, true); //卡牌不允许被展示且正面朝上
     }
 
+    //----------绘制方法:
+
     private void drawPeekCard() {
         if (drawPile.size() > 0) {
             drawPile.peek().setIsDisplayable(true); //将栈顶的牌设置为允许被展示

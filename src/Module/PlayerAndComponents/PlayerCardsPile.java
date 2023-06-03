@@ -1,10 +1,3 @@
-/*
-属性：
-cards（保存玩家手牌的列表，类型为List<Card>）
-方法：
-初始化方法，设置JDialog的布局，根据cards列表中的卡牌，创建卡片展示组件并添加到JDialog中
-updateCards()（更新手牌列表）
-*/
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
@@ -18,17 +11,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下玩家手上的卡牌
-    //属性:
-    public static ArrayList<Card> playerCards;
     public static int playerCardsPileJPanelX = 0;
     public static int playerCardsPileJPanelY = (ApplicationStart.screenHeight * 4) / 5;
     public static int playerCardsPileJPanelWidth = (ApplicationStart.screenWidth * 10) / 12;
     public static int playerCardsPileJPanelHeight = (ApplicationStart.screenHeight) / 5;
     private Player owner;
+    private ArrayList<Card> cardsList;
     private Image playerCardsPileImage;
 
     public PlayerCardsPile(Player owner) {
         this.owner = owner;
+        this.cardsList = new ArrayList<>();
         loadAndSetPlayerCardsPileBackground();
     }
 
@@ -41,7 +34,33 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
         }
     }
 
-    public void drawPlayerCardsPile(Graphics g) {
+    public void drawCardFromCardsPile(ArrayList<Card> cards) { //加牌
+        cardsList.addAll(cards);
+        for (int i = 0; i < cardsList.size(); i++) {
+            this.add(cardsList.get(i)); //将Card添加到CardsPile这一JPanel中,但不展示出来
+            cardsList.get(i).setIsDisplayable(false);
+            cardsList.get(i).setIsCardFront(true);
+
+        }
+    }
+
+    private void setCardBounds(Card card, int x, int y, boolean isDisplayable, boolean isCardFront) {
+        card.setCardJPanelBounds(x, y); //为Card重新分配它在该JPanel下的坐标
+        card.setIsCardFront(isCardFront);
+        card.setIsDisplayable(isDisplayable);
+    }
+
+    //-------绘制方法:
+
+    private void drawCardsUpToEleven() {
+        for (int i = 0; i < cardsList.size(); i++) {
+            if (i < 11) {
+                setCardBounds(cardsList.get(i), (ApplicationStart.screenWidth / 12) * i, 0, true, true);
+            }
+        }
+    }
+
+    private void drawPlayerCardsPile(Graphics g) {
         if (playerCardsPileImage != null) {
             if (owner.isPlayerTurn()) {
                 for (int i = 0; i < 11; i++) {
@@ -56,6 +75,7 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
         if (owner.isPlayerTurn()) {
             super.paintComponent(g); // 调用父类方法以确保正常绘制
             drawPlayerCardsPile(g);
+            drawCardsUpToEleven();
         }
     }
 }

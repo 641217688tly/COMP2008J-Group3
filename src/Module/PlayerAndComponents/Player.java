@@ -25,6 +25,7 @@ package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
 import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
+import Module.Cards.Card;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,6 +33,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player extends JPanel {
     public static int playerHeight = (ApplicationStart.screenHeight) / 5;
@@ -45,10 +47,11 @@ public class Player extends JPanel {
     private final int countDown = 30; //倒计时
     private boolean isPlayerTurn = false;
     private Image playerImage;
+    private ArrayList<Card> cardsList;
     //组件:
-    public HandCards handCards; //玩家的手牌
     public Bank bank; //玩家的银行
     public Property property; //玩家的房产区
+    public HandCards handCards; //玩家的手牌
     private PlayerCardsPile playerCardsPile; //玩家的手牌区
     private PlayerListener playerListener;
     private JButton playerCardsButton;
@@ -76,7 +79,7 @@ public class Player extends JPanel {
         this.playerImage = playerImage;
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
-
+        this.cardsList = new ArrayList<>();
         this.handCards = new HandCards(this);
         this.bank = new Bank(this);
         this.property = new Property(this);
@@ -142,4 +145,9 @@ public class Player extends JPanel {
         this.isPlayerTurn = isPlayerTurn;
     }
 
+    public void drawCards(ArrayList<Card> cards) {
+        this.cardsList.addAll(cards);
+        handCards.drawCardFromCardsPile(cards);
+        playerCardsPile.drawCardFromCardsPile(cards);
+    }
 }
