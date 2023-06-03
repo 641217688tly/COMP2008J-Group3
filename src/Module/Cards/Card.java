@@ -24,9 +24,11 @@ HandCards:
 package Module.Cards;
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.CardsListener.CardListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 
 public abstract class Card extends JPanel implements ICard {
@@ -40,14 +42,36 @@ public abstract class Card extends JPanel implements ICard {
     protected final ImageIcon cardBackImage = new ImageIcon("images/Card/CardsBack.jpg"); //卡牌的背面
     protected ImageIcon cardImage; //卡牌的图片
 
-    protected JLabel cardLabel;
-    protected JButton useButton;
+    protected CardListener cardListener;
+    protected JButton playButton; //使用按钮
     protected JButton depositButton;//当做钱存进银行
-
+    protected JButton discardButton;//丢弃按钮
 
     public Card(ImageIcon image, int value) {
+        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        setOpaque(false);
         this.cardImage = image;
         this.value = value;
+        this.cardListener = new CardListener();
+        initButtons();
+    }
+
+    private void initButtons() {
+        this.playButton = createButton("Play", cardWidth / 5, 0, 3 * cardWidth / 5, cardHeight / 10, this.cardListener.playAction);
+        this.depositButton = createButton("Save", 3 * cardWidth / 5 - cardWidth / 10, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.depositAction);
+        this.discardButton = createButton("Throw", 0, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.discardAction);
+        this.add(this.playButton);
+        this.add(this.depositButton);
+        this.add(this.discardButton);
+    }
+
+    private JButton createButton(String text, int x, int y, int buttonWidth, int buttonHeight, ActionListener listener) {
+        JButton button = new JButton(text);
+        button.setBounds(x, y, buttonWidth, buttonHeight);
+        Font buttonFont = new Font("Arial", Font.BOLD, 7);
+        button.setFont(buttonFont); // 设置按钮的字体和字体大小
+        button.addActionListener(listener);
+        return button;
     }
 
     public void setCardJPanelBounds(int cardJPanelX, int cardJPanelY) {

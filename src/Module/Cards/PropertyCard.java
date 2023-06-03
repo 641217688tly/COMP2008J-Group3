@@ -62,6 +62,11 @@ public class PropertyCard extends Card {
     }
 
     @Override
+    public void discard() {
+
+    }
+
+    @Override
     public void drawCard(Graphics g) {
         if (isDisplayable) {
             if (isCardFront) { //牌的正面
