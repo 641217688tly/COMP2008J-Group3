@@ -50,10 +50,32 @@ public class PropertyCard extends Card {
         return propertyCards;
     }
 
-
     @Override
     public void play() { //(被)使用
-
+        //play:放置房产牌
+        if (owner != null) {
+            if (owner.actionNumber > 0) {
+                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
+                    if (owner.cardsList.get(i) == this) {
+                        owner.cardsList.remove(i);
+                        break;
+                    }
+                }
+                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                } else { //如果被调用的时候玩家正在看的是组件
+                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                }
+                //将牌上的按钮全部隐藏:
+                this.playButtonSwitch = false;
+                this.depositButtonSwitch = false;
+                this.discardButtonSwitch = false;
+                controlButtons();
+                //将牌存进房产中并刷新房产的状态
+                owner.property.placePropertyCardAndShowTable(this);
+                owner.actionNumber = owner.actionNumber - 1;
+            }
+        }
     }
 
     @Override
@@ -68,7 +90,7 @@ public class PropertyCard extends Card {
                 }
                 if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
                     owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
+                } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
                 //将牌上的按钮全部隐藏:
@@ -86,7 +108,7 @@ public class PropertyCard extends Card {
     @Override
     public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
         if (owner != null) {
-            if (owner.isPlayerTurn()){
+            if (owner.isPlayerTurn()) {
                 for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
                     if (owner.cardsList.get(i) == this) {
                         owner.cardsList.remove(i);
@@ -95,7 +117,7 @@ public class PropertyCard extends Card {
                 }
                 if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
                     owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
+                } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
                 //将牌上的按钮全部隐藏:

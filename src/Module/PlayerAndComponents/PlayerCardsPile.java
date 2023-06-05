@@ -16,6 +16,7 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
     public static int playerCardsPileJPanelWidth = (ApplicationStart.screenWidth * 11) / 12;
     public static int playerCardsPileJPanelHeight = (ApplicationStart.screenHeight) / 5;
     public ArrayList<Card> cardsList;
+
     private Player owner;
     private Image playerCardsPileImage;
 
@@ -40,27 +41,26 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
         this.cardsList.clear(); //将旧牌全部丢弃
         this.removeAll(); //将旧牌全部丢弃
         this.cardsList.addAll(owner.cardsList); // 获得玩家手上的牌
-        for (int i = 0; i < cardsList.size(); i++) {
-            cardsList.get(i).setIsDisplayable(false);
-            cardsList.get(i).setIsCardFront(true); //正面朝上
-        }
         paintCardsFrontUpToEleven();
-    }
-
-    private void setCardBounds(Card card, int x, int y, boolean isDisplayable, boolean isCardFront) {
-        card.setCardJPanelBounds(x, y); //为Card重新分配它在该JPanel下的坐标
-        card.setIsCardFront(isCardFront);
-        card.setIsDisplayable(isDisplayable);
     }
 
     //-------绘制方法:
 
     private void paintCardsFrontUpToEleven() {
+        if (!owner.isPlayerTurn()) {
+            this.setVisible(false);
+            return;
+        }
         for (int i = 0; i < cardsList.size(); i++) {
-            if (i < 11) {
-                this.add(cardsList.get(i));
-                setCardBounds(cardsList.get(i), (ApplicationStart.screenWidth / 12) * i, 0, true, true);
+            Card card = cardsList.get(i);
+            card.setCardJPanelBounds((ApplicationStart.screenWidth / 12) * i, 0); //为Card重新分配它在该JPanel下的坐标
+            card.setIsCardFront(true); //正面朝上
+            if (owner.isPlayerTurn()) {
+                card.openDiscardButtonSwitch(true);
+                card.openDepositButtonSwitch(true);
+                card.openPlayButtonSwitch(true);
             }
+            this.add(card);
         }
     }
 

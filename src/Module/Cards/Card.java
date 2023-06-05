@@ -31,6 +31,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/*
+不同的回合中,卡牌的如下属性可能发生变化:
+1.位置: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
+2.正反面:isCardFront
+3.按钮的开关: 1.使用按钮的开关 2.储蓄按钮的开关 3.丢弃按钮的开关 (多色卡: 4.换色按钮的开关)
+4.是否可视: isDisplayable
+5.主人: owner
+*/
 
 public abstract class Card extends JPanel implements ICard {
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
@@ -60,7 +68,6 @@ public abstract class Card extends JPanel implements ICard {
         this.cardListener = new CardListener();
         initButtons();
     }
-
 
     private void initButtons() {
         this.playButton = createButton("Play", cardWidth / 5, 0, 3 * cardWidth / 5, cardHeight / 10, this.cardListener.playCardButtonListener(this));

@@ -27,7 +27,6 @@ public class GameScreen extends JPanel {
         this.game = game;
         this.gameEngine = new GameEngine(game, this);
         this.gameScreenListener = new GameScreenListener(game);
-        this.addKeyListener(gameScreenListener);  //添加键盘监听器到这个面板
         this.setFocusable(true); //设置面板可以获取焦点
         this.requestFocusInWindow(); //请求焦点
     }
@@ -66,27 +65,9 @@ public class GameScreen extends JPanel {
         }
     }
 
-    private void drawPausePrompt(Graphics g) {
-        if (game.getIsPaused()) {
-            Font originalFont = g.getFont(); // 保存原始字体
-            Color originalColor = g.getColor(); // 保存原始颜色
-
-            g.setFont(new Font("Arial", Font.BOLD, 24)); // 设置新的字体
-            g.setColor(Color.RED); // 设置新的颜色
-
-            int x = (ApplicationStart.screenWidth / 12) * 5;
-            int y = ApplicationStart.screenHeight / 5; // 对y坐标进行微调，以便字符串在指定的区域内垂直居中
-            g.drawString("Press P to cancel the pause", x, y);
-
-            g.setFont(originalFont); // 恢复原始字体
-            g.setColor(originalColor); // 恢复原始颜色
-        }
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
         drawBackground(g);
-        drawPausePrompt(g);
     }
 }

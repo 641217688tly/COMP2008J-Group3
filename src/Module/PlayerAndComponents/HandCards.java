@@ -51,17 +51,8 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
         this.removeAll(); //将旧牌(组件)全部丢弃,但这会导致按钮也丢失
         this.add(closeButton); //将被丢失的按钮加上
         this.cardsList.addAll(owner.cardsList);
-        for (int i = 0; i < cardsList.size(); i++) {
-            cardsList.get(i).setIsDisplayable(false);
-            if (owner.isPlayerTurn()) {
-                cardsList.get(i).setIsCardFront(true);
-            } else {
-                cardsList.get(i).setIsCardFront(false);
-            }
-        }
         paintAllCardsFront();
     }
-
 
     //-------绘制方法:
 
@@ -69,9 +60,20 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
         for (int i = 0; i < cardsList.size(); i++) {
             if (i < 12) {
                 Card card = cardsList.get(i);
-                this.add(card);
                 card.setCardJPanelBounds((ApplicationStart.screenWidth / 12) * i, ApplicationStart.screenHeight / 25); //为Card重新分配它在该JPanel下的坐标
+                if (owner.isPlayerTurn()) {
+                    cardsList.get(i).setIsCardFront(true);
+                    card.openPlayButtonSwitch(true);
+                    card.openDepositButtonSwitch(true);
+                    card.openDiscardButtonSwitch(true);
+                } else {
+                    cardsList.get(i).setIsCardFront(false);
+                    card.openPlayButtonSwitch(false);
+                    card.openDepositButtonSwitch(false);
+                    card.openDiscardButtonSwitch(false);
+                }
                 card.setIsDisplayable(true);
+                this.add(card);
             }
         }
     }

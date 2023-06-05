@@ -36,7 +36,30 @@ public class MoneyCard extends Card {
 
     @Override
     public void play() { //(被)使用
-
+        //play()功能 == deposit()功能
+        if (owner != null) {
+            if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
+                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
+                    if (owner.cardsList.get(i) == this) {
+                        owner.cardsList.remove(i);
+                        break;
+                    }
+                }
+                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                }else{ //如果被调用的时候玩家正在看的是组件
+                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                }
+                //将牌上的按钮全部隐藏:
+                this.playButtonSwitch = false;
+                this.depositButtonSwitch = false;
+                this.discardButtonSwitch = false;
+                controlButtons();
+                //将牌存进银行并刷新银行的状态
+                owner.bank.saveMoneyAndShowCards(this);
+                owner.actionNumber = owner.actionNumber - 1;
+            }
+        }
     }
 
     @Override

@@ -10,11 +10,6 @@ import java.util.ArrayList;
 public class RentCard extends Card {
     public RentCardType type;
 
-    public RentCard(RentCardType type, ImageIcon image, int value) {
-        super(image, value);
-        this.type = type;
-    }
-
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> rentCards = new ArrayList<>();
 
@@ -34,6 +29,10 @@ public class RentCard extends Card {
         return rentCards;
     }
 
+    public RentCard(RentCardType type, ImageIcon image, int value) {
+        super(image, value);
+        this.type = type;
+    }
 
     @Override
     public void play() { //(被)使用
@@ -52,7 +51,7 @@ public class RentCard extends Card {
                 }
                 if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
                     owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
+                } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
                 //将牌上的按钮全部隐藏:
@@ -70,7 +69,7 @@ public class RentCard extends Card {
     @Override
     public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
         if (owner != null) {
-            if (owner.isPlayerTurn()){
+            if (owner.isPlayerTurn()) {
                 for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
                     if (owner.cardsList.get(i) == this) {
                         owner.cardsList.remove(i);
@@ -79,7 +78,7 @@ public class RentCard extends Card {
                 }
                 if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
                     owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
+                } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
                 //将牌上的按钮全部隐藏:

@@ -65,8 +65,7 @@ public class Bank extends JPanel {
         this.add(card);
     }
 
-    public void withdrawMoneyCard() {
-        //TODO 从银行里取钱
+    public void payForMoney() {
 
         paintAllCards();
     }
@@ -83,6 +82,9 @@ public class Bank extends JPanel {
     public void paintAllCards() {
         for (int i = 0; i < cardsList.size(); i++) {
             Card card = cardsList.get(i);
+            card.openPlayButtonSwitch(false);
+            card.openDepositButtonSwitch(false);
+            card.openDiscardButtonSwitch(false);
             if (i < 12) {
                 setCardBounds(card, (ApplicationStart.screenWidth / 12) * i, ApplicationStart.screenHeight / 25, true, true);
             } else if (i >= 12 && i < 24) {

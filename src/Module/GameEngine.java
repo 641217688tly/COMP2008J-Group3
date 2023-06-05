@@ -30,7 +30,7 @@ public final class GameEngine {
         new Timer(delay, e -> {
             if (game.isGameOver()) {
                 exitGame();
-            } else if (!game.isPaused()) {
+            } else {
                 game.updateGame();
                 gameScreen.repaint();
             }

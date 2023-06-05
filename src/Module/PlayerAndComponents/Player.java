@@ -3,6 +3,7 @@ package Module.PlayerAndComponents;
 import GUI.ApplicationStart;
 import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
 import Module.Cards.Card;
+import Module.Game;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,6 +20,7 @@ public class Player extends JPanel {
 
     public String name;
     public ArrayList<Card> cardsList;
+    public ArrayList<Card> cardsBuffer; //用于存储玩家在一个回合内所出过的牌
     public int playerJPanelX;
     public int playerJPanelY;
     public boolean whetherViewComponent = false;
@@ -36,6 +38,7 @@ public class Player extends JPanel {
     private JButton handCardsButton;
     private JButton bankButton;
     private JButton propertyButton;
+    private JButton skipButton;
 
     static {
         loadAndSetPlayerImage();
@@ -59,6 +62,7 @@ public class Player extends JPanel {
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
         this.cardsList = new ArrayList<>();
+        this.cardsBuffer = new ArrayList<>();
         this.playerCardsPile = new PlayerCardsPile(this);
         this.handCards = new HandCards(this);
         this.bank = new Bank(this);
@@ -70,12 +74,15 @@ public class Player extends JPanel {
     }
 
     private void initButtons() {
-        handCardsButton = createButton("C", playerWidth * 2 / 3, 0, this.playerListener.handCardsButtonListener(this));
         bankButton = createButton("B", 0, playerHeight * 3 / 4, this.playerListener.bankButtonListener(this));
+        handCardsButton = createButton("C", playerWidth / 3, playerHeight * 3 / 4, this.playerListener.handCardsButtonListener(this));
         propertyButton = createButton("P", playerWidth * 2 / 3, playerHeight * 3 / 4, this.playerListener.propertyButtonListener(this));
+        skipButton = createButton("S", playerWidth * 2 / 3, 0, this.playerListener.skipButtonListener(this));
+
         this.add(handCardsButton);
         this.add(bankButton);
         this.add(propertyButton);
+        this.add(skipButton);
     }
 
     private JButton createButton(String text, int x, int y, ActionListener listener) {
@@ -98,41 +105,8 @@ public class Player extends JPanel {
     }
 
     public void moveToNextTurn() {
-        //先把所有卡牌的按钮都隐藏:
+        this.cardsBuffer.clear();
         this.actionNumber = 3;
-        if (isPlayerTurn) { //该玩家的回合
-            //手牌的三个按钮都被允许使用
-            for (Card card : cardsList) {
-                card.openPlayButtonSwitch(true);
-                card.openDepositButtonSwitch(true);
-                card.openDiscardButtonSwitch(true);
-            }
-            for (Card propertyCard : property.cardsList) {
-                // TODO 双色或多色的房产允许换色,换色的按钮需要被呈现
-
-            }
-            for (Card moneyCard : bank.cardsList) {
-                moneyCard.openPlayButtonSwitch(true);
-                moneyCard.openDepositButtonSwitch(true);
-                moneyCard.openDiscardButtonSwitch(true);
-            }
-        } else {
-            for (Card card : cardsList) {
-                card.openPlayButtonSwitch(false);
-                card.openDepositButtonSwitch(false);
-                card.openDiscardButtonSwitch(false);
-            }
-            for (Card moneyCard : bank.cardsList) {
-                moneyCard.openPlayButtonSwitch(false);
-                moneyCard.openDepositButtonSwitch(false);
-                moneyCard.openDiscardButtonSwitch(false);
-            }
-            for (Card propertyCard : property.cardsList) {
-                propertyCard.openPlayButtonSwitch(false);
-                propertyCard.openDepositButtonSwitch(false);
-                propertyCard.openDiscardButtonSwitch(false);
-            }
-        }
         handCards.updateAndShowCards();
         if (this.isPlayerTurn) {
             playerCardsPile.updateAndShowCards();

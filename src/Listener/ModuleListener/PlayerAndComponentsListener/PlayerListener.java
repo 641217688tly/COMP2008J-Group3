@@ -33,7 +33,7 @@ public class PlayerListener {
                 for (Player player : Game.players) { //将除了当前回合的玩家的形象都设置为不可视
                     if (!player.isPlayerTurn()) {
                         player.setVisible(false);
-                    }else{
+                    } else {
                         player.playerCardsPile.setVisible(false);
                     }
                 }
@@ -56,8 +56,18 @@ public class PlayerListener {
                 }
                 player.whetherViewComponent = true;
                 player.property.setVisible(true);
-                player.property.paintAllCardsFront();
+                player.property.reallocateAllCards();
             }
         };
+    }
+
+    public ActionListener skipButtonListener(Player player) { //打开玩家的房产
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                player.actionNumber = 0;
+            }
+        };
+
     }
 }
