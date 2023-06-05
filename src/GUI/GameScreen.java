@@ -2,7 +2,7 @@ package GUI;
 
 import Listener.GUIListener.GameScreenListener;
 import Module.Game;
-import Module.PlayerAndComponents.PlayerCardsPile;
+import Module.PlayerAndComponents.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,13 +19,14 @@ public class GameScreen extends JPanel {
     public GameEngine gameEngine;
 
     public GameScreen(Game game) {
-        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
+
         loadAndSetBackgroundImage();
         setPreferredSize(new Dimension(ApplicationStart.screenWidth, ApplicationStart.screenHeight)); // 设置GameScreen的理想大小
         this.game = game;
         this.gameEngine = new GameEngine(game, this);
-        gameScreenListener = new GameScreenListener(game);
+        this.gameScreenListener = new GameScreenListener(game);
         this.addKeyListener(gameScreenListener);  //添加键盘监听器到这个面板
         this.setFocusable(true); //设置面板可以获取焦点
         this.requestFocusInWindow(); //请求焦点
@@ -43,11 +44,17 @@ public class GameScreen extends JPanel {
 
     public void addComponentsIntoJPanel() {
         for (int i = 0; i < Game.players.size(); i++) {
+            Player player = Game.players.get(i);
             //将Player添加到JPanel中
-            this.add(Game.players.get(i));
-            //Player的PlayerCardsPile添加到JPanel中
-            Game.players.get(i).getPlayerCardsPile().setBounds(PlayerCardsPile.playerCardsPileJPanelX, PlayerCardsPile.playerCardsPileJPanelY, PlayerCardsPile.playerCardsPileJPanelWidth, PlayerCardsPile.playerCardsPileJPanelHeight);
-            this.add(Game.players.get(i).getPlayerCardsPile());
+            this.add(player);
+            //将Player的PlayerCardsPile添加到JPanel中
+            this.add(player.playerCardsPile);
+            //将Player的Bank添加到JPanel中:
+            this.add(player.bank);
+            //将Player的Property添加到JPanel中:
+            this.add(player.property);
+            //将Player的HandCards添加到JPanel中:
+            this.add(player.handCards);
         }
         //将中央的牌堆CardsPile添加到JPanel中
         this.add(Game.cardsPile);

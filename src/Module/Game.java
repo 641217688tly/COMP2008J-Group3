@@ -11,7 +11,9 @@ public class Game implements IGame {
     public static int[] playersJPanelYCoordinate = {(ApplicationStart.screenHeight * 4) / 5, (ApplicationStart.screenHeight * 2) / 5, 0, 0, (ApplicationStart.screenHeight * 2) / 5};
     public static CardsPile cardsPile = new CardsPile(); //中央牌区
     public static ArrayList<Player> players = new ArrayList<>(); //所有的Player对象(Player对象中包含有Bank,Property,PlayerCards以及PlayerCardsPile这些组件)
+    public int whichPlayerTurn = 0;
     private boolean isPaused = false;
+
 
     public Game() {
 
@@ -25,21 +27,18 @@ public class Game implements IGame {
         }
     }
 
-    public void initPlayersCards() {
-        for (int i = 0; i < Game.players.size(); i++) {
-            Game.players.get(i).drawCards(cardsPile.drawCardFromDrawPile(5));
+    @Override
+    public void startNewGame() {
+        Game.players.get(whichPlayerTurn).setPlayerTurn(true); //从一号玩家开始开启回合
+        for (Player player : Game.players) {
+            player.drawCards(Game.cardsPile.drawCardFromDrawPile(5)); //为玩家加牌
+            player.moveToNextTurn(); //设置回合次数,打开或关闭卡牌的按钮
         }
     }
 
     @Override
-    public void startNewGame() {
-        Game.players.get(0).setPlayerTurn(true); //从一号玩家开始开启回合
-        initPlayersCards();
-    }
-
-    @Override
     public void updateGame() {
-
+        nextPlayerTurn();
     }
 
     @Override
@@ -49,7 +48,17 @@ public class Game implements IGame {
 
     @Override
     public void nextPlayerTurn() {
-
+        if (Game.players.get(whichPlayerTurn).actionNumber == 0) { //玩家的行动次数为0
+            if (false) { //TODO 如果玩家间的互动也已经结束,待完成
+                Game.players.get(whichPlayerTurn).setPlayerTurn(false);
+                whichPlayerTurn = (whichPlayerTurn + 1) % Game.players.size();
+                Game.players.get(whichPlayerTurn).setPlayerTurn(true);
+                for (Player player : Game.players) {
+                    player.moveToNextTurn();
+                }
+            }
+        }
+        //TODO 移动玩家的位置
     }
 
     @Override
