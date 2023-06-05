@@ -57,7 +57,7 @@ public class CardsPile extends JPanel {
     private void loadAndSetBackgroundImage() {
         try {
             // 从文件中读取背景图片
-            cardsPileBackground = ImageIO.read(new File("images/Module/CardsPileBackground.jpg"));
+            cardsPileBackground = ImageIO.read(new File("images/Module/PlayerAndComponents/PlayerCardsPileBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
