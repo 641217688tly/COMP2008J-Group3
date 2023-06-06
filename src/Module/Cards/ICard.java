@@ -9,4 +9,6 @@ public interface ICard {
     void play();//打牌
 
     void discard();//弃牌
+
+    void move();//移动牌
 }

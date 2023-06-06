@@ -32,4 +32,15 @@ public class CardListener {
             }
         };
     }
+
+    public ActionListener moveCardButtonListener(Card card){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                card.move();
+            }
+        };
+    }
+
+
 }

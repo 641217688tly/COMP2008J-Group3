@@ -39,7 +39,7 @@ public class PlayerListener {
                 }
                 player.whetherViewComponent = true;
                 player.bank.setVisible(true);
-                player.bank.paintAllCards();
+                player.bank.paintAllCardsFront();
             }
         };
     }
@@ -68,6 +68,5 @@ public class PlayerListener {
                 player.actionNumber = 0;
             }
         };
-
     }
 }

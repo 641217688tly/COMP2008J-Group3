@@ -1,16 +1,17 @@
 package Listener.ModuleListener.PlayerAndComponentsListener;
 
+import Module.Cards.Card;
 import Module.Game;
 import Module.PlayerAndComponents.Player;
 import Module.PlayerAndComponents.Property;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PropertyListener {
 
     public ActionListener closeButtonListener(Player owner, Property property) {
-
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -25,6 +26,14 @@ public class PropertyListener {
                 }
             }
         };
+    }
 
+    public ActionListener moveButtonListener(Player owner, Card movedCard, JButton hereButton) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                owner.property.moveCardAndUpdateScreen(owner, movedCard, hereButton);
+            }
+        };
     }
 }

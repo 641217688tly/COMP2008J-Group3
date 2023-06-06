@@ -19,7 +19,7 @@ public class Player extends JPanel {
     public static Image[] images = new Image[5];
 
     public String name;
-    public ArrayList<Card> cardsList;
+    public Card[] cardsTable;
     public ArrayList<Card> cardsBuffer; //用于存储玩家在一个回合内所出过的牌
     public int playerJPanelX;
     public int playerJPanelY;
@@ -61,7 +61,7 @@ public class Player extends JPanel {
         this.playerImage = playerImage;
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
-        this.cardsList = new ArrayList<>();
+        this.cardsTable = new Card[12];
         this.cardsBuffer = new ArrayList<>();
         this.playerCardsPile = new PlayerCardsPile(this);
         this.handCards = new HandCards(this);
@@ -95,13 +95,17 @@ public class Player extends JPanel {
         return button;
     }
 
-    public void drawCards(ArrayList<Card> cards) { //抽牌
-        for (int i = 0; i < cards.size(); i++) {
-            cards.get(i).owner = this;
-            cards.get(i).setIsCardFront(true);
-            cards.get(i).setIsDisplayable(false);
+    public void drawCards(Card[] cards) { //抽牌
+        for (int i = 0, j = 0; i < cardsTable.length; i++) {
+            if (cardsTable[i] == null) {
+                cards[j].owner = this;
+                cardsTable[i] = cards[j];
+                j = j + 1;
+                if (j >= cards.length) {
+                    break;
+                }
+            }
         }
-        this.cardsList.addAll(cards);
     }
 
     public void moveToNextTurn() {
@@ -111,6 +115,17 @@ public class Player extends JPanel {
         if (this.isPlayerTurn) {
             playerCardsPile.updateAndShowCards();
         }
+    }
+
+    public boolean containsCard(Card card) {
+        boolean flag = false;
+        for (int column = 0; column < 12; column++) {
+            if (cardsTable[column] == card) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
     }
 
     public boolean isPlayerTurn() {

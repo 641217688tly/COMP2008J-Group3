@@ -1,5 +1,6 @@
 package Listener.ModuleListener.PlayerAndComponentsListener;
 
+import Module.Cards.Card;
 import Module.PlayerAndComponents.Bank;
 import Module.PlayerAndComponents.Player;
 
@@ -8,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import Module.Game;
+
+import javax.swing.*;
 
 public class BankListener {
 
@@ -25,6 +28,15 @@ public class BankListener {
                         player.playerCardsPile.updateAndShowCards();
                     }
                 }
+            }
+        };
+    }
+
+    public ActionListener moveButtonListener(Player owner, Card movedCard, JButton hereButton) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                owner.bank.moveCardAndUpdateScreen(owner, movedCard, hereButton);
             }
         };
     }

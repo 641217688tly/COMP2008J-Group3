@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class PropertyWildCard extends Card {
     public boolean reverseButtonSwitch = false;
     public PropertyWildCardType type;
-    private PropertyCardType currentType; //当前是哪一种PropertyCardType
+    public PropertyCardType currentType; //当前是哪一种PropertyCardType
     private ImageIcon reversedCardImage;
     private PropertyWildCardListener propertyWildCardListener;
     private JButton reverseButton;
@@ -67,7 +67,7 @@ public class PropertyWildCard extends Card {
         } else if (type == PropertyWildCardType.RED_YELLOW) {
             currentType = PropertyCardType.YELLOW;
         } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-            currentType = PropertyCardType.GREEN;
+            currentType = PropertyCardType.UTILITY;
         }
     }
 
@@ -125,7 +125,7 @@ public class PropertyWildCard extends Card {
                 currentType = PropertyCardType.YELLOW;
             }
         } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-            PropertyCardType[] allPropertyCardTypes = PropertyCardType.values(); //获取所有但色卡的类型
+            PropertyCardType[] allPropertyCardTypes = PropertyCardType.values(); //获取所有单色卡的类型
             for (int i = 0; i < allPropertyCardTypes.length; i++) {
                 if (allPropertyCardTypes[i].equals(currentType)) {
                     currentType = allPropertyCardTypes[(i + 1) % 10];
@@ -140,9 +140,9 @@ public class PropertyWildCard extends Card {
         //play:放置房产牌
         if (owner != null) {
             if (owner.actionNumber > 0) {
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
+                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                    if (owner.cardsTable[i] == this) {
+                        owner.cardsTable[i] = null;
                         break;
                     }
                 }
@@ -155,6 +155,7 @@ public class PropertyWildCard extends Card {
                 this.playButtonSwitch = false;
                 this.depositButtonSwitch = false;
                 this.discardButtonSwitch = false;
+                this.moveButtonSwitch = false;
                 controlButtons();
                 //将牌存进房产中并刷新房产的状态
                 owner.property.placePropertyCardAndShowTable(this);
@@ -166,26 +167,31 @@ public class PropertyWildCard extends Card {
     @Override
     public void deposit() { //(被)储蓄-需要更新银行
         if (owner != null) {
-            if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) {
+                    for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        if (owner.cardsTable[i] == this) {
+                            owner.cardsTable[i] = null;
+                            break;
+                        }
                     }
+                    if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                        owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                    } else { //如果被调用的时候玩家正在看的是组件
+                        owner.handCards.updateAndShowCards(); //直接更新HandCards
+                    }
+                    //将牌上的按钮全部隐藏:
+                    this.playButtonSwitch = false;
+                    this.depositButtonSwitch = false;
+                    this.discardButtonSwitch = false;
+                    this.moveButtonSwitch = false;
+                    controlButtons();
+                    //将牌存进银行并刷新银行的状态
+                    owner.bank.saveMoneyAndShowCards(this);
+                    owner.actionNumber = owner.actionNumber - 1;
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                controlButtons();
-                //将牌存进银行并刷新银行的状态
-                owner.bank.saveMoneyAndShowCards(this);
-                owner.actionNumber = owner.actionNumber - 1;
+            } else { //被迫掏钱的倒霉蛋
+                //TODO
             }
         }
     }
@@ -194,9 +200,9 @@ public class PropertyWildCard extends Card {
     public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
+                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                    if (owner.cardsTable[i] == this) {
+                        owner.cardsTable[i] = null;
                         break;
                     }
                 }
@@ -209,10 +215,31 @@ public class PropertyWildCard extends Card {
                 this.playButtonSwitch = false;
                 this.depositButtonSwitch = false;
                 this.discardButtonSwitch = false;
+                this.moveButtonSwitch = false;
                 controlButtons();
                 //将牌扔进废牌堆
                 this.owner = null;
                 Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+            }
+        }
+    }
+
+    @Override
+    public void move() {
+        //先判断自己所属的容器:
+        if (owner != null) {
+            if (owner.containsCard(this)) {
+                if (owner.whetherViewComponent) { //玩家正在看HandCards
+                    //给HandCards内的空位置加上按钮
+                    owner.handCards.addAndPaintHereButtons(this);
+                } else { //玩家正在看PlayerCardsPile
+                    //给PlayerCardsPile内的空位置加上按钮
+                    owner.playerCardsPile.addAndPaintHereButtons(this);
+                }
+            } else if (owner.bank.containsCard(this)) {
+                owner.bank.addAndPaintHereButtons(this);
+            } else if (owner.property.containsCard(this)) {
+                owner.property.addAndPaintHereButtons(this);
             }
         }
     }

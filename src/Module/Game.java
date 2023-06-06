@@ -1,6 +1,7 @@
 package Module;
 
 import GUI.ApplicationStart;
+import Module.Cards.Card;
 import Module.PlayerAndComponents.Player;
 
 import java.util.ArrayList;
@@ -47,10 +48,20 @@ public class Game implements IGame {
                 Game.players.get(0).setPlayerTurn(false);
                 reDistributePlayersLocation(); //将会转动玩家以及玩家的数组
                 Game.players.get(0).setPlayerTurn(true); //为下一个玩家设置成是他的回合
+
+                //补牌:
+                int cardsCount = 0;
+                for (Card card : Game.players.get(0).cardsTable) {
+                    if (card != null) {
+                        cardsCount++;
+                    }
+                }
                 if (counter >= Game.players.size()) {
-                    if (Game.players.get(0).cardsList.size() <= 7 && Game.players.get(0).cardsList.size() >= 0) {
-                        if (Game.players.get(0).cardsList.size() == 0) {
+                    if (cardsCount <= 7) {
+                        if (cardsCount == 0) {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(5));
+                        } else if (cardsCount == 7) {
+                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(2));
                         } else {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(3));
                         }
