@@ -1,10 +1,3 @@
-/*
-属性：
-cards（保存玩家手牌的列表，类型为List<Card>）
-方法：
-初始化方法，设置JDialog的布局，根据cards列表中的卡牌，创建卡片展示组件并添加到JDialog中
-updateCards()（更新手牌列表）
-*/
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
@@ -17,13 +10,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PlayerCardsPile extends JDialog {
-    //属性:
-    public static ArrayList<Card> playerCards;
+public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下玩家手上的卡牌
+    public static int playerCardsPileJPanelX = 0;
+    public static int playerCardsPileJPanelY = (ApplicationStart.screenHeight * 4) / 5;
+    public static int playerCardsPileJPanelWidth = (ApplicationStart.screenWidth * 11) / 12;
+    public static int playerCardsPileJPanelHeight = (ApplicationStart.screenHeight) / 5;
+    public ArrayList<Card> cardsList;
+
+    private Player owner;
     private Image playerCardsPileImage;
 
-    public PlayerCardsPile(){
+    public PlayerCardsPile(Player owner) {
+        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.owner = owner;
+        this.cardsList = new ArrayList<>();
         loadAndSetPlayerCardsPileBackground();
+        this.setBounds(PlayerCardsPile.playerCardsPileJPanelX, PlayerCardsPile.playerCardsPileJPanelY, PlayerCardsPile.playerCardsPileJPanelWidth, PlayerCardsPile.playerCardsPileJPanelHeight);
     }
 
     private void loadAndSetPlayerCardsPileBackground() {
@@ -35,11 +37,48 @@ public class PlayerCardsPile extends JDialog {
         }
     }
 
-    public void drawPlayerCardsPile(Graphics g) { //TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
-        if (playerCardsPileImage != null) {
-            for (int i = 0; i < 10; i++) {
-                g.drawImage(playerCardsPileImage, (ApplicationStart.screenWidth * i) / 12, (ApplicationStart.screenHeight * 4) / 5, Player.playerWidth, Player.playerHeight, null);
+    public void updateAndShowCards() { //每次调用都需要清除列表中已有的牌并移除JPanel中牌对应的组件,相当于PlayerCardsPile的刷新方法
+        this.cardsList.clear(); //将旧牌全部丢弃
+        this.removeAll(); //将旧牌全部丢弃
+        this.cardsList.addAll(owner.cardsList); // 获得玩家手上的牌
+        paintCardsFrontUpToEleven();
+    }
+
+    //-------绘制方法:
+
+    private void paintCardsFrontUpToEleven() {
+        if (!owner.isPlayerTurn()) {
+            this.setVisible(false);
+            return;
+        }
+        for (int i = 0; i < cardsList.size(); i++) {
+            Card card = cardsList.get(i);
+            card.setCardJPanelBounds((ApplicationStart.screenWidth / 12) * i, 0); //为Card重新分配它在该JPanel下的坐标
+            card.setIsCardFront(true); //正面朝上
+            if (owner.isPlayerTurn()) {
+                card.openDiscardButtonSwitch(true);
+                card.openDepositButtonSwitch(true);
+                card.openPlayButtonSwitch(true);
             }
+            this.add(card);
+        }
+    }
+
+    private void paintPlayerCardsPile(Graphics g) {
+        if (playerCardsPileImage != null) {
+            if (owner.isPlayerTurn()) { //如果正处于玩家的回合
+                for (int i = 0; i < 11; i++) {
+                    g.drawImage(playerCardsPileImage, (ApplicationStart.screenWidth / 12) * i, 0, ApplicationStart.screenWidth / 12, playerCardsPileJPanelHeight, null);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        if (owner.isPlayerTurn()) {
+            super.paintComponent(g); // 调用父类方法以确保正常绘制
+            paintPlayerCardsPile(g);
         }
     }
 }

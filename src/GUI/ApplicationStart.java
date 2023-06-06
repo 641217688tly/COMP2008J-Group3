@@ -5,6 +5,7 @@ import Listener.GUIListener.MenuScreenListener;
 import Listener.GUIListener.RulesScreenListener;
 import Listener.GUIListener.SettingsScreenListener;
 import Module.Game;
+import Module.GameEngine;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class ApplicationStart extends JFrame {
     private RulesScreen rulesScreen;
     private SettingsScreen settingsScreen;
     private GameScreen gameScreen;
+
     public static int screenWidth; // 屏幕的宽度
     public static int screenHeight; // 屏幕的高度
 
@@ -33,7 +35,7 @@ public class ApplicationStart extends JFrame {
         setupMainPanel(); // 主面板
         setupMenuScreen(); // 菜单栏
         setupRulesScreen(); // 规则面板
-        setupGameScreen(); // 游戏面板
+        setupGameScreen(game); // 游戏面板
         setupSettingsScreen(game, gameScreen); // 设置面板
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,8 +79,9 @@ public class ApplicationStart extends JFrame {
     }
 
     // 设置游戏屏幕
-    private void setupGameScreen() {
-        gameScreen = new GameScreen();
+    private void setupGameScreen(Game game) {
+        gameScreen = new GameScreen(game);
+        gameScreen.setFocusable(true); // 设置GameScreen能够获得焦点
         mainPanel.add(gameScreen, "Game");
     }
 
@@ -88,8 +91,9 @@ public class ApplicationStart extends JFrame {
         layout.show(mainPanel, panelName);
     }
 
+
     // 程序入口
     public static void main(String[] args) {
-        new ApplicationStart();
+        ApplicationStart newGame = new ApplicationStart();
     }
 }

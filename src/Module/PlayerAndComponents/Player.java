@@ -1,30 +1,9 @@
-/*
-Player类应该主管玩家的一系列动作;同时应该具有如玩家的房产,玩家的银行,玩家的手牌等属性:
-属性:
-玩家名
-玩家的手牌
-玩家的房产
-玩家的银行
-玩家的行动次数(default=3) (待定)
-倒计时(玩家需要在指定的时间内打出手牌,否则将自动pass或者自动交租/交房产)
-
-方法:
-放置房产
-存钱
-交租
-pass(行动次数没使用完前可以跳过自己的回合)
-改变房产颜色
-打出手牌:
-    收租
-    收钱
-    再抽三张
-    say no(不消耗行动次数)
-    ....
-*/
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
 import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
+import Module.Cards.Card;
+import Module.Game;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -32,26 +11,34 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player extends JPanel {
     public static int playerHeight = (ApplicationStart.screenHeight) / 5;
     public static int playerWidth = (ApplicationStart.screenWidth) / 12;
     public static Image[] images = new Image[5];
+
+    public String name;
+    public ArrayList<Card> cardsList;
+    public ArrayList<Card> cardsBuffer; //用于存储玩家在一个回合内所出过的牌
     public int playerJPanelX;
     public int playerJPanelY;
-    public String name;
-    private int actionsNumber = 3; //行动次数
-    private int countDown = 180; //倒计时
-    private boolean isMyTurn = false;
+    public boolean whetherViewComponent = false;
+    public int actionNumber = 3; //行动次数
+    public boolean isDisplayable = true;
+    private boolean isPlayerTurn = false;
+
     //组件:
     private Image playerImage;
+    public Bank bank; //玩家的银行
+    public Property property; //玩家的房产区
+    public HandCards handCards; //玩家的手牌
+    public PlayerCardsPile playerCardsPile; //玩家左边的牌堆
     private PlayerListener playerListener;
-    private PlayerCardsPile playerCardsPile; //玩家的手牌区
-    private Bank bank; //玩家的银行
-    private Property property; //玩家的房产区
-    private JButton playerCardsButton;
+    private JButton handCardsButton;
     private JButton bankButton;
     private JButton propertyButton;
+    private JButton skipButton;
 
     static {
         loadAndSetPlayerImage();
@@ -74,24 +61,28 @@ public class Player extends JPanel {
         this.playerImage = playerImage;
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
-
+        this.cardsList = new ArrayList<>();
+        this.cardsBuffer = new ArrayList<>();
+        this.playerCardsPile = new PlayerCardsPile(this);
+        this.handCards = new HandCards(this);
+        this.bank = new Bank(this);
+        this.property = new Property(this);
         this.playerListener = new PlayerListener();
-        this.playerCardsPile = new PlayerCardsPile();
-        this.bank = new Bank();
-        this.property = new Property();
+        initButtons();
 
         this.setBounds(this.playerJPanelX, this.playerJPanelY, playerWidth, playerHeight); // 设置Player的大小和位置
-        initButtons();
     }
 
-
     private void initButtons() {
-        playerCardsButton = createButton("C", playerWidth * 2 / 3, 0, this.playerListener.playerCardsButtonListener(this.playerCardsPile));
-        bankButton = createButton("B", 0, playerHeight * 3 / 4, this.playerListener.bankButtonListener(this.bank));
-        propertyButton = createButton("P", playerWidth * 2 / 3, playerHeight * 3 / 4, this.playerListener.propertyButtonListener(this.property));
-        this.add(playerCardsButton);
+        bankButton = createButton("B", 0, playerHeight * 3 / 4, this.playerListener.bankButtonListener(this));
+        handCardsButton = createButton("C", playerWidth / 3, playerHeight * 3 / 4, this.playerListener.handCardsButtonListener(this));
+        propertyButton = createButton("P", playerWidth * 2 / 3, playerHeight * 3 / 4, this.playerListener.propertyButtonListener(this));
+        skipButton = createButton("S", playerWidth * 2 / 3, 0, this.playerListener.skipButtonListener(this));
+
+        this.add(handCardsButton);
         this.add(bankButton);
         this.add(propertyButton);
+        this.add(skipButton);
     }
 
     private JButton createButton(String text, int x, int y, ActionListener listener) {
@@ -104,13 +95,41 @@ public class Player extends JPanel {
         return button;
     }
 
-    private void drawPlayerImage(Graphics g) {
+    public void drawCards(ArrayList<Card> cards) { //抽牌
+        for (int i = 0; i < cards.size(); i++) {
+            cards.get(i).owner = this;
+            cards.get(i).setIsCardFront(true);
+            cards.get(i).setIsDisplayable(false);
+        }
+        this.cardsList.addAll(cards);
+    }
+
+    public void moveToNextTurn() {
+        this.cardsBuffer.clear();
+        this.actionNumber = 3;
+        handCards.updateAndShowCards();
+        if (this.isPlayerTurn) {
+            playerCardsPile.updateAndShowCards();
+        }
+    }
+
+    public boolean isPlayerTurn() {
+        return isPlayerTurn;
+    }
+
+    public void setPlayerTurn(boolean isPlayerTurn) {
+        this.isPlayerTurn = isPlayerTurn;
+    }
+
+    //-------绘制方法:
+
+    private void paintPlayerImage(Graphics g) {
         if (playerImage != null) { // 如果背景图片已加载
             g.drawImage(playerImage, 0, 0, playerWidth, playerHeight, null);
         }
     }
 
-    private void drawPlayerName(Graphics g) {
+    private void paintPlayerName(Graphics g) { //绘制玩家的名字
         if (playerImage != null) { // 如果背景图片已加载
             g.setColor(Color.BLACK); // 设置文本颜色
             g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
@@ -120,25 +139,31 @@ public class Player extends JPanel {
         }
     }
 
-    public void drawPlayerCardsPile(Graphics g) { //TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
-        if (isMyTurn) {
-            playerCardsPile.drawPlayerCardsPile(g);
+    private void paintChosenMark(Graphics g) { //被允许行动的玩家的头像上将会有标记
+        if (isPlayerTurn) {
+            g.setColor(Color.GREEN); // 设置文本颜色
+            g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
+            g.drawString("Move", Player.playerWidth / 5 + Player.playerWidth / 10, 3 * Player.playerHeight / 8); // 在图片内部的左上角绘制玩家名字
+        }
+    }
+
+    private void paintPlayerActionNumber(Graphics g) { //处于自己回合的玩家头像上将会有行动次数
+        if (isPlayerTurn) {
+            g.setColor(Color.RED); // 设置文本颜色
+            g.setFont(new Font("Arial", Font.BOLD, 15)); // 设置字体和大小
+            g.drawString("Remaining: " + this.actionNumber, Player.playerWidth / 10, 6 * Player.playerHeight / 8 - Player.playerHeight / 16); // 在图片内部的左上角绘制玩家名字
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawPlayerImage(g);
-        drawPlayerName(g);
-    }
-
-    public boolean isMyTurn(){
-        return isMyTurn;
-    }
-
-    public void setTurn(boolean isMyTurn) {
-        this.isMyTurn = isMyTurn;
+        if (isDisplayable) {
+            super.paintComponent(g); // 调用父类方法以确保正常绘制
+            paintPlayerImage(g);
+            paintPlayerName(g);
+            paintChosenMark(g);
+            paintPlayerActionNumber(g);
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 package GUI;
 
+import Listener.GUIListener.GameScreenListener;
 import Module.Game;
+import Module.PlayerAndComponents.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,14 +10,25 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import Module.GameEngine;
+
 public class GameScreen extends JPanel {
     private Image gameScreenBackground; // 存储背景图像的变量
+    private GameScreenListener gameScreenListener;
+    private Game game;
+    public GameEngine gameEngine;
 
-    public GameScreen() {
-        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
+    public GameScreen(Game game) {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
+
         loadAndSetBackgroundImage();
         setPreferredSize(new Dimension(ApplicationStart.screenWidth, ApplicationStart.screenHeight)); // 设置GameScreen的理想大小
+        this.game = game;
+        this.gameEngine = new GameEngine(game, this);
+        this.gameScreenListener = new GameScreenListener(game);
+        this.setFocusable(true); //设置面板可以获取焦点
+        this.requestFocusInWindow(); //请求焦点
     }
 
     // 加载并设置背景图片
@@ -30,8 +43,19 @@ public class GameScreen extends JPanel {
 
     public void addComponentsIntoJPanel() {
         for (int i = 0; i < Game.players.size(); i++) {
-            this.add(Game.players.get(i));
+            Player player = Game.players.get(i);
+            //将Player添加到JPanel中
+            this.add(player);
+            //将Player的PlayerCardsPile添加到JPanel中
+            this.add(player.playerCardsPile);
+            //将Player的Bank添加到JPanel中:
+            this.add(player.bank);
+            //将Player的Property添加到JPanel中:
+            this.add(player.property);
+            //将Player的HandCards添加到JPanel中:
+            this.add(player.handCards);
         }
+        //将中央的牌堆CardsPile添加到JPanel中
         this.add(Game.cardsPile);
     }
 
@@ -41,16 +65,9 @@ public class GameScreen extends JPanel {
         }
     }
 
-    private void drawPlayerCardsPile(Graphics g) { //TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
-        for (int i = 0; i < Game.players.size(); i++) {
-            Game.players.get(i).drawPlayerCardsPile(g);
-        }
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
         drawBackground(g);
-        drawPlayerCardsPile(g);//TODO 不通过JPanel组件调用,而是通过传入PlayerCardsPile内的Image变量来绘制图片是不能一劳永逸的,必须进行更改
     }
 }
