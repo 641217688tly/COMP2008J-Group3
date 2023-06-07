@@ -22,7 +22,7 @@ public class PropertyWildCard extends Card {
         ArrayList<Card> propertyWildCards = new ArrayList<>();
         propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.BLUE_GREEN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Blue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Green.jpg"), 4));
         propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.GREEN_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Green.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Railroad.jpg"), 4));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.UTILITY_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad_Utility.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad_Railroad.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.UTILITY_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad_Utility.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRailroadUtility_Railroad.jpg"), 2));
         propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_LightBlue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_Railroad.jpg"), 4));
         propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_BROWN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_LightBlue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_Brown.jpg"), 1));
         propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Orange.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Pink.jpg"), 2));
@@ -140,6 +140,7 @@ public class PropertyWildCard extends Card {
         //play:放置房产牌
         if (owner != null) {
             if (owner.actionNumber > 0) {
+                owner.cardsBuffer.add(this);
                 for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
@@ -169,6 +170,7 @@ public class PropertyWildCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
+                    owner.cardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;
@@ -190,8 +192,6 @@ public class PropertyWildCard extends Card {
                     owner.bank.saveMoneyAndShowCards(this);
                     owner.actionNumber = owner.actionNumber - 1;
                 }
-            } else { //被迫掏钱的倒霉蛋
-                //TODO
             }
         }
     }

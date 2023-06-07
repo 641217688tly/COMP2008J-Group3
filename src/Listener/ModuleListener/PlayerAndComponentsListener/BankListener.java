@@ -21,10 +21,8 @@ public class BankListener {
                 owner.whetherViewComponent = false;
                 bank.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
                 for (Player player : Game.players) {
-                    if (!player.isPlayerTurn()) {
-                        player.setVisible(true);
-                    }else {
-                        player.playerCardsPile.setVisible(true);
+                    player.setVisible(true);
+                    if (player.isPlayerTurn()) {
                         player.playerCardsPile.updateAndShowCards();
                     }
                 }

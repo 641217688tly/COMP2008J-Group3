@@ -125,18 +125,34 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
             if (cardsTable[i] != null) {
                 Card card = cardsTable[i];
                 card.setCardJPanelBounds(cardsCoordinates[i].x, cardsCoordinates[i].y); //为Card重新分配它在该JPanel下的坐标
-                if (owner.isPlayerTurn()) {
-                    card.setIsCardFront(true);
-                    card.openPlayButtonSwitch(true);
-                    card.openDepositButtonSwitch(true);
-                    card.openDiscardButtonSwitch(true);
-                    card.openMoveButtonSwitch(true);
-                } else {
-                    card.setIsCardFront(false);
-                    card.openPlayButtonSwitch(false);
-                    card.openDepositButtonSwitch(false);
-                    card.openDiscardButtonSwitch(false);
-                    card.openMoveButtonSwitch(false);
+                if (owner.isPlayerTurn()) { //处于自己的回合
+                    if (owner.isInAction) {//处于行动中
+                        card.setIsCardFront(true);
+                        card.openPlayButtonSwitch(true);
+                        card.openDepositButtonSwitch(true);
+                        card.openDiscardButtonSwitch(true);
+                        card.openMoveButtonSwitch(true);
+                    } else { //处于自己的回合但不在行动中
+                        card.setIsCardFront(false);
+                        card.openPlayButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openMoveButtonSwitch(false);
+                    }
+                } else { //不处于自己的回合
+                    if (owner.isInAction) { //处于行动中
+                        card.setIsCardFront(true);
+                        card.openPlayButtonSwitch(true);
+                        card.openDepositButtonSwitch(true);
+                        card.openDiscardButtonSwitch(true);
+                        card.openMoveButtonSwitch(true);
+                    } else { //不处于自己的回合,也不在行动中
+                        card.setIsCardFront(false);
+                        card.openPlayButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openMoveButtonSwitch(false);
+                    }
                 }
                 card.setIsDisplayable(true);
                 this.add(card);

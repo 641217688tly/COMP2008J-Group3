@@ -1,12 +1,10 @@
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.CardsListener.CardListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.PropertyListener;
-import Module.Cards.ActionCard;
-import Module.Cards.Card;
+import Module.Cards.*;
 import Module.Cards.CardsEnum.PropertyCardType;
-import Module.Cards.PropertyCard;
-import Module.Cards.PropertyWildCard;
 
 
 import javax.imageio.ImageIO;
@@ -22,7 +20,7 @@ public class Property extends JPanel { //房产类
     public Card[][] cardsTable;
     public ArrayList<JButton> hereButtons;
     private Player owner;
-    private JButton closeButton; // 新增一个关闭按钮
+    public JButton closeButton; // 新增一个关闭按钮
     private PropertyListener propertyListener;
     private Image propertyBackgroundImage;
 
@@ -70,6 +68,20 @@ public class Property extends JPanel { //房产类
         card.setIsDisplayable(isDisplayable);
         card.setIsCardFront(isCardFront);
     }
+
+    public boolean whetherRentCardCanPlay(RentCard rentCard) { //检查Property是否为空,或者是虽然不为空但没有可以用于收租的房产
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (this.cardsTable[row][column] instanceof PropertyCard || this.cardsTable[row][column] instanceof PropertyWildCard) {
+                    if (rentCard.whetherRentCardCanBeUsed(this.cardsTable[row][column])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     public boolean containsCard(Card card) {
         boolean flag = false;
@@ -257,6 +269,70 @@ H H H H H H H H H H C B
                 if (cardsTable[4][column] == null) {
                     cardsTable[4][column] = card;
                     return;
+                }
+            }
+        }
+    }
+
+    public int calculatedRent(Card propertyCard, boolean isDoubleRent) {
+        PropertyCardType searchedType = null;
+        int cardsNumber = 0;
+        int totalRent = 0;
+        if (propertyCard instanceof PropertyCard) {
+            searchedType = ((PropertyCard) propertyCard).type;
+        } else if (propertyCard instanceof PropertyWildCard) {
+            searchedType = ((PropertyWildCard) propertyCard).currentType;
+        }
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
+                    if (cardsTable[row][column] instanceof PropertyCard) {
+                        if (searchedType.equals(((PropertyCard) cardsTable[row][column]).type)) {
+                            cardsNumber++;
+                        }
+                    }
+                    if (cardsTable[row][column] instanceof PropertyWildCard) {
+                        if (searchedType.equals(((PropertyWildCard) cardsTable[row][column]).currentType)) {
+                            cardsNumber++;
+                        }
+                    }
+                }
+            }
+        }
+        totalRent = RentCard.obtainRentNumber(searchedType, cardsNumber);
+        if (isDoubleRent) {
+            return totalRent * 2;
+        } else {
+            return totalRent;
+        }
+
+    }
+
+    public void addAndPaintChooseButtons(RentCard rentCard, boolean isDoubleRent) { //该选择按钮用于选择RentCard要收租的房产
+        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+            for (int row = 0; row < 5; row++) {
+                for (int column = 0; column < 11; column++) {
+                    if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
+                        JButton chosenbutton = new JButton("Use");
+                        chosenbutton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                        Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                        chosenbutton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        chosenbutton.addActionListener((new CardListener()).chosenButtonListener(owner, cardsTable[row][column], rentCard, isDoubleRent));
+                        cardsTable[row][column].add(chosenbutton);
+                        chosenbutton.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    public void hideAndRemoveChooseButtons(Player propertyOwner) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的choose按钮
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
+                    int lastIndex = cardsTable[row][column].getComponentCount() - 1;
+                    cardsTable[row][column].getComponent(lastIndex).setVisible(false);
+                    cardsTable[row][column].remove(lastIndex);
                 }
             }
         }

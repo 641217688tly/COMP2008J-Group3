@@ -39,6 +39,7 @@ public class MoneyCard extends Card {
         //play()功能 == deposit()功能
         if (owner != null) {
             if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
+                owner.cardsBuffer.add(this);
                 for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
@@ -68,6 +69,7 @@ public class MoneyCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
+                    owner.cardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;
@@ -89,8 +91,6 @@ public class MoneyCard extends Card {
                     owner.bank.saveMoneyAndShowCards(this);
                     owner.actionNumber = owner.actionNumber - 1;
                 }
-            } else { //被迫掏钱的倒霉蛋
-                //TODO
             }
         }
     }

@@ -1,7 +1,10 @@
 package Module.Cards;
 
+import Module.Cards.CardsEnum.ActionCardType;
+import Module.Cards.CardsEnum.PropertyCardType;
 import Module.Game;
 import Module.Cards.CardsEnum.RentCardType;
+import Module.PlayerAndComponents.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,14 +32,192 @@ public class RentCard extends Card {
         return rentCards;
     }
 
+    public static int obtainRentNumber(PropertyCardType type, int cardsNumber) {
+        if (type.equals(PropertyCardType.BLUE)) {
+            if (cardsNumber == 1) {
+                return 3;
+            } else if (cardsNumber >= 2) {
+                return 8;
+            }
+        } else if (type.equals(PropertyCardType.BROWN)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber >= 2) {
+                return 2;
+            }
+        } else if (type.equals(PropertyCardType.GREEN)) {
+            if (cardsNumber == 1) {
+                return 2;
+            } else if (cardsNumber == 2) {
+                return 4;
+            } else if (cardsNumber >= 3) {
+                return 7;
+            }
+        } else if (type.equals(PropertyCardType.LIGHTBLUE)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber == 2) {
+                return 2;
+            } else if (cardsNumber >= 3) {
+                return 3;
+            }
+        } else if (type.equals(PropertyCardType.ORANGE)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber == 2) {
+                return 3;
+            } else if (cardsNumber >= 3) {
+                return 5;
+            }
+        } else if (type.equals(PropertyCardType.PINK)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber == 2) {
+                return 2;
+            } else if (cardsNumber >= 3) {
+                return 4;
+            }
+        } else if (type.equals(PropertyCardType.RAILROAD)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber == 2) {
+                return 2;
+            } else if (cardsNumber == 3) {
+                return 3;
+            } else if (cardsNumber >= 4) {
+                return 4;
+            }
+        } else if (type.equals(PropertyCardType.RED)) {
+            if (cardsNumber == 1) {
+                return 2;
+            } else if (cardsNumber == 2) {
+                return 3;
+            } else if (cardsNumber >= 3) {
+                return 6;
+            }
+        } else if (type.equals(PropertyCardType.YELLOW)) {
+            if (cardsNumber == 1) {
+                return 2;
+            } else if (cardsNumber == 2) {
+                return 4;
+            } else if (cardsNumber >= 3) {
+                return 6;
+            }
+        } else if (type.equals(PropertyCardType.UTILITY)) {
+            if (cardsNumber == 1) {
+                return 1;
+            } else if (cardsNumber >= 2) {
+                return 2;
+            }
+        }
+        return 0;
+    }
+
+    public boolean whetherRentCardCanBeUsed(Card propertyCard) {
+        boolean flag = false;
+        PropertyCardType propertyCardType = null;
+        if (propertyCard instanceof PropertyCard) {
+            propertyCardType = ((PropertyCard) propertyCard).type;
+        } else if (propertyCard instanceof PropertyWildCard) {
+            propertyCardType = ((PropertyWildCard) propertyCard).currentType;
+        } else {
+            return flag;
+        }
+        if (propertyCardType.equals(PropertyCardType.BLUE)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.BROWN)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.GREEN)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.LIGHTBLUE)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.ORANGE)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.PINK)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.RAILROAD)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.RED)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.YELLOW)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
+                flag = true;
+            }
+        } else if (propertyCardType.equals(PropertyCardType.UTILITY)) {
+            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
     public RentCard(RentCardType type, ImageIcon image, int value) {
         super(image, value);
         this.type = type;
     }
 
     @Override
+    //多色卡是选择一个玩家;双色卡是选择所有玩家
     public void play() { //(被)使用
-        //TODO 实现Rent卡的Play方法和玩家交互流程
+        if (owner != null) {
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) {
+                    if (owner.property.whetherRentCardCanPlay(this)) {
+                        //检查有无双倍卡
+                        Integer oldRentCardIndex = null;
+                        Integer doubleCardIndex = null;
+                        for (int i = 0; i < owner.cardsBuffer.size(); i++) {
+                            if (owner.cardsBuffer.get(i) instanceof RentCard) {
+                                oldRentCardIndex = i;
+                            } else if (owner.cardsBuffer.get(i) instanceof ActionCard) {
+                                if (((ActionCard) owner.cardsBuffer.get(i)).type.equals(ActionCardType.DOUBLE_RENT)) {
+                                    doubleCardIndex = i;
+                                }
+                            }
+                        }
+                        //检查是否用了双倍卡,小心这种情况:双倍 租金卡 当前租金卡(双倍卡已经被用过了)和 双倍 其他卡 租金卡
+                        boolean isDoubleRentUsed = (oldRentCardIndex == null && doubleCardIndex != null) || (doubleCardIndex != null && oldRentCardIndex != null && oldRentCardIndex < doubleCardIndex);
+                        //将新的RentCard添加到cardsBuffer中
+                        owner.cardsBuffer.add(this);
+                        Player tempOwner = this.owner;
+                        //从玩家的手牌中消除
+                        discard();
+                        //强制打开玩家的房产:
+                        for (Player player : Game.players) {
+                            //将所有玩家和PlayerCardsPile设置为不可视
+                            player.setVisible(false);
+                            if (player.isPlayerTurn()) {
+                                player.playerCardsPile.setVisible(false);
+                            }
+                        }
+                        tempOwner.whetherViewComponent = true;
+                        tempOwner.property.setVisible(true);
+                        tempOwner.property.reallocateAllCards();
+                        tempOwner.property.closeButton.setVisible(false); //将关闭按钮隐藏,直到玩家选择完房产
+                        //为使用RentCard的玩家的所有房产牌上增加临时的"choose"按钮
+                        tempOwner.property.addAndPaintChooseButtons(this, isDoubleRentUsed);
+                        //为choose按钮添加监听事件,获得:1.所选择的卡牌的种类 2.统计这种卡牌一共多少张 3.计算要支付的钱 4.查看玩家是否之前使用了翻倍租金卡,如果有,计算结果翻倍
+                        tempOwner.actionNumber = tempOwner.actionNumber - 1;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -44,6 +225,7 @@ public class RentCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
+                    owner.cardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;
@@ -65,8 +247,6 @@ public class RentCard extends Card {
                     owner.bank.saveMoneyAndShowCards(this);
                     owner.actionNumber = owner.actionNumber - 1;
                 }
-            } else { //被迫掏钱的倒霉蛋
-                //TODO
             }
         }
     }

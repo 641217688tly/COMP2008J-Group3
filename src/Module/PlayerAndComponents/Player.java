@@ -1,8 +1,12 @@
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.CardsListener.CardListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.PlayerListener;
 import Module.Cards.Card;
+import Module.Cards.PropertyCard;
+import Module.Cards.PropertyWildCard;
+import Module.Cards.RentCard;
 import Module.Game;
 
 import javax.imageio.ImageIO;
@@ -21,11 +25,12 @@ public class Player extends JPanel {
     public String name;
     public Card[] cardsTable;
     public ArrayList<Card> cardsBuffer; //用于存储玩家在一个回合内所出过的牌
+    public ArrayList<Player> interactivePlayers;
     public int playerJPanelX;
     public int playerJPanelY;
-    public boolean whetherViewComponent = false;
     public int actionNumber = 3; //行动次数
-    public boolean isDisplayable = true;
+    public boolean whetherViewComponent = false;
+    public boolean isInAction = false;
     private boolean isPlayerTurn = false;
 
     //组件:
@@ -67,6 +72,7 @@ public class Player extends JPanel {
         this.handCards = new HandCards(this);
         this.bank = new Bank(this);
         this.property = new Property(this);
+        this.interactivePlayers = new ArrayList<>();
         this.playerListener = new PlayerListener();
         initButtons();
 
@@ -74,10 +80,10 @@ public class Player extends JPanel {
     }
 
     private void initButtons() {
-        bankButton = createButton("B", 0, playerHeight * 3 / 4, this.playerListener.bankButtonListener(this));
-        handCardsButton = createButton("C", playerWidth / 3, playerHeight * 3 / 4, this.playerListener.handCardsButtonListener(this));
-        propertyButton = createButton("P", playerWidth * 2 / 3, playerHeight * 3 / 4, this.playerListener.propertyButtonListener(this));
-        skipButton = createButton("S", playerWidth * 2 / 3, 0, this.playerListener.skipButtonListener(this));
+        bankButton = createButton(10, "B", 0, playerHeight * 3 / 4, this.playerListener.bankButtonListener(this));
+        handCardsButton = createButton(10, "C", playerWidth / 3, playerHeight * 3 / 4, this.playerListener.handCardsButtonListener(this));
+        propertyButton = createButton(10, "P", playerWidth * 2 / 3, playerHeight * 3 / 4, this.playerListener.propertyButtonListener(this));
+        skipButton = createButton(10, "S", playerWidth * 2 / 3, 0, this.playerListener.skipButtonListener(this));
 
         this.add(handCardsButton);
         this.add(bankButton);
@@ -85,11 +91,10 @@ public class Player extends JPanel {
         this.add(skipButton);
     }
 
-    private JButton createButton(String text, int x, int y, ActionListener listener) {
+    private JButton createButton(int fontSize, String text, int x, int y, ActionListener listener) {
         JButton button = new JButton(text);
         button.setBounds(x, y, playerWidth / 3, playerHeight / 4);
-
-        Font buttonFont = new Font("Arial", Font.BOLD, 10); // 设置形状为粗体，大小为10的Arial字体
+        Font buttonFont = new Font("Arial", Font.BOLD, fontSize); // 设置形状为粗体，大小为10的Arial字体
         button.setFont(buttonFont); // 设置按钮的字体和字体大小
         button.addActionListener(listener);
         return button;
@@ -113,7 +118,10 @@ public class Player extends JPanel {
         this.actionNumber = 3;
         handCards.updateAndShowCards();
         if (this.isPlayerTurn) {
+            isInAction = true;
             playerCardsPile.updateAndShowCards();
+        } else {
+            isInAction = false;
         }
     }
 
@@ -128,12 +136,49 @@ public class Player extends JPanel {
         return flag;
     }
 
+    public void payForRent(Player interactivePlayer, int totalRent) { //interactivePlayer是处于当前回合的玩家,也是收租人
+
+    }
+
+    public void addAndPaintRentChooseButtons(Player inTurnPlayer, int totalRent) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+        for (int i = 0; i < Game.players.size(); i++) {
+            if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
+                JButton chosenbutton = new JButton("Choose");
+                chosenbutton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
+                Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                chosenbutton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                chosenbutton.addActionListener(playerListener.rentChooseButtonListener(inTurnPlayer, Game.players.get(i), totalRent));
+                Game.players.get(i).add(chosenbutton);
+                chosenbutton.setVisible(true);
+            }
+        }
+    }
+
+    public void hideAndRemoveRentChooseButtons() {
+        for (int i = 0; i < Game.players.size(); i++) {
+            if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
+                int lastIndex = Game.players.get(i).getComponentCount() - 1;
+                Game.players.get(i).getComponent(lastIndex).setVisible(false);
+                Game.players.get(i).remove(lastIndex);
+            }
+        }
+    }
+
+
     public boolean isPlayerTurn() {
         return isPlayerTurn;
     }
 
     public void setPlayerTurn(boolean isPlayerTurn) {
         this.isPlayerTurn = isPlayerTurn;
+    }
+
+    public boolean isInAction() {
+        return isInAction;
+    }
+
+    public void setIsInAction(boolean inAction) {
+        isInAction = inAction;
     }
 
     //-------绘制方法:
@@ -155,7 +200,7 @@ public class Player extends JPanel {
     }
 
     private void paintChosenMark(Graphics g) { //被允许行动的玩家的头像上将会有标记
-        if (isPlayerTurn) {
+        if (isInAction) {
             g.setColor(Color.GREEN); // 设置文本颜色
             g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
             g.drawString("Move", Player.playerWidth / 5 + Player.playerWidth / 10, 3 * Player.playerHeight / 8); // 在图片内部的左上角绘制玩家名字
@@ -172,13 +217,12 @@ public class Player extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (isDisplayable) {
-            super.paintComponent(g); // 调用父类方法以确保正常绘制
-            paintPlayerImage(g);
-            paintPlayerName(g);
-            paintChosenMark(g);
-            paintPlayerActionNumber(g);
-        }
+        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        paintPlayerImage(g);
+        paintPlayerName(g);
+        paintChosenMark(g);
+        paintPlayerActionNumber(g);
+
     }
 
 }

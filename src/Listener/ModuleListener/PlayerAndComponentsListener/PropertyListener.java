@@ -20,7 +20,6 @@ public class PropertyListener {
                 for (Player player : Game.players) {
                     player.setVisible(true);
                     if (player.isPlayerTurn()) {
-                        player.playerCardsPile.setVisible(true);
                         player.playerCardsPile.updateAndShowCards();
                     }
                 }
@@ -36,4 +35,5 @@ public class PropertyListener {
             }
         };
     }
+
 }

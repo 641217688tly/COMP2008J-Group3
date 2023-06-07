@@ -13,10 +13,10 @@ public class PlayerListener {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) { //打开玩家的手牌
-                for (Player inTurnPlayer : Game.players) {
+                for (Player inTurnPlayer : Game.players) { //将所有玩家
+                    inTurnPlayer.setVisible(false);
                     if (inTurnPlayer.isPlayerTurn()) {
                         inTurnPlayer.playerCardsPile.setVisible(false);
-                        inTurnPlayer.playerCardsPile.removeAll();
                     }
                 }
                 player.whetherViewComponent = true;
@@ -31,9 +31,8 @@ public class PlayerListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (Player player : Game.players) { //将除了当前回合的玩家的形象都设置为不可视
-                    if (!player.isPlayerTurn()) {
-                        player.setVisible(false);
-                    } else {
+                    player.setVisible(false);
+                    if (player.isPlayerTurn()) {
                         player.playerCardsPile.setVisible(false);
                     }
                 }
@@ -66,6 +65,22 @@ public class PlayerListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 player.actionNumber = 0;
+                player.interactivePlayers.clear();
+            }
+        };
+    }
+
+    //对于多色收租卡,为每个玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
+    public ActionListener rentChooseButtonListener(Player inTurnPlayer, Player beChargedRentPlayer, int totalRent) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inTurnPlayer.hideAndRemoveRentChooseButtons(); //隐藏并删除所有玩家的choose按钮
+                inTurnPlayer.interactivePlayers.add(beChargedRentPlayer);
+                inTurnPlayer.setIsInAction(false);
+                inTurnPlayer.playerCardsPile.updateAndShowCards();
+                beChargedRentPlayer.setIsInAction(true);
+                beChargedRentPlayer.payForRent(inTurnPlayer, totalRent);
             }
         };
     }

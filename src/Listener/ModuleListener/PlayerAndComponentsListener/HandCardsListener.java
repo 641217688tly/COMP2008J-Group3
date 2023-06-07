@@ -19,11 +19,11 @@ public class HandCardsListener {
             public void actionPerformed(ActionEvent e) {
                 owner.whetherViewComponent = false;
                 handCards.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
-                handCards.removeAll();
-                for (Player inTurnPlayer : Game.players) {
-                    if (inTurnPlayer.isPlayerTurn()) {
-                        inTurnPlayer.playerCardsPile.setVisible(true);
-                        inTurnPlayer.playerCardsPile.updateAndShowCards();
+                handCards.removeAll(); //主要是防止JPanel组件上的冲突
+                for (Player player : Game.players) {
+                    player.setVisible(true);
+                    if (player.isPlayerTurn()) {
+                        player.playerCardsPile.updateAndShowCards();
                     }
                 }
             }
