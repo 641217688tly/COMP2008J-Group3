@@ -67,21 +67,33 @@ public class Bank extends JPanel {
     }
 
     public boolean containsCard(Card card) {
-        boolean flag = false;
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 12; column++) {
                 if (cardsTable[row][column] == card) {
-                    flag = true;
-                    break;
+                    return true;
                 }
             }
         }
-        return flag;
+        return false;
     }
 
-    public void addAndPaintHereButtons(Card movedCard) {
+    public int calculateTotalAssetsInBank() { //计算银行的总资产
+        int totalAssets = 0;
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 12; column++) {
+                if (this.cardsTable[row][column] != null) {
+                    totalAssets = this.cardsTable[row][column].value + totalAssets;
+                }
+            }
+        }
+        return totalAssets;
+    }
+
+
+    public void addAndPaintHereButtons(Card movedCard) { ///HereButton:用于实现Card在Bank内的自由移动
+        //仅当玩家在自己的回合时,且使用了Card上的Move按钮后Here按钮才会被创建
         hereButtons.clear();
-        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+        if (owner.isPlayerTurn()) {
             for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 12; column++) {
                     if (cardsTable[row][column] == null) {
@@ -99,7 +111,7 @@ public class Bank extends JPanel {
         }
     }
 
-    public void moveCardAndUpdateScreen(Player owner, Card movedCard, JButton hereButton) {
+    public void moveCardAndUpdateScreen(Player owner, Card movedCard, JButton hereButton) { //实现Card的移动效果
         Point movedCardPoint = new Point(movedCard.getX(), movedCard.getY());
         Point hereButtonPoint = new Point(hereButton.getX(), hereButton.getY());
         Point movedCardIndex = new Point();
@@ -135,6 +147,7 @@ public class Bank extends JPanel {
     }
 
     public void saveMoneyAndShowCards(Card card) {//每次调用都会添加钱卡进银行并且刷新Card的呈现状态
+        card.owner = this.owner;
         //先将牌存进容器中:
         for (int row = 0; row < 3; row++) {
             boolean flag = false;

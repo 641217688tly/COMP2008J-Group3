@@ -46,7 +46,7 @@ public abstract class Card extends JPanel implements ICard {
     public Player owner = null;
     protected int cardJPanelX;
     protected int cardJPanelY;
-    protected int value;
+    public int value;
     protected boolean isCardFront = false; //默认卡牌是背面的
     protected boolean isDisplayable = false; //默认卡牌时不被绘制的
     protected final ImageIcon cardBackImage = new ImageIcon("images/Card/CardsBack.jpg"); //卡牌的背面

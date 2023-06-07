@@ -207,6 +207,12 @@ public class RentCard extends Card {
                             }
                         }
                         tempOwner.whetherViewComponent = true;
+                        for (Player player : Game.players) {
+                            player.setVisible(false);
+                            if (player.isPlayerTurn()) {
+                                player.playerCardsPile.setVisible(false);
+                            }
+                        }
                         tempOwner.property.setVisible(true);
                         tempOwner.property.reallocateAllCards();
                         tempOwner.property.closeButton.setVisible(false); //将关闭按钮隐藏,直到玩家选择完房产
