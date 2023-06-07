@@ -60,27 +60,34 @@ public class PlayerListener {
         };
     }
 
-    public ActionListener skipButtonListener(Player player) { //打开玩家的房产
+    public ActionListener skipButtonListener(Player player) { //跳过自己的回合
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                player.actionNumber = 0;
-                player.interactivePlayers.clear();
+                if (player.isPlayerTurn()) {
+                    if (player.isInAction()) {
+                        player.actionNumber = 0;
+                        player.interactivePlayers.clear();
+                    }
+
+                }
+
             }
         };
     }
 
-    //对于多色收租卡,为每个玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
+    //对于多色收租卡(需要选择一个作用对象),为每个玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
     public ActionListener rentChooseButtonListener(Player inTurnPlayer, Player beChargedRentPlayer, int totalRent) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 inTurnPlayer.hideAndRemoveRentChooseButtons(); //隐藏并删除所有玩家的choose按钮
                 inTurnPlayer.interactivePlayers.add(beChargedRentPlayer);
+                inTurnPlayer.actionNumber = inTurnPlayer.actionNumber - 1;
                 inTurnPlayer.setIsInAction(false);
                 inTurnPlayer.playerCardsPile.updateAndShowCards();
                 beChargedRentPlayer.setIsInAction(true);
-                beChargedRentPlayer.payForRent(inTurnPlayer, totalRent);
+                beChargedRentPlayer.payForMoney(inTurnPlayer, totalRent);
             }
         };
     }

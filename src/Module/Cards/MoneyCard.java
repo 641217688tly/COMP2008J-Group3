@@ -39,7 +39,7 @@ public class MoneyCard extends Card {
         //play()功能 == deposit()功能
         if (owner != null) {
             if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
-                owner.cardsBuffer.add(this);
+                owner.oneTurnCardsBuffer.add(this);
                 for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
@@ -51,12 +51,6 @@ public class MoneyCard extends Card {
                 } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                this.moveButtonSwitch = false;
-                controlButtons();
                 //将牌存进银行并刷新银行的状态
                 owner.bank.saveMoneyAndShowCards(this);
                 owner.actionNumber = owner.actionNumber - 1;
@@ -69,7 +63,7 @@ public class MoneyCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.cardsBuffer.add(this);
+                    owner.oneTurnCardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;
@@ -81,12 +75,6 @@ public class MoneyCard extends Card {
                     } else { //如果被调用的时候玩家正在看的是组件
                         owner.handCards.updateAndShowCards(); //直接更新HandCards
                     }
-                    //将牌上的按钮全部隐藏:
-                    this.playButtonSwitch = false;
-                    this.depositButtonSwitch = false;
-                    this.discardButtonSwitch = false;
-                    this.moveButtonSwitch = false;
-                    controlButtons();
                     //将牌存进银行并刷新银行的状态
                     owner.bank.saveMoneyAndShowCards(this);
                     owner.actionNumber = owner.actionNumber - 1;
@@ -110,14 +98,6 @@ public class MoneyCard extends Card {
                 } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                this.moveButtonSwitch = false;
-                controlButtons();
-                //将牌扔进废牌堆
-                this.owner = null;
                 Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
             }
         }

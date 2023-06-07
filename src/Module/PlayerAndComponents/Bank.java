@@ -1,8 +1,13 @@
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
+import Listener.ModuleListener.CardsListener.CardListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.BankListener;
+import Module.Cards.ActionCard;
 import Module.Cards.Card;
+import Module.Cards.CardsEnum.ActionCardType;
+import Module.Cards.PropertyCard;
+import Module.Cards.PropertyWildCard;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -89,6 +94,43 @@ public class Bank extends JPanel {
         return totalAssets;
     }
 
+    public void addAndPaintPledgeButtons() { //创建用于选择抵押债务的选择按钮
+        if (owner.isInAction()) {
+            for (int row = 0; row < 3; row++) {
+                for (int column = 0; column < 12; column++) {
+                    if (cardsTable[row][column] != null) {
+                        JButton pledgeButton = new JButton("Pledge");
+                        pledgeButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                        Font buttonFont = new Font("Arial", Font.BOLD, 8);
+                        pledgeButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        pledgeButton.addActionListener((new CardListener()).pledgeButtonListener(owner, cardsTable[row][column], false));
+                        cardsTable[row][column].add(pledgeButton);
+                        pledgeButton.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    public void hideAndRemovePledgeButtons(Player debtor) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的PledgeButtons
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 12; column++) {
+                if (cardsTable[row][column] != null) {
+                    int lastIndex = cardsTable[row][column].getComponentCount() - 1;
+                    cardsTable[row][column].getComponent(lastIndex).setVisible(false);
+                    cardsTable[row][column].remove(lastIndex);
+                }
+            }
+        }
+        //再删除被添加到抵押数组中卡牌上的按钮:
+        if (debtor.pledgeCardFromBank.size() > 0) {
+            for (Card card : debtor.pledgeCardFromBank) {
+                int lastIndex = card.getComponentCount() - 1;
+                card.getComponent(lastIndex).setVisible(false);
+                card.remove(lastIndex);
+            }
+        }
+    }
 
     public void addAndPaintHereButtons(Card movedCard) { ///HereButton:用于实现Card在Bank内的自由移动
         //仅当玩家在自己的回合时,且使用了Card上的Move按钮后Here按钮才会被创建
@@ -175,16 +217,34 @@ public class Bank extends JPanel {
                 if (cardsTable[row][column] != null) {
                     Card card = cardsTable[row][column];
                     setCardBounds(card, cardsCoordinates[row][column].x, cardsCoordinates[row][column].y, true, true);
-                    if (owner.isPlayerTurn()) {
-                        card.openMoveButtonSwitch(true);
-                        card.openPlayButtonSwitch(false);
-                        card.openDiscardButtonSwitch(false);
-                        card.openDepositButtonSwitch(false);
-                    } else {
-                        card.openMoveButtonSwitch(false);
-                        card.openPlayButtonSwitch(false);
-                        card.openDiscardButtonSwitch(false);
-                        card.openDepositButtonSwitch(false);
+                    if (owner.isPlayerTurn()) { //处于自己的回合
+                        if (owner.isInAction) {//处于行动中
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(true);
+                            card.openDepositButtonSwitch(true);
+                            card.openDiscardButtonSwitch(true);
+                            card.openMoveButtonSwitch(true);
+                        } else { //处于自己的回合但不在行动中
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(false);
+                            card.openDepositButtonSwitch(false);
+                            card.openDiscardButtonSwitch(false);
+                            card.openMoveButtonSwitch(false);
+                        }
+                    } else { //不处于自己的回合
+                        if (owner.isInAction) { //处于行动中
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(false);
+                            card.openDepositButtonSwitch(false);
+                            card.openDiscardButtonSwitch(false);
+                            card.openMoveButtonSwitch(false);
+                        } else { //不处于自己的回合,也不在行动中
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(false);
+                            card.openDepositButtonSwitch(false);
+                            card.openDiscardButtonSwitch(false);
+                            card.openMoveButtonSwitch(false);
+                        }
                     }
                 }
             }

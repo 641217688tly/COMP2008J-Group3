@@ -2,7 +2,9 @@ package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
 import Listener.ModuleListener.PlayerAndComponentsListener.HandCardsListener;
+import Module.Cards.ActionCard;
 import Module.Cards.Card;
+import Module.Cards.CardsEnum.ActionCardType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -141,11 +143,19 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                     }
                 } else { //不处于自己的回合
                     if (owner.isInAction) { //处于行动中
+                        if (cardsTable[i] instanceof ActionCard) {
+                            if (((ActionCard) cardsTable[i]).type.equals(ActionCardType.JUST_SAY_NO)) {
+                                card.openPlayButtonSwitch(true);
+                            } else {
+                                card.openPlayButtonSwitch(false);
+                            }
+                        } else {
+                            card.openPlayButtonSwitch(false);
+                        }
                         card.setIsCardFront(true);
-                        card.openPlayButtonSwitch(true);
-                        card.openDepositButtonSwitch(true);
-                        card.openDiscardButtonSwitch(true);
-                        card.openMoveButtonSwitch(true);
+                        card.openDepositButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openMoveButtonSwitch(false);
                     } else { //不处于自己的回合,也不在行动中
                         card.setIsCardFront(false);
                         card.openPlayButtonSwitch(false);

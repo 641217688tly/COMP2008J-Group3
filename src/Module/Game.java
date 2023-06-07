@@ -44,7 +44,14 @@ public class Game implements IGame {
     @Override
     public void nextPlayerTurn() {
         if (Game.players.get(0).actionNumber == 0) { //玩家的行动次数为0
-            if (true) { //TODO 如果玩家间的互动也已经结束,待完成
+            boolean isInteractionComplete = true; //判断玩家间的互动是否结束
+            for (Player player : Game.players) {
+                if (player.interactivePlayers.size() > 0) {
+                    isInteractionComplete = false;
+                    break;
+                }
+            }
+            if (isInteractionComplete) {
                 Game.players.get(0).setPlayerTurn(false);
                 reDistributePlayersLocation(); //将会转动玩家以及玩家的数组
                 Game.players.get(0).setPlayerTurn(true); //为下一个玩家设置成是他的回合

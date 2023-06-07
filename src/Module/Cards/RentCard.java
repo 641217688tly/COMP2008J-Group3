@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class RentCard extends Card {
     public RentCardType type;
+    public int totalRent = 0;
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> rentCards = new ArrayList<>();
@@ -182,19 +183,17 @@ public class RentCard extends Card {
                         //检查有无双倍卡
                         Integer oldRentCardIndex = null;
                         Integer doubleCardIndex = null;
-                        for (int i = 0; i < owner.cardsBuffer.size(); i++) {
-                            if (owner.cardsBuffer.get(i) instanceof RentCard) {
+                        for (int i = 0; i < owner.oneTurnCardsBuffer.size(); i++) {
+                            if (owner.oneTurnCardsBuffer.get(i) instanceof RentCard) {
                                 oldRentCardIndex = i;
-                            } else if (owner.cardsBuffer.get(i) instanceof ActionCard) {
-                                if (((ActionCard) owner.cardsBuffer.get(i)).type.equals(ActionCardType.DOUBLE_RENT)) {
+                            } else if (owner.oneTurnCardsBuffer.get(i) instanceof ActionCard) {
+                                if (((ActionCard) owner.oneTurnCardsBuffer.get(i)).type.equals(ActionCardType.DOUBLE_RENT)) {
                                     doubleCardIndex = i;
                                 }
                             }
                         }
                         //检查是否用了双倍卡,小心这种情况:双倍 租金卡 当前租金卡(双倍卡已经被用过了)和 双倍 其他卡 租金卡
-                        boolean isDoubleRentUsed = (oldRentCardIndex == null && doubleCardIndex != null) || (doubleCardIndex != null && oldRentCardIndex != null && oldRentCardIndex < doubleCardIndex);
-                        //将新的RentCard添加到cardsBuffer中
-                        owner.cardsBuffer.add(this);
+                        boolean isDoubleRentUsed = ((oldRentCardIndex == null && doubleCardIndex != null) || (doubleCardIndex != null && oldRentCardIndex != null && oldRentCardIndex < doubleCardIndex));
                         Player tempOwner = this.owner;
                         //从玩家的手牌中消除
                         discard();
@@ -219,7 +218,10 @@ public class RentCard extends Card {
                         //为使用RentCard的玩家的所有房产牌上增加临时的"choose"按钮
                         tempOwner.property.addAndPaintChooseButtons(this, isDoubleRentUsed);
                         //为choose按钮添加监听事件,获得:1.所选择的卡牌的种类 2.统计这种卡牌一共多少张 3.计算要支付的钱 4.查看玩家是否之前使用了翻倍租金卡,如果有,计算结果翻倍
-                        tempOwner.actionNumber = tempOwner.actionNumber - 1;
+
+                        //inTurnPlayer.actionNumber = inTurnPlayer.actionNumber - 1;
+                        //上述扣除玩家行动次数的语句不能在这里写!必须要等到玩家在interactivePlayers中添加互动对象后才能扣除行动次数
+                        //不然游戏会直接进入下一个回合
                     }
                 }
             }
@@ -231,7 +233,7 @@ public class RentCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.cardsBuffer.add(this);
+                    owner.oneTurnCardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;
@@ -243,12 +245,6 @@ public class RentCard extends Card {
                     } else { //如果被调用的时候玩家正在看的是组件
                         owner.handCards.updateAndShowCards(); //直接更新HandCards
                     }
-                    //将牌上的按钮全部隐藏:
-                    this.playButtonSwitch = false;
-                    this.depositButtonSwitch = false;
-                    this.discardButtonSwitch = false;
-                    this.moveButtonSwitch = false;
-                    controlButtons();
                     //将牌存进银行并刷新银行的状态
                     owner.bank.saveMoneyAndShowCards(this);
                     owner.actionNumber = owner.actionNumber - 1;
@@ -272,14 +268,6 @@ public class RentCard extends Card {
                 } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                this.moveButtonSwitch = false;
-                controlButtons();
-                //将牌扔进废牌堆
-                this.owner = null;
                 Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
             }
         }

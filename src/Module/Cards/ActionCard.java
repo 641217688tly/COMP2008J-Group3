@@ -79,10 +79,58 @@ public class ActionCard extends Card {
         }
     }
 
+    private void playDoubleRent() {
+        if (this.type.equals(ActionCardType.DOUBLE_RENT)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        owner.oneTurnCardsBuffer.add(this); //将RentCard加入到玩家的cardsBuffer中
+                        owner.actionNumber = owner.actionNumber - 1;
+                        discard();
+                    }
+                }
+            }
+        }
+    }
+
+    private void playPassGo() {
+        if (this.type.equals(ActionCardType.PASS_GO)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        owner.drawCards(Game.cardsPile.drawCardFromDrawPile(2));
+                        owner.actionNumber = owner.actionNumber - 1;
+                        discard();
+                    }
+                }
+            }
+        }
+    }
+
+    private void playJustSayNo() {
+        if (this.type.equals(ActionCardType.PASS_GO)) {
+            if (owner != null) {
+                if (owner.isInAction()) { //只要玩家在行动中,他就有权使用SayNoCard
+                    if (owner.isPlayerTurn()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        owner.singleActionCardsBuffer.add(this);
+                    } else {
+                        owner.singleActionCardsBuffer.add(this);
+                    }
+                    owner.interactivePlayers.get(0).respondSayNoCard(); //将选择权交给对手
+                    discard();
+                }
+            }
+        }
+    }
+
 
     @Override
     public void play() { //(被)使用
         playHouseAndHotel();
+        playDoubleRent();
+        playPassGo();
+        playJustSayNo();
     }
 
     @Override
@@ -90,7 +138,7 @@ public class ActionCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.cardsBuffer.add(this);
+                    owner.oneTurnCardsBuffer.add(this);
                     for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
                         if (owner.cardsTable[i] == this) {
                             owner.cardsTable[i] = null;

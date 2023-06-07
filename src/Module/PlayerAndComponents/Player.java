@@ -21,7 +21,8 @@ public class Player extends JPanel {
 
     public String name;
     public Card[] cardsTable;
-    public ArrayList<Card> cardsBuffer; //用于存储玩家在一个回合内所出过的牌
+    public ArrayList<Card> oneTurnCardsBuffer; //用于该回合下玩家每次行动中所用过的牌
+    public ArrayList<Card> singleActionCardsBuffer; //用于存储玩家某次行动中所用过的牌,其中index=0处的牌是玩家在本次行动中最先使用的牌
     public ArrayList<Player> interactivePlayers;
     public ArrayList<Card> pledgeCardFromBank;
     public ArrayList<Card> pledgeCardFromProperty;
@@ -67,7 +68,8 @@ public class Player extends JPanel {
         this.playerJPanelX = playerJPanelX;
         this.playerJPanelY = playerJPanelY;
         this.cardsTable = new Card[12];
-        this.cardsBuffer = new ArrayList<>();
+        this.oneTurnCardsBuffer = new ArrayList<>();
+        this.singleActionCardsBuffer = new ArrayList<>();
         this.pledgeCardFromBank = new ArrayList<>();
         this.pledgeCardFromProperty = new ArrayList<>();
         this.playerCardsPile = new PlayerCardsPile(this);
@@ -116,7 +118,7 @@ public class Player extends JPanel {
     }
 
     public void moveToNextTurn() {
-        this.cardsBuffer.clear();
+        this.oneTurnCardsBuffer.clear();
         this.actionNumber = 3;
         handCards.updateAndShowCards();
         if (this.isPlayerTurn) {
@@ -138,38 +140,27 @@ public class Player extends JPanel {
         return flag;
     }
 
+    public void respondSayNoCard() {
+        this.setIsInAction(true); //为要回应SayNoCard的玩家设置为可以自由行动
+        if (this.isPlayerTurn) {
 
-    public void payForRent(Player interactivePlayer, int totalRent) { //interactivePlayer是处于当前回合的玩家,也是收租人
-        this.debt = totalRent;
-        Timer timer = new Timer(2000, e -> {
-            if (whetherHasSayNoCard()) {
-                //有sayNo牌,让玩家判断用不用
-                //TODO 强制打开HandsCard,让玩家自己决定是否使用sayNo牌
-            }
-        });
-        timer.setRepeats(false); // make sure the timer only runs once
-        timer.start(); // start the timer
-
-        ArrayList<Card> bankAssets = new ArrayList<>();
-        ArrayList<Card> propertyAssets = new ArrayList<>();
-        //不用sayNo牌或者玩家没有sayNo牌:
-        if (this.bank.calculateTotalAssetsInBank() >= debt) {
-            //情况1:玩家的银行有能力支付
-
-        } else if ((this.bank.calculateTotalAssetsInBank() < debt) && (this.property.calculateTotalAssetsInProperty() + this.bank.calculateTotalAssetsInBank() >= debt)) {
-            //情况2:玩家的银行无能力支付(银行可能为空),玩家的房产的价值有能力支付
-            //TODO 从Bank和Property中选择Card加入pledgeCardFromProperty和pledgeCardFromBank
-
-        } else if ((this.bank.calculateTotalAssetsInBank() < debt) && (this.property.calculateTotalAssetsInProperty() + this.bank.calculateTotalAssetsInBank() < debt)) {
-            //情况3:玩家的银行(可能为空)和房产(可能为空)都不足以支付
-            //TODO 将银行和房产全部打包送给对手
+        } else {
 
         }
-
-        //最后不管还没还清债务,一律清零:
-        this.debt = 0;
     }
 
+    //为玩家的房产和银行中的卡牌都加上Use按钮,并且设置该玩家的债务为totalRent
+    public void payForMoney(Player interactivePlayer, int totalRent) { //interactivePlayer是处于当前回合的玩家,也是收租人
+        this.setIsInAction(true);
+        this.interactivePlayers.add(interactivePlayer);
+        this.debt = totalRent;
+        this.property.addAndPaintPledgeButtons();
+        this.bank.addAndPaintPledgeButtons();
+
+        //TODO BUG1:玩家抵押卡牌之后,卡牌不会直接消失(如果债务没完全还清且玩家还有别的资产时)
+        //TODO BUG2:玩家给对手交租之后,再次回到对手的视角时,对手的手牌(HandCards和PlayerCardsPile)都没有被绘制
+        //TODO BUG3:玩家给对手交租之后,再次回到对手的视角时,从对方手里收取的卡牌上没有"M"(可移动按钮)
+    }
 
     public boolean whetherHasSayNoCard() {
         for (int i = 0; i < cardsTable.length; i++) {
@@ -187,7 +178,7 @@ public class Player extends JPanel {
     public void addAndPaintRentChooseButtons(Player inTurnPlayer, int totalRent) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
         for (int i = 0; i < Game.players.size(); i++) {
             if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
-                JButton chosenbutton = new JButton("Choose");
+                JButton chosenbutton = new JButton("↓");
                 chosenbutton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                 Font buttonFont = new Font("Arial", Font.BOLD, 10);
                 chosenbutton.setFont(buttonFont); // 设置按钮的字体和字体大小

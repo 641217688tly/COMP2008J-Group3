@@ -104,6 +104,12 @@ public class CardsPile extends JPanel {
             discardPile.peek().setIsDisplayable(false);
             this.remove(discardPile.peek());
         }
+        card.owner = null;
+        //将牌上的按钮全部隐藏:
+        card.openMoveButtonSwitch(false);
+        card.openPlayButtonSwitch(false);
+        card.openDepositButtonSwitch(false);
+        card.openDiscardButtonSwitch(false);
         this.discardPile.push(card);
         paintPeekCard();
     }

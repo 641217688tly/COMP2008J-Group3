@@ -138,7 +138,6 @@ public class Property extends JPanel { //房产类
 
     }
 
-
     public int calculateTotalAssetsInProperty() {
         int totalAssets = 0;
         for (int row = 0; row < 5; row++) {
@@ -151,25 +150,64 @@ public class Property extends JPanel { //房产类
         return totalAssets;
     }
 
-    public void addAndPaintChooseButtons(RentCard rentCard, boolean isDoubleRent) { //该选择按钮用于选择RentCard要收租的房产
-        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+    public void addAndPaintPledgeButtons() { //创建用于选择抵押债务的选择按钮
+        if (owner.isInAction()) {
             for (int row = 0; row < 5; row++) {
                 for (int column = 0; column < 11; column++) {
-                    if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
-                        JButton chosenbutton = new JButton("Use");
-                        chosenbutton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
-                        Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                        chosenbutton.setFont(buttonFont); // 设置按钮的字体和字体大小
-                        chosenbutton.addActionListener((new CardListener()).chosenButtonListener(owner, cardsTable[row][column], rentCard, isDoubleRent));
-                        cardsTable[row][column].add(chosenbutton);
-                        chosenbutton.setVisible(true);
+                    if (cardsTable[row][column] != null) {
+                        JButton pledgeButton = new JButton("Pledge");
+                        pledgeButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                        Font buttonFont = new Font("Arial", Font.BOLD, 8);
+                        pledgeButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        pledgeButton.addActionListener((new CardListener()).pledgeButtonListener(owner, cardsTable[row][column], true));
+                        cardsTable[row][column].add(pledgeButton);
+                        pledgeButton.setVisible(true);
                     }
                 }
             }
         }
     }
 
-    public void hideAndRemoveChooseButtons(Player propertyOwner) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的choose按钮
+    public void hideAndRemovePledgeButtons(Player debtor) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的PledgeButtons
+        //先删除房产中现存卡牌上的按钮
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] != null) {
+                    int lastIndex = cardsTable[row][column].getComponentCount() - 1;
+                    cardsTable[row][column].getComponent(lastIndex).setVisible(false);
+                    cardsTable[row][column].remove(lastIndex);
+                }
+            }
+        }
+        //再删除被添加到抵押数组中卡牌上的按钮:
+        if (debtor.pledgeCardFromProperty.size() > 0) {
+            for (Card card : debtor.pledgeCardFromProperty) {
+                int lastIndex = card.getComponentCount() - 1;
+                card.getComponent(lastIndex).setVisible(false);
+                card.remove(lastIndex);
+            }
+        }
+    }
+
+    public void addAndPaintChooseButtons(RentCard rentCard, boolean isDoubleRent) { //该选择按钮用于选择RentCard要收租的房产
+        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+            for (int row = 0; row < 5; row++) {
+                for (int column = 0; column < 11; column++) {
+                    if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
+                        JButton chosenButton = new JButton("Use");
+                        chosenButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                        Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                        chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        chosenButton.addActionListener((new CardListener()).chosenButtonListener(owner, cardsTable[row][column], rentCard, isDoubleRent));
+                        cardsTable[row][column].add(chosenButton);
+                        chosenButton.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    public void hideAndRemoveChooseButtons() { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的choose按钮
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 11; column++) {
                 if (cardsTable[row][column] instanceof PropertyCard || cardsTable[row][column] instanceof PropertyWildCard) {
