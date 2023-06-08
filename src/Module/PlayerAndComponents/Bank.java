@@ -188,6 +188,24 @@ public class Bank extends JPanel {
         paintAllCardsFront();
     }
 
+    public Card removeCardFromBank(Card removedCard) {
+        for (int row = 0; row < 3; row++) {
+            boolean flag = false;
+            for (int column = 0; column < 12; column++) {
+                if (cardsTable[row][column] == removedCard) {
+                    cardsTable[row][column] = null;
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                break;
+            }
+        }
+        this.remove(removedCard);
+        return removedCard;
+    }
+
     public void saveMoneyAndShowCards(Card card) {//每次调用都会添加钱卡进银行并且刷新Card的呈现状态
         card.owner = this.owner;
         //先将牌存进容器中:
@@ -217,34 +235,16 @@ public class Bank extends JPanel {
                 if (cardsTable[row][column] != null) {
                     Card card = cardsTable[row][column];
                     setCardBounds(card, cardsCoordinates[row][column].x, cardsCoordinates[row][column].y, true, true);
-                    if (owner.isPlayerTurn()) { //处于自己的回合
-                        if (owner.isInAction) {//处于行动中
-                            card.setIsCardFront(true);
-                            card.openPlayButtonSwitch(true);
-                            card.openDepositButtonSwitch(true);
-                            card.openDiscardButtonSwitch(true);
-                            card.openMoveButtonSwitch(true);
-                        } else { //处于自己的回合但不在行动中
-                            card.setIsCardFront(true);
-                            card.openPlayButtonSwitch(false);
-                            card.openDepositButtonSwitch(false);
-                            card.openDiscardButtonSwitch(false);
-                            card.openMoveButtonSwitch(false);
-                        }
-                    } else { //不处于自己的回合
-                        if (owner.isInAction) { //处于行动中
-                            card.setIsCardFront(true);
-                            card.openPlayButtonSwitch(false);
-                            card.openDepositButtonSwitch(false);
-                            card.openDiscardButtonSwitch(false);
-                            card.openMoveButtonSwitch(false);
-                        } else { //不处于自己的回合,也不在行动中
-                            card.setIsCardFront(true);
-                            card.openPlayButtonSwitch(false);
-                            card.openDepositButtonSwitch(false);
-                            card.openDiscardButtonSwitch(false);
-                            card.openMoveButtonSwitch(false);
-                        }
+                    if (owner.isPlayerTurn()) {
+                        card.openMoveButtonSwitch(true);
+                        card.openPlayButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
+                    } else {
+                        card.openMoveButtonSwitch(false);
+                        card.openPlayButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
                     }
                 }
             }
@@ -264,8 +264,8 @@ public class Bank extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         paintBankPile(g);
+        //paintAllCardsFront();
     }
-
 }
 
 

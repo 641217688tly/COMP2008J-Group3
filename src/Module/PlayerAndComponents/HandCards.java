@@ -110,25 +110,25 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
         }
         owner.handCards.hereButtons.clear();
         //更新屏幕
-        paintAllCardsFront();
+        paintAllCards();
     }
 
     public void updateAndShowCards() { //每次调用都需要清除列表中已有的牌并移除JPanel中牌对应的组件,相当于HandCards的刷新方法
         this.cardsTable = owner.cardsTable; //克隆玩家的数组
         this.removeAll(); //将旧牌(组件)全部丢弃,但这会导致按钮也丢失
         this.add(closeButton); //将被丢失的按钮加上
-        paintAllCardsFront();
+        paintAllCards();
     }
 
     //-------绘制方法:
 
-    private void paintAllCardsFront() {
+    private void paintAllCards() {
         for (int i = 0; i < cardsTable.length; i++) {
             if (cardsTable[i] != null) {
                 Card card = cardsTable[i];
                 card.setCardJPanelBounds(cardsCoordinates[i].x, cardsCoordinates[i].y); //为Card重新分配它在该JPanel下的坐标
                 if (owner.isPlayerTurn()) { //处于自己的回合
-                    if (owner.isInAction) {//处于行动中
+                    if (owner.isInAction()) {//处于行动中
                         card.setIsCardFront(true);
                         card.openPlayButtonSwitch(true);
                         card.openDepositButtonSwitch(true);
@@ -142,20 +142,19 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                         card.openMoveButtonSwitch(false);
                     }
                 } else { //不处于自己的回合
-                    if (owner.isInAction) { //处于行动中
-                        if (cardsTable[i] instanceof ActionCard) {
-                            if (((ActionCard) cardsTable[i]).type.equals(ActionCardType.JUST_SAY_NO)) {
+                    if (owner.isInAction()) { //处于行动中
+                        card.setIsCardFront(true);
+                        card.openPlayButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openMoveButtonSwitch(false);
+                        if (card instanceof ActionCard) {
+                            if (((ActionCard) card).type.equals(ActionCardType.JUST_SAY_NO)) {
                                 card.openPlayButtonSwitch(true);
                             } else {
                                 card.openPlayButtonSwitch(false);
                             }
-                        } else {
-                            card.openPlayButtonSwitch(false);
                         }
-                        card.setIsCardFront(true);
-                        card.openDepositButtonSwitch(false);
-                        card.openDiscardButtonSwitch(false);
-                        card.openMoveButtonSwitch(false);
                     } else { //不处于自己的回合,也不在行动中
                         card.setIsCardFront(false);
                         card.openPlayButtonSwitch(false);
