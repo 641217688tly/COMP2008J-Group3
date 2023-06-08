@@ -2,6 +2,8 @@ package Module;
 
 import GUI.ApplicationStart;
 import Module.Cards.Card;
+import Module.Cards.CardsEnum.PropertyCardType;
+import Module.Cards.PropertyCard;
 import Module.PlayerAndComponents.Player;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class Game implements IGame {
     @Override
     public void updateGame() {
         nextPlayerTurn();
+        isGameOver();
     }
 
     @Override
@@ -47,6 +50,10 @@ public class Game implements IGame {
             boolean isInteractionComplete = true; //判断玩家间的互动是否结束
             for (Player player : Game.players) {
                 if (player.interactivePlayers.size() > 0) {
+                    isInteractionComplete = false;
+                    break;
+                }
+                if (player.numberOfHandCards() > 7) {
                     isInteractionComplete = false;
                     break;
                 }
@@ -97,7 +104,17 @@ public class Game implements IGame {
 
     @Override
     public boolean isGameOver() {
-        //方法待实现
+        for (Player player : Game.players) {
+            int wholeSetNumber = 0;
+            for (PropertyCardType propertyType : PropertyCardType.values()) {
+                if (PropertyCard.judgeCompleteSet(propertyType, player.property.propertyNumberMap.get(propertyType))) {
+                    wholeSetNumber++;
+                }
+                if (wholeSetNumber >= 3) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 

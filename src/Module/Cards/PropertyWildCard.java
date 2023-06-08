@@ -67,7 +67,7 @@ public class PropertyWildCard extends Card {
         } else if (type == PropertyWildCardType.RED_YELLOW) {
             currentType = PropertyCardType.YELLOW;
         } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-            currentType = PropertyCardType.UTILITY;
+            currentType = PropertyCardType.RAILROAD;
         }
     }
 
@@ -139,21 +139,25 @@ public class PropertyWildCard extends Card {
     public void play() { //(被)使用
         //play:放置房产牌
         if (owner != null) {
-            if (owner.actionNumber > 0) {
-                owner.oneTurnCardsBuffer.add(this);
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                    if (owner.cardsTable[i] == this) {
-                        owner.cardsTable[i] = null;
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) {
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
+                        }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        owner.property.placePropertyCardAndShowTable(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                owner.property.placePropertyCardAndShowTable(this);
-                owner.actionNumber = owner.actionNumber - 1;
             }
         }
     }
@@ -163,20 +167,22 @@ public class PropertyWildCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.oneTurnCardsBuffer.add(this);
-                    for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                        if (owner.cardsTable[i] == this) {
-                            owner.cardsTable[i] = null;
-                            break;
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
                         }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
-                    if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                        owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                    } else { //如果被调用的时候玩家正在看的是组件
-                        owner.handCards.updateAndShowCards(); //直接更新HandCards
-                    }
-                    owner.bank.saveMoneyAndShowCards(this);
-                    owner.actionNumber = owner.actionNumber - 1;
                 }
             }
         }
@@ -238,7 +244,7 @@ public class PropertyWildCard extends Card {
 
     private void paintMULTICOLOURCardColour(Graphics g) { //为多色卡呈现其当前的Type
         g.setColor(Color.RED); // 设置文本颜色
-        g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
+        g.setFont(new Font("Arial", Font.BOLD, 18)); // 设置字体和大小
         g.drawString(currentType.toString(), Player.playerWidth / 6, 3 * Player.playerHeight / 8);
 
     }

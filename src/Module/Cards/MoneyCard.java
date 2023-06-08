@@ -38,22 +38,26 @@ public class MoneyCard extends Card {
     public void play() { //(被)使用
         //play()功能 == deposit()功能
         if (owner != null) {
-            if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
-                owner.oneTurnCardsBuffer.add(this);
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                    if (owner.cardsTable[i] == this) {
-                        owner.cardsTable[i] = null;
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
+                        }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                //将牌存进银行并刷新银行的状态
-                owner.bank.saveMoneyAndShowCards(this);
-                owner.actionNumber = owner.actionNumber - 1;
             }
         }
     }
@@ -63,21 +67,24 @@ public class MoneyCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.oneTurnCardsBuffer.add(this);
-                    for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                        if (owner.cardsTable[i] == this) {
-                            owner.cardsTable[i] = null;
-                            break;
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
                         }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
-                    if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                        owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                    } else { //如果被调用的时候玩家正在看的是组件
-                        owner.handCards.updateAndShowCards(); //直接更新HandCards
-                    }
-                    //将牌存进银行并刷新银行的状态
-                    owner.bank.saveMoneyAndShowCards(this);
-                    owner.actionNumber = owner.actionNumber - 1;
+
                 }
             }
         }

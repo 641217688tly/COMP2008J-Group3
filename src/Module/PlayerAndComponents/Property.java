@@ -12,6 +12,7 @@ import GUI.ApplicationStart;
 import Listener.ModuleListener.CardsListener.CardListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.PropertyListener;
 import Module.Cards.*;
+import Module.Cards.CardsEnum.ActionCardType;
 import Module.Cards.CardsEnum.PropertyCardType;
 
 
@@ -21,11 +22,14 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class Property extends JPanel { //房产类
     public Point[][] cardsCoordinates;
     public Card[][] cardsTable;
+    public Map<PropertyCardType, Integer> propertyNumberMap;
     public ArrayList<JButton> hereButtons;
     private Player owner;
     public JButton closeButton; // 新增一个关闭按钮
@@ -37,6 +41,7 @@ public class Property extends JPanel { //房产类
         this.setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight);
         this.setVisible(false); // 初始时设为不可见
 
+        this.propertyNumberMap = new HashMap<>();
         this.hereButtons = new ArrayList<>();
         this.cardsTable = new Card[5][11];
         this.owner = owner;
@@ -44,6 +49,7 @@ public class Property extends JPanel { //房产类
         loadAndSetPlayerCardsPileBackground();
         initButtons();
         initCardsCoordinates();
+        countPropertiesNumber();
     }
 
     private void loadAndSetPlayerCardsPileBackground() {
@@ -103,11 +109,38 @@ public class Property extends JPanel { //房产类
         return flag;
     }
 
+    public void countPropertiesNumber() {
+        for (PropertyCardType propertyType : PropertyCardType.values()) {
+            propertyNumberMap.put(propertyType, 0);
+        }
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] != null) {
+                    Card property = cardsTable[row][column];
+                    if (property instanceof PropertyCard) {
+                        for (PropertyCardType propertyType : PropertyCardType.values()) {
+                            if (((PropertyCard) property).type.equals(propertyType)) {
+                                propertyNumberMap.put(propertyType, propertyNumberMap.get(propertyType) + 1);
+                            }
+                        }
+                    } else if (property instanceof PropertyWildCard) {
+                        for (PropertyCardType propertyType : PropertyCardType.values()) {
+                            if (((PropertyWildCard) property).currentType.equals(propertyType)) {
+                                propertyNumberMap.put(propertyType, propertyNumberMap.get(propertyType) + 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public int calculatedRent(Card propertyCard, boolean isDoubleRent) { //给定房产卡的类型和租金是否翻倍,计算最后的总租金
         //TODO 有问题,忘记考虑House和Hotel卡了
         PropertyCardType searchedType = null;
         int cardsNumber = 0;
         int totalRent = 0;
+        ArrayList<Integer> columns = new ArrayList<>();
         if (propertyCard instanceof PropertyCard) {
             searchedType = ((PropertyCard) propertyCard).type;
         } else if (propertyCard instanceof PropertyWildCard) {
@@ -119,26 +152,56 @@ public class Property extends JPanel { //房产类
                     if (cardsTable[row][column] instanceof PropertyCard) {
                         if (searchedType.equals(((PropertyCard) cardsTable[row][column]).type)) {
                             cardsNumber++;
+                            columns.add(column);
                         }
                     }
                     if (cardsTable[row][column] instanceof PropertyWildCard) {
                         if (searchedType.equals(((PropertyWildCard) cardsTable[row][column]).currentType)) {
                             cardsNumber++;
+                            columns.add(column);
                         }
                     }
                 }
             }
         }
-        totalRent = RentCard.obtainRentNumber(searchedType, cardsNumber);
+        totalRent = RentCard.obtainRentNumber(searchedType, cardsNumber) + calculateExtraRent(searchedType, cardsNumber, columns);
         if (isDoubleRent) {
             return totalRent * 2;
         } else {
             return totalRent;
         }
-
     }
 
-    public int calculateTotalAssetsInProperty() {
+    private int calculateExtraRent(PropertyCardType propertyType, int propertyNumber, ArrayList<Integer> columns) {
+        int extraRent = 0;
+        if (PropertyCard.judgeCompleteSet(propertyType, propertyNumber)) {
+            for (Integer column : columns) {
+                boolean flag = false;
+                for (int row = 0; row < 5; row++) {
+                    if (cardsTable[row][column] != null) {
+                        if (cardsTable[row][column] instanceof ActionCard) {
+                            ActionCard card = (ActionCard) cardsTable[row][column];
+                            if (card.type.equals(ActionCardType.HOTEL)) {
+                                extraRent = 4;
+                                flag = true;
+                                break;
+                            } else if (card.type.equals(ActionCardType.HOUSE)) {
+                                extraRent = 3;
+                                flag = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (flag) {
+                    break;
+                }
+            }
+        }
+        return extraRent;
+    }
+
+    public int calculateTotalAssetsInProperty() { //计算银行的总资产
         int totalAssets = 0;
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 11; column++) {
@@ -225,14 +288,14 @@ public class Property extends JPanel { //房产类
             for (int row = 0; row < 5; row++) {
                 for (int column = 0; column < 11; column++) {
                     if (cardsTable[row][column] == null) {
-                        JButton herebutton = new JButton("Here");
-                        herebutton.setBounds(cardsCoordinates[row][column].x, cardsCoordinates[row][column].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
+                        JButton hereButton = new JButton("Here");
+                        hereButton.setBounds(cardsCoordinates[row][column].x, cardsCoordinates[row][column].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
                         Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                        herebutton.setFont(buttonFont); // 设置按钮的字体和字体大小
-                        herebutton.addActionListener(propertyListener.moveButtonListener(owner, movedCard, herebutton));
-                        this.add(herebutton);
-                        hereButtons.add(herebutton);
-                        herebutton.setVisible(true);
+                        hereButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        hereButton.addActionListener(propertyListener.moveButtonListener(owner, movedCard, hereButton));
+                        this.add(hereButton);
+                        hereButtons.add(hereButton);
+                        hereButton.setVisible(true);
                     }
                 }
             }
@@ -274,189 +337,53 @@ public class Property extends JPanel { //房产类
         reallocateAllCards();
     }
 
-    //-----------存牌:
-
-    private void distributeCardLocation(Card card) {
-        if (card instanceof PropertyCard) {
-            if (((PropertyCard) card).type.equals(PropertyCardType.RAILROAD)) {
-                for (int row = 0; row < 4; row++) {
-                    if (cardsTable[row][0] == null) {
-                        cardsTable[row][0] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.RED)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][1] == null) {
-                        cardsTable[row][1] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.ORANGE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][2] == null) {
-                        cardsTable[row][2] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.YELLOW)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][3] == null) {
-                        cardsTable[row][3] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.GREEN)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][4] == null) {
-                        cardsTable[row][4] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.BLUE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][5] == null) {
-                        cardsTable[row][5] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.LIGHTBLUE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][6] == null) {
-                        cardsTable[row][6] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.PINK)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][7] == null) {
-                        cardsTable[row][7] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.BROWN)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][8] == null) {
-                        cardsTable[row][8] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyCard) card).type.equals(PropertyCardType.UTILITY)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][9] == null) {
-                        cardsTable[row][9] = card;
-                        return;
-                    }
-                }
-            } else { //位置已满(已经凑够了一套房)
-                for (int row = 0; row < 5; row++) {
-                    if (cardsTable[row][10] == null) {
-                        cardsTable[row][10] = card;
-                        return;
-                    }
+    public Card removeCardFromProperty(Card removedCard) {
+        for (int row = 0; row < 5; row++) {
+            boolean flag = false;
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] == removedCard) {
+                    cardsTable[row][column] = null;
+                    flag = true;
+                    break;
                 }
             }
-        } else if (card instanceof PropertyWildCard) {
-            if (((PropertyWildCard) card).currentType.equals(PropertyCardType.RAILROAD)) {
-                for (int row = 0; row < 4; row++) {
-                    if (cardsTable[row][0] == null) {
-                        cardsTable[row][0] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.RED)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][1] == null) {
-                        cardsTable[row][1] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.ORANGE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][2] == null) {
-                        cardsTable[row][2] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.YELLOW)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][3] == null) {
-                        cardsTable[row][3] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.GREEN)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][4] == null) {
-                        cardsTable[row][4] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.BLUE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][5] == null) {
-                        cardsTable[row][5] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.LIGHTBLUE)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][6] == null) {
-                        cardsTable[row][6] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.PINK)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][7] == null) {
-                        cardsTable[row][7] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.BROWN)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][8] == null) {
-                        cardsTable[row][8] = card;
-                        return;
-                    }
-                }
-            } else if (((PropertyWildCard) card).currentType.equals(PropertyCardType.UTILITY)) {
-                for (int row = 0; row < 3; row++) {
-                    if (cardsTable[row][9] == null) {
-                        cardsTable[row][9] = card;
-                        return;
-                    }
-                }
-            } else { //位置已满(已经凑够了一套房)
-                for (int row = 0; row < 5; row++) {
-                    if (cardsTable[row][10] == null) {
-                        cardsTable[row][10] = card;
-                        return;
-                    }
-                }
-            }
-        } else if (card instanceof ActionCard) { //存储酒店卡
-            for (int column = 0; column < 10; column++) {
-                if (cardsTable[4][column] == null) {
-                    cardsTable[4][column] = card;
-                    return;
-                }
+            if (flag) {
+                break;
             }
         }
+        this.remove(removedCard);
+        countPropertiesNumber();
+        return removedCard;
     }
+
+
+    //-----------存牌:
 
     public void placePropertyCardAndShowTable(Card card) { //将新进入Property的Card按序排放
         card.owner = this.owner;
         //先将牌存进容器中:
-        distributeCardLocation(card);
+        for (int row = 0; row < 4; row++) {
+            boolean flag = false;
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] == null) {
+                    cardsTable[row][column] = card;
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                break;
+            }
+        }
         reallocateAllCards(); //为所有的牌重新分配坐标和可视化状态
         this.add(card); //添加卡牌到JPanel中
+        countPropertiesNumber();
     }
 
     //-------绘制方法:
 
     public void reallocateAllCards() {
-        for (int row = 0; row < 4; row++) {
+        for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 11; column++) {
                 if (cardsTable[row][column] != null) {
                     Card card = cardsTable[row][column];
@@ -484,24 +411,6 @@ public class Property extends JPanel { //房产类
                 }
             }
         }
-        //设置ActionCard
-        for (int column = 0; column < 11; column++) {
-            if (cardsTable[4][column] != null) {
-                Card card = cardsTable[4][column];
-                setCardBounds(card, cardsCoordinates[4][column].x, cardsCoordinates[4][column].y, true, true);
-                if (owner.isPlayerTurn()) {
-                    card.openMoveButtonSwitch(true);
-                    card.openPlayButtonSwitch(false);
-                    card.openDiscardButtonSwitch(false);
-                    card.openDiscardButtonSwitch(false);
-                } else {
-                    card.openMoveButtonSwitch(false);
-                    card.openPlayButtonSwitch(false);
-                    card.openDiscardButtonSwitch(false);
-                    card.openDiscardButtonSwitch(false);
-                }
-            }
-        }
     }
 
     private void paintPropertyPile(Graphics g) {
@@ -520,6 +429,7 @@ public class Property extends JPanel { //房产类
     @Override
     protected void paintComponent(Graphics g) {
         paintPropertyPile(g);
+        //reallocateAllCards();
     }
 
 

@@ -65,17 +65,19 @@ public class CardListener {
 
                     //非多色收租卡:
                     if (!rentCard.type.equals(RentCardType.WILD_RENT)) {
+                        //将所有玩家都加入交互队列中
                         for (int i = 0; i < Game.players.size(); i++) {
                             if (Game.players.get(i) != propertyOwner) {
                                 propertyOwner.interactivePlayers.add(Game.players.get(i));
                             }
                         }
+                        //玩家的行动次数减少
                         propertyOwner.actionNumber = propertyOwner.actionNumber - 1;
+                        propertyOwner.setIsInAction(false);
                         //退出房产界面:
                         propertyOwner.property.closeButton.setVisible(true);
                         propertyOwner.whetherViewComponent = false;
-                        propertyOwner.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
-                        propertyOwner.setIsInAction(false);
+                        propertyOwner.property.setVisible(false);
                         propertyOwner.interactivePlayers.get(0).setIsInAction(true);
                         for (Player player : Game.players) {
                             player.setVisible(true);
@@ -90,7 +92,7 @@ public class CardListener {
                         //退出房产界面:
                         propertyOwner.property.closeButton.setVisible(true);
                         propertyOwner.whetherViewComponent = false;
-                        propertyOwner.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                        propertyOwner.property.setVisible(false);
                         for (Player player : Game.players) {
                             player.setVisible(true);
                             if (player.isPlayerTurn()) {
@@ -108,16 +110,16 @@ public class CardListener {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                pledgeCard.setIsDisplayable(false);
                 //先将被抵押的牌存储进数组
                 if (isInPropertyOrBank) { //在Property中:
-                    debtor.pledgeCardFromProperty.add(pledgeCard);
+                    debtor.pledgeCardFromProperty.add(debtor.property.removeCardFromProperty(pledgeCard));
                 } else { //在Bank中:
-                    debtor.pledgeCardFromBank.add(pledgeCard);
+                    debtor.pledgeCardFromBank.add(debtor.bank.removeCardFromBank(pledgeCard));
                 }
                 //更新债务
                 debtor.debt = debtor.debt - pledgeCard.value;
                 Player inTurnPlayer = debtor.interactivePlayers.get(0);
-
                 //判断债务情况:
                 if (debtor.debt <= 0) { //债务还清
                     //将自己的银行和房产上的按钮给删除:
@@ -156,16 +158,11 @@ public class CardListener {
                         }
 
                     } else { //对手的本次action全部结束
-                        Timer timer = new Timer(2000, a -> {
-                            //延迟两秒再呈现当前的玩家的卡牌
-                            inTurnPlayer.setIsInAction(true);
-                            inTurnPlayer.singleActionCardsBuffer.clear();
-                            inTurnPlayer.interactivePlayers.clear();
-                            inTurnPlayer.playerCardsPile.updateAndShowCards();
+                        inTurnPlayer.setIsInAction(true);
+                        inTurnPlayer.singleActionCardsBuffer.clear();
+                        inTurnPlayer.interactivePlayers.clear();
+                        inTurnPlayer.playerCardsPile.updateAndShowCards();
 
-                        });
-                        timer.setRepeats(false); // make sure the timer only runs once
-                        timer.start(); // start the timer
                     }
 
                 } else { //债务没有还清
@@ -208,29 +205,19 @@ public class CardListener {
                             }
 
                         } else { //对手的本次action全部结束
-                            Timer timer = new Timer(2000, a -> {
-                                //延迟两秒再呈现当前的玩家的卡牌
-                                inTurnPlayer.setIsInAction(true);
-                                inTurnPlayer.singleActionCardsBuffer.clear();
-                                inTurnPlayer.interactivePlayers.clear();
-                                inTurnPlayer.playerCardsPile.updateAndShowCards();
-
-                            });
-                            timer.setRepeats(false); // make sure the timer only runs once
-                            timer.start(); // start the timer
+                            //延迟两秒再呈现当前的玩家的卡牌
+                            inTurnPlayer.setIsInAction(true);
+                            inTurnPlayer.singleActionCardsBuffer.clear();
+                            inTurnPlayer.interactivePlayers.clear();
+                            inTurnPlayer.playerCardsPile.updateAndShowCards();
                         }
 
-                    } else if (debtor.property.calculateTotalAssetsInProperty() == 0 && debtor.bank.calculateTotalAssetsInBank() > 0) { //银行还有钱
-                        debtor.property.hideAndRemovePledgeButtons(debtor);
-                    } else if (debtor.bank.calculateTotalAssetsInBank() == 0 && debtor.property.calculateTotalAssetsInProperty() > 0) { //还有房产
-                        debtor.bank.hideAndRemovePledgeButtons(debtor);
+                    } else { //银行或者房产还有牌
+                        //continue
                     }
                 }
-
             }
-        }
-
-                ;
+        };
     }
 
 

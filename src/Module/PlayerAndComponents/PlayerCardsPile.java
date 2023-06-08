@@ -1,9 +1,10 @@
 package Module.PlayerAndComponents;
 
 import GUI.ApplicationStart;
-import Listener.ModuleListener.PlayerAndComponentsListener.HandCardsListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.PlayerCardsPileListener;
+import Module.Cards.ActionCard;
 import Module.Cards.Card;
+import Module.Cards.CardsEnum.ActionCardType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -53,32 +54,6 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
         }
     }
 
-    public void updateAndShowCards() { //每次调用都需要清除列表中已有的牌并移除JPanel中牌对应的组件,相当于PlayerCardsPile的刷新方法
-        this.cardsTable = owner.cardsTable; //克隆玩家的数组
-        this.removeAll(); //将旧牌(组件)全部丢弃,但这会导致按钮也丢失
-        paintCardsFrontUpToEleven();
-    }
-
-    //-------绘制方法:
-
-    public void addAndPaintHereButtons(Card movedCard) {
-        hereButtons.clear();
-        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
-            for (int i = 0; i < 11; i++) {
-                if (cardsTable[i] == null) {
-                    JButton herebutton = new JButton("Here");
-                    herebutton.setBounds(cardsCoordinates[i].x, cardsCoordinates[i].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
-                    Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                    herebutton.setFont(buttonFont); // 设置按钮的字体和字体大小
-                    herebutton.addActionListener(playerCardsPileListener.moveButtonListener(owner, movedCard, herebutton));
-                    this.add(herebutton);
-                    hereButtons.add(herebutton);
-                    herebutton.setVisible(true);
-                }
-            }
-        }
-    }
-
     public void moveCardAndUpdateScreen(Player owner, Card movedCard, JButton hereButton) {
         Point movedCardPoint = new Point(movedCard.getX(), movedCard.getY());
         Point hereButtonPoint = new Point(hereButton.getX(), hereButton.getY());
@@ -111,13 +86,42 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
         }
         owner.playerCardsPile.hereButtons.clear();
         //更新屏幕
-        paintCardsFrontUpToEleven();
+        paintCardsUpToEleven();
     }
 
-    private void paintCardsFrontUpToEleven() {
+    public void updateAndShowCards() { //每次调用都需要清除列表中已有的牌并移除JPanel中牌对应的组件,相当于PlayerCardsPile的刷新方法
+        this.cardsTable = owner.cardsTable; //克隆玩家的数组
+        this.removeAll(); //将旧牌(组件)全部丢弃,但这会导致按钮也丢失
+        paintCardsUpToEleven();
+    }
+
+    //-------绘制方法:
+
+    public void addAndPaintHereButtons(Card movedCard) {
+        hereButtons.clear();
+        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+            for (int i = 0; i < 11; i++) {
+                if (cardsTable[i] == null) {
+                    JButton herebutton = new JButton("Here");
+                    herebutton.setBounds(cardsCoordinates[i].x, cardsCoordinates[i].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
+                    Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                    herebutton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    herebutton.addActionListener(playerCardsPileListener.moveButtonListener(owner, movedCard, herebutton));
+                    this.add(herebutton);
+                    hereButtons.add(herebutton);
+                    herebutton.setVisible(true);
+                }
+            }
+        }
+    }
+
+    private void paintCardsUpToEleven() {
         if (owner.isInAction() && owner.isPlayerTurn()) { //既是玩家的回合,也是该回合的玩家在行动
             this.setVisible(true);
         } else if (owner.isInAction() && !owner.isPlayerTurn()) { //虽然玩家在行动,但不是该玩家的回合
+            this.setVisible(false);
+            return;
+        } else if (!owner.isInAction() && owner.isPlayerTurn()) { //玩家的回合,但玩家不行动
             this.setVisible(false);
             return;
         } else if (!owner.isInAction() && !owner.isPlayerTurn()) { //玩家既不在行动,也不是该玩家的回合
@@ -129,7 +133,7 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
                 Card card = cardsTable[i];
                 card.setCardJPanelBounds(cardsCoordinates[i].x, cardsCoordinates[i].y); //为Card重新分配它在该JPanel下的坐标
                 if (owner.isPlayerTurn()) { //处于自己的回合
-                    if (owner.isInAction) {//处于行动中
+                    if (owner.isInAction()) {//处于行动中
                         card.setIsCardFront(true);
                         card.openPlayButtonSwitch(true);
                         card.openDepositButtonSwitch(true);
@@ -145,12 +149,19 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
                         card.setIsDisplayable(false);
                     }
                 } else { //不处于自己的回合
-                    if (owner.isInAction) { //处于行动中
+                    if (owner.isInAction()) { //处于行动中
                         card.setIsCardFront(true);
-                        card.openPlayButtonSwitch(true);
-                        card.openDepositButtonSwitch(true);
-                        card.openDiscardButtonSwitch(true);
-                        card.openMoveButtonSwitch(true);
+                        card.openPlayButtonSwitch(false);
+                        card.openDepositButtonSwitch(false);
+                        card.openDiscardButtonSwitch(false);
+                        card.openMoveButtonSwitch(false);
+                        if (card instanceof ActionCard) {
+                            if (((ActionCard) card).type.equals(ActionCardType.JUST_SAY_NO)) {
+                                card.openPlayButtonSwitch(true);
+                            } else {
+                                card.openPlayButtonSwitch(false);
+                            }
+                        }
                         card.setIsDisplayable(false);
                     } else { //不处于自己的回合,也不在行动中
                         card.setIsCardFront(false);
@@ -169,7 +180,7 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
     private void paintPlayerCardsPile(Graphics g) {
         if (playerCardsPileImage != null) {
             if (owner.isPlayerTurn()) { //如果正处于玩家的回合
-                if (owner.isInAction) {
+                if (owner.isInAction()) {
                     for (int i = 0; i < 11; i++) {
                         g.drawImage(playerCardsPileImage, cardsCoordinates[i].x, cardsCoordinates[i].y, ApplicationStart.screenWidth / 12, playerCardsPileJPanelHeight, null);
                     }
@@ -181,11 +192,10 @@ public class PlayerCardsPile extends JPanel { // 该类为呈现当前回合下�
     @Override
     protected void paintComponent(Graphics g) {
         if (owner.isPlayerTurn()) {
-            if (owner.isInAction) {
+            if (owner.isInAction()) {
                 super.paintComponent(g); // 调用父类方法以确保正常绘制
                 paintPlayerCardsPile(g);
             }
-
         }
     }
 }

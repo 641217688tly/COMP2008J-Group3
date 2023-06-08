@@ -31,7 +31,7 @@ public class Player extends JPanel {
     public int actionNumber = 3; //行动次数
     public int debt = 0;
     public boolean whetherViewComponent = false;
-    public boolean isInAction = false;
+    private boolean isInAction = false;
     private boolean isPlayerTurn = false;
 
     //组件:
@@ -119,6 +119,8 @@ public class Player extends JPanel {
 
     public void moveToNextTurn() {
         this.oneTurnCardsBuffer.clear();
+        this.singleActionCardsBuffer.clear();
+        this.debt = 0;
         this.actionNumber = 3;
         handCards.updateAndShowCards();
         if (this.isPlayerTurn) {
@@ -150,16 +152,49 @@ public class Player extends JPanel {
     }
 
     //为玩家的房产和银行中的卡牌都加上Use按钮,并且设置该玩家的债务为totalRent
-    public void payForMoney(Player interactivePlayer, int totalRent) { //interactivePlayer是处于当前回合的玩家,也是收租人
+    public void payForMoney(Player renter, int totalRent) { //renter是处于当前回合的玩家,也是收租人
         this.setIsInAction(true);
-        this.interactivePlayers.add(interactivePlayer);
-        this.debt = totalRent;
-        this.property.addAndPaintPledgeButtons();
-        this.bank.addAndPaintPledgeButtons();
+        if (this.bank.calculateTotalAssetsInBank() == 0 && this.property.calculateTotalAssetsInProperty() == 0) { //什么都没有,无法还债
+            //从对手的交互队列中移除自己:
+            renter.interactivePlayers.remove(0);
+            this.setIsInAction(false);
 
-        //TODO BUG1:玩家抵押卡牌之后,卡牌不会直接消失(如果债务没完全还清且玩家还有别的资产时)
-        //TODO BUG2:玩家给对手交租之后,再次回到对手的视角时,对手的手牌(HandCards和PlayerCardsPile)都没有被绘制
-        //TODO BUG3:玩家给对手交租之后,再次回到对手的视角时,从对方手里收取的卡牌上没有"M"(可移动按钮)
+            //判断对手接下来的行动
+            if (renter.interactivePlayers.size() > 0) { //对手还要继续与别的玩家交互:
+                renter.interactivePlayers.get(0).setIsInAction(true);
+                if (renter.singleActionCardsBuffer.size() > 1) {
+                    Card tempCard = renter.singleActionCardsBuffer.get(0);
+                    renter.singleActionCardsBuffer.clear();
+                    renter.singleActionCardsBuffer.add(tempCard);
+                }
+                if (renter.singleActionCardsBuffer.get(0) instanceof RentCard) {
+                    renter.interactivePlayers.get(0).payForMoney(renter, ((RentCard) renter.singleActionCardsBuffer.get(0)).totalRent);
+                } else if (renter.singleActionCardsBuffer.get(0) instanceof ActionCard) {
+                    //TODO 判断不同ActionCard的类型并给出不同的处理方案
+                }
+
+            } else { //对手的本次action全部结束
+                Timer timer = new Timer(3000, a -> {
+                    //延迟两秒再呈现当前的玩家的卡牌
+                    renter.setIsInAction(true);
+                    renter.singleActionCardsBuffer.clear();
+                    renter.interactivePlayers.clear();
+                    renter.bank.paintAllCardsFront();
+                    renter.property.reallocateAllCards();
+                    renter.handCards.updateAndShowCards();
+                    renter.playerCardsPile.updateAndShowCards();
+
+                });
+                timer.setRepeats(false); // make sure the timer only runs once
+                timer.start(); // start the timer
+            }
+
+        } else { //玩家的银行或房产中还有牌可抵债
+            this.interactivePlayers.add(renter);
+            this.debt = totalRent;
+            this.property.addAndPaintPledgeButtons();
+            this.bank.addAndPaintPledgeButtons();
+        }
     }
 
     public boolean whetherHasSayNoCard() {
@@ -178,13 +213,13 @@ public class Player extends JPanel {
     public void addAndPaintRentChooseButtons(Player inTurnPlayer, int totalRent) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
         for (int i = 0; i < Game.players.size(); i++) {
             if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
-                JButton chosenbutton = new JButton("↓");
-                chosenbutton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
+                JButton chosenButton = new JButton("↓");
+                chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                 Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                chosenbutton.setFont(buttonFont); // 设置按钮的字体和字体大小
-                chosenbutton.addActionListener(playerListener.rentChooseButtonListener(inTurnPlayer, Game.players.get(i), totalRent));
-                Game.players.get(i).add(chosenbutton);
-                chosenbutton.setVisible(true);
+                chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                chosenButton.addActionListener(playerListener.rentChooseButtonListener(inTurnPlayer, Game.players.get(i), totalRent));
+                Game.players.get(i).add(chosenButton);
+                chosenButton.setVisible(true);
             }
         }
     }
@@ -199,6 +234,16 @@ public class Player extends JPanel {
         }
     }
 
+
+    public int numberOfHandCards() {
+        int counter = 0;
+        for (int i = 0; i < cardsTable.length; i++) {
+            if (cardsTable[i] != null) {
+                counter++;
+            }
+        }
+        return counter;
+    }
 
     public boolean isPlayerTurn() {
         return isPlayerTurn;

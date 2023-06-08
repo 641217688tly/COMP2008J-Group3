@@ -2,6 +2,7 @@ package Module.Cards;
 
 import Module.Game;
 import Module.Cards.CardsEnum.ActionCardType;
+import Module.PlayerAndComponents.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,31 +49,48 @@ public class ActionCard extends Card {
         return actionCards;
     }
 
-    private void playHouseAndHotel() {
+    private void updatePlayerInteractiveState() {
+        //每次使用ActionCard后都代表玩家开启了一轮新的交互,因此需要确保上次交互中的数据被清除
+        if (owner != null) {
+            if (owner.isPlayerTurn()) {
+                if (owner.isInAction()) {
+                    owner.debt = 0;
+                    owner.interactivePlayers.clear();
+                    owner.singleActionCardsBuffer.clear();
+                    owner.pledgeCardFromProperty.clear();
+                    owner.pledgeCardFromBank.clear();
+                }
+            }
+        }
+    }
+
+    private void playHouseOrHotel() {
         if (this.type.equals(ActionCardType.HOUSE) || this.type.equals(ActionCardType.HOTEL)) {
             if (owner != null) {
                 if (owner.isPlayerTurn()) {
                     if (owner.actionNumber > 0) {
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                            if (owner.cardsTable[i] == this) {
-                                owner.cardsTable[i] = null;
-                                break;
+                        if (owner.isInAction()) {
+                            for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                                if (owner.cardsTable[i] == this) {
+                                    owner.cardsTable[i] = null;
+                                    break;
+                                }
                             }
+                            if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                                owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                            } else { //如果被调用的时候玩家正在看的是组件
+                                owner.handCards.updateAndShowCards(); //直接更新HandCards
+                            }
+                            //将牌上的按钮全部隐藏:
+                            this.playButtonSwitch = false;
+                            this.depositButtonSwitch = false;
+                            this.discardButtonSwitch = false;
+                            this.moveButtonSwitch = false;
+                            controlButtons();
+                            //将牌存进房产中并刷新房产的状态
+                            owner.property.placePropertyCardAndShowTable(this);
+                            owner.actionNumber = owner.actionNumber - 1;
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
-                        }
-                        //将牌上的按钮全部隐藏:
-                        this.playButtonSwitch = false;
-                        this.depositButtonSwitch = false;
-                        this.discardButtonSwitch = false;
-                        this.moveButtonSwitch = false;
-                        controlButtons();
-                        //将牌存进房产中并刷新房产的状态
-                        owner.property.placePropertyCardAndShowTable(this);
-                        owner.actionNumber = owner.actionNumber - 1;
                     }
                 }
             }
@@ -84,9 +102,11 @@ public class ActionCard extends Card {
             if (owner != null) {
                 if (owner.isPlayerTurn()) {
                     if (owner.actionNumber > 0) {
-                        owner.oneTurnCardsBuffer.add(this); //将RentCard加入到玩家的cardsBuffer中
-                        owner.actionNumber = owner.actionNumber - 1;
-                        discard();
+                        if (owner.isInAction()) {
+                            owner.oneTurnCardsBuffer.add(this); //将RentCard加入到玩家的cardsBuffer中
+                            owner.actionNumber = owner.actionNumber - 1;
+                            discard();
+                        }
                     }
                 }
             }
@@ -98,9 +118,91 @@ public class ActionCard extends Card {
             if (owner != null) {
                 if (owner.isPlayerTurn()) {
                     if (owner.actionNumber > 0) {
-                        owner.drawCards(Game.cardsPile.drawCardFromDrawPile(2));
-                        owner.actionNumber = owner.actionNumber - 1;
-                        discard();
+                        if (owner.isInAction()) {
+                            owner.drawCards(Game.cardsPile.drawCardFromDrawPile(2));
+                            owner.actionNumber = owner.actionNumber - 1;
+                            discard();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void playBirthday() {
+        if (this.type.equals(ActionCardType.BIRTHDAY)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        if (owner.isInAction()) {
+                            updatePlayerInteractiveState();
+                            //将所有玩家都加入交互队列中
+                            for (int i = 0; i < Game.players.size(); i++) {
+                                if (Game.players.get(i) != owner) {
+                                    owner.interactivePlayers.add(Game.players.get(i));
+                                }
+                            }
+                            //玩家的行动次数减少
+                            owner.actionNumber = owner.actionNumber - 1;
+                            owner.setIsInAction(false);
+                            owner.interactivePlayers.get(0).setIsInAction(true);
+                            for (Player player : Game.players) {
+                                player.setVisible(true);
+                                if (player.isPlayerTurn()) {
+                                    player.playerCardsPile.updateAndShowCards();
+                                }
+                            }
+                            //让需要交租的第一个玩家进行交互
+                            owner.interactivePlayers.get(0).payForMoney(owner, 2);
+                            discard();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void playDebtCollector() {
+        if (this.type.equals(ActionCardType.DEBT_COLLECTOR)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        if (owner.isInAction()) {
+                            updatePlayerInteractiveState();
+                            //将所有玩家都加入交互队列中
+                            for (int i = 0; i < Game.players.size(); i++) {
+                                if (Game.players.get(i) != owner) {
+                                    owner.interactivePlayers.add(Game.players.get(i));
+                                }
+                            }
+                            //玩家的行动次数减少
+                            owner.actionNumber = owner.actionNumber - 1;
+                            owner.setIsInAction(false);
+                            owner.interactivePlayers.get(0).setIsInAction(true);
+                            for (Player player : Game.players) {
+                                player.setVisible(true);
+                                if (player.isPlayerTurn()) {
+                                    player.playerCardsPile.updateAndShowCards();
+                                }
+                            }
+                            //让需要交租的第一个玩家进行交互
+                            owner.interactivePlayers.get(0).payForMoney(owner, 5);
+                            discard();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void playSlyDeal() { //偷一张房产卡
+        if (this.type.equals(ActionCardType.DEBT_COLLECTOR)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        updatePlayerInteractiveState();
+
+
                     }
                 }
             }
@@ -127,10 +229,12 @@ public class ActionCard extends Card {
 
     @Override
     public void play() { //(被)使用
-        playHouseAndHotel();
+        playHouseOrHotel();
         playDoubleRent();
         playPassGo();
         playJustSayNo();
+        playBirthday();
+        playDebtCollector();
     }
 
     @Override
@@ -138,27 +242,29 @@ public class ActionCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.oneTurnCardsBuffer.add(this);
-                    for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                        if (owner.cardsTable[i] == this) {
-                            owner.cardsTable[i] = null;
-                            break;
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
                         }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌上的按钮全部隐藏:
+                        this.playButtonSwitch = false;
+                        this.depositButtonSwitch = false;
+                        this.discardButtonSwitch = false;
+                        this.moveButtonSwitch = false;
+                        controlButtons();
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
-                    if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                        owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                    } else { //如果被调用的时候玩家正在看的是组件
-                        owner.handCards.updateAndShowCards(); //直接更新HandCards
-                    }
-                    //将牌上的按钮全部隐藏:
-                    this.playButtonSwitch = false;
-                    this.depositButtonSwitch = false;
-                    this.discardButtonSwitch = false;
-                    this.moveButtonSwitch = false;
-                    controlButtons();
-                    //将牌存进银行并刷新银行的状态
-                    owner.bank.saveMoneyAndShowCards(this);
-                    owner.actionNumber = owner.actionNumber - 1;
                 }
             }
         }

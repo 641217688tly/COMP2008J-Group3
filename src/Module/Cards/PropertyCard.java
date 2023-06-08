@@ -50,26 +50,76 @@ public class PropertyCard extends Card {
         return propertyCards;
     }
 
+    public static boolean judgeCompleteSet(PropertyCardType propertyType, int number) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
+        boolean flag = false;
+        if (propertyType.equals(PropertyCardType.RAILROAD)) {
+            if (number >= 4) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.RED)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.ORANGE)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.YELLOW)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.GREEN)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.BLUE)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.LIGHTBLUE)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.PINK)) {
+            if (number >= 3) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.BROWN)) {
+            if (number >= 2) {
+                flag = true;
+            }
+        } else if (propertyType.equals(PropertyCardType.UTILITY)) {
+            if (number >= 2) {
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
     @Override
     public void play() { //(被)使用
         //play:放置房产牌
         if (owner != null) {
-            if (owner.actionNumber > 0) {
-                owner.oneTurnCardsBuffer.add(this);
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                    if (owner.cardsTable[i] == this) {
-                        owner.cardsTable[i] = null;
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) {
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
+                        }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进房产中并刷新房产的状态
+                        owner.property.placePropertyCardAndShowTable(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                //将牌存进房产中并刷新房产的状态
-                owner.property.placePropertyCardAndShowTable(this);
-                owner.actionNumber = owner.actionNumber - 1;
             }
         }
     }
@@ -79,21 +129,23 @@ public class PropertyCard extends Card {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
-                    owner.oneTurnCardsBuffer.add(this);
-                    for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
-                        if (owner.cardsTable[i] == this) {
-                            owner.cardsTable[i] = null;
-                            break;
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
                         }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
-                    if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                        owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                    } else { //如果被调用的时候玩家正在看的是组件
-                        owner.handCards.updateAndShowCards(); //直接更新HandCards
-                    }
-                    //将牌存进银行并刷新银行的状态
-                    owner.bank.saveMoneyAndShowCards(this);
-                    owner.actionNumber = owner.actionNumber - 1;
                 }
             }
         }
