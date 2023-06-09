@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import Module.GameEngine;
 
@@ -59,15 +60,42 @@ public class GameScreen extends JPanel {
         this.add(Game.cardsPile);
     }
 
-    private void drawBackground(Graphics g) {
+    private void paintBackground(Graphics g) {
         if (gameScreenBackground != null) { // 如果背景图片已加载
             g.drawImage(gameScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight, null);
         }
     }
 
+    private void paintDiscardReminder(Graphics g) { //当回合结束前,如果玩家手上的牌大于7张,就提醒玩家弃牌!
+        if (Game.players.get(0).isPlayerTurn()) {
+            if (Game.players.get(0).actionNumber <= 0) {
+                if (Game.players.get(0).isInAction()) {
+                    boolean flag = true;
+                    for (Player player : Game.players) {
+                        if (player.interactivePlayers.size() > 0) { //玩家间的交互如果没完成,则
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (Game.players.get(0).numberOfHandCards() <= 7) { //牌若小于等于7
+                        flag = false;
+                    }
+                    if (flag) {
+                        g.setColor(Color.RED); // 设置文本颜色
+                        g.setFont(new Font("Arial", Font.BOLD, 30)); // 设置字体和大小
+                        g.drawString("Discard to 7 remaining!", 5 * ApplicationStart.screenWidth / 12 - ApplicationStart.screenWidth / 40, 4 * ApplicationStart.screenHeight / 5 - ApplicationStart.screenHeight / 10);
+                    }
+                }
+            }
+        }
+    }
+
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawBackground(g);
+        paintBackground(g);
+        paintDiscardReminder(g);
     }
+
 }

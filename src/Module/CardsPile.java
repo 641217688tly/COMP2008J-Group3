@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -43,7 +42,7 @@ public class CardsPile extends JPanel {
         this.drawPile = new Stack<Card>(); //抽牌堆
         this.discardPile = new Stack<Card>(); //废牌回收堆
         drawPile.addAll(ActionCard.initializeCardsForCardsPile());
-        drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
+        //drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyWildCard.initializeCardsForCardsPile());
         drawPile.addAll(RentCard.initializeCardsForCardsPile());
@@ -69,8 +68,8 @@ public class CardsPile extends JPanel {
         card.setIsCardFront(isCardFront);
     }
 
-    public ArrayList<Card> drawCardFromDrawPile(int number) { //抽牌,所有抽出来的牌都:1.没有按钮 2.不可视
-        ArrayList<Card> drawnCards = new ArrayList<>();
+    public Card[] drawCardFromDrawPile(int number) { //抽牌,所有抽出来的牌都:1.没有按钮 2.不可视
+        Card[] cards = new Card[number];
         if (drawPile.size() < number) {
             drawPile.peek().setIsDisplayable(false);
             this.remove(drawPile.peek());
@@ -80,10 +79,10 @@ public class CardsPile extends JPanel {
             Card popCard = this.drawPile.pop();
             popCard.setIsDisplayable(false);
             this.remove(popCard);
-            drawnCards.add(popCard);
+            cards[i] = popCard;
         }
         paintPeekCard();
-        return drawnCards;
+        return cards;
     }
 
     private void reuseCardsFromDiscardPile() { //牌堆没有牌时从废牌堆里拿牌
@@ -105,6 +104,12 @@ public class CardsPile extends JPanel {
             discardPile.peek().setIsDisplayable(false);
             this.remove(discardPile.peek());
         }
+        card.owner = null;
+        //将牌上的按钮全部隐藏:
+        card.openMoveButtonSwitch(false);
+        card.openPlayButtonSwitch(false);
+        card.openDepositButtonSwitch(false);
+        card.openDiscardButtonSwitch(false);
         this.discardPile.push(card);
         paintPeekCard();
     }

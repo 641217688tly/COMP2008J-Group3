@@ -38,26 +38,26 @@ public class MoneyCard extends Card {
     public void play() { //(被)使用
         //play()功能 == deposit()功能
         if (owner != null) {
-            if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
+                        }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                controlButtons();
-                //将牌存进银行并刷新银行的状态
-                owner.bank.saveMoneyAndShowCards(this);
-                owner.actionNumber = owner.actionNumber - 1;
             }
         }
     }
@@ -65,26 +65,27 @@ public class MoneyCard extends Card {
     @Override
     public void deposit() { //(被)储蓄-需要更新银行
         if (owner != null) {
-            if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
-                        break;
+            if (owner.isPlayerTurn()) {
+                if (owner.actionNumber > 0) {
+                    if (owner.isInAction()) {
+                        owner.oneTurnCardsBuffer.add(this);
+                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                            if (owner.cardsTable[i] == this) {
+                                owner.cardsTable[i] = null;
+                                break;
+                            }
+                        }
+                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
+                        } else { //如果被调用的时候玩家正在看的是组件
+                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        }
+                        //将牌存进银行并刷新银行的状态
+                        owner.bank.saveMoneyAndShowCards(this);
+                        owner.actionNumber = owner.actionNumber - 1;
                     }
+
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
-                }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                controlButtons();
-                //将牌存进银行并刷新银行的状态
-                owner.bank.saveMoneyAndShowCards(this);
-                owner.actionNumber = owner.actionNumber - 1;
             }
         }
     }
@@ -92,26 +93,39 @@ public class MoneyCard extends Card {
     @Override
     public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
         if (owner != null) {
-            if (owner.isPlayerTurn()){
-                for (int i = 0; i < owner.cardsList.size(); i++) { //把牌从玩家上手清除
-                    if (owner.cardsList.get(i) == this) {
-                        owner.cardsList.remove(i);
+            if (owner.isPlayerTurn()) {
+                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                    if (owner.cardsTable[i] == this) {
+                        owner.cardsTable[i] = null;
                         break;
                     }
                 }
                 if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
                     owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                }else{ //如果被调用的时候玩家正在看的是组件
+                } else { //如果被调用的时候玩家正在看的是组件
                     owner.handCards.updateAndShowCards(); //直接更新HandCards
                 }
-                //将牌上的按钮全部隐藏:
-                this.playButtonSwitch = false;
-                this.depositButtonSwitch = false;
-                this.discardButtonSwitch = false;
-                controlButtons();
-                //将牌扔进废牌堆
-                this.owner = null;
                 Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+            }
+        }
+    }
+
+    @Override
+    public void move() {
+        //先判断自己所属的容器:
+        if (owner != null) {
+            if (owner.containsCard(this)) {
+                if (owner.whetherViewComponent) { //玩家正在看HandCards
+                    //给HandCards内的空位置加上按钮
+                    owner.handCards.addAndPaintHereButtons(this);
+                } else { //玩家正在看PlayerCardsPile
+                    //给PlayerCardsPile内的空位置加上按钮
+                    owner.playerCardsPile.addAndPaintHereButtons(this);
+                }
+            } else if (owner.bank.containsCard(this)) {
+                owner.bank.addAndPaintHereButtons(this);
+            } else if (owner.property.containsCard(this)) {
+                owner.property.addAndPaintHereButtons(this);
             }
         }
     }

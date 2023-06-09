@@ -46,7 +46,7 @@ public abstract class Card extends JPanel implements ICard {
     public Player owner = null;
     protected int cardJPanelX;
     protected int cardJPanelY;
-    protected int value;
+    public int value;
     protected boolean isCardFront = false; //默认卡牌是背面的
     protected boolean isDisplayable = false; //默认卡牌时不被绘制的
     protected final ImageIcon cardBackImage = new ImageIcon("images/Card/CardsBack.jpg"); //卡牌的背面
@@ -56,9 +56,11 @@ public abstract class Card extends JPanel implements ICard {
     protected JButton playButton; //使用按钮
     protected JButton depositButton;//当做钱存进银行
     protected JButton discardButton;//丢弃按钮
+    protected JButton moveButton; //移动卡牌的按钮
     protected boolean playButtonSwitch = false;
     protected boolean depositButtonSwitch = false;
     protected boolean discardButtonSwitch = false;
+    protected boolean moveButtonSwitch = false;
 
     public Card(ImageIcon image, int value) {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
@@ -71,11 +73,13 @@ public abstract class Card extends JPanel implements ICard {
 
     private void initButtons() {
         this.playButton = createButton("Play", cardWidth / 5, 0, 3 * cardWidth / 5, cardHeight / 10, this.cardListener.playCardButtonListener(this));
-        this.depositButton = createButton("Save", 3 * cardWidth / 5 - cardWidth / 10, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.depositCardButtonListener(this));
-        this.discardButton = createButton("Throw", 0, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.discardCardButtonListener(this));
+        this.depositButton = createButton("S", 2 * cardWidth / 3, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.depositCardButtonListener(this));
+        this.moveButton = createButton("M", 1 * cardWidth / 3, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.moveCardButtonListener(this));
+        this.discardButton = createButton("T", 0, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.discardCardButtonListener(this));
         this.add(this.playButton);
         this.add(this.depositButton);
         this.add(this.discardButton);
+        this.add(this.moveButton);
     }
 
     private JButton createButton(String text, int x, int y, int buttonWidth, int buttonHeight, ActionListener listener) {
@@ -101,18 +105,6 @@ public abstract class Card extends JPanel implements ICard {
         this.isCardFront = isCardFront;
     }
 
-    public boolean playButtonSwitch() {
-        return playButtonSwitch;
-    }
-
-    public boolean depositButtonSwitch() {
-        return depositButtonSwitch;
-    }
-
-    public boolean discardButtonSwitch() {
-        return discardButtonSwitch;
-    }
-
     public void openPlayButtonSwitch(boolean playButtonSwitch) {
         this.playButtonSwitch = playButtonSwitch;
     }
@@ -123,6 +115,10 @@ public abstract class Card extends JPanel implements ICard {
 
     public void openDiscardButtonSwitch(boolean discardButtonSwitch) {
         this.discardButtonSwitch = discardButtonSwitch;
+    }
+
+    public void openMoveButtonSwitch(boolean moveButtonSwitch) {
+        this.moveButtonSwitch = moveButtonSwitch;
     }
 
     //-------绘制方法:
@@ -144,6 +140,11 @@ public abstract class Card extends JPanel implements ICard {
             discardButton.setVisible(true);
         } else {
             discardButton.setVisible(false);
+        }
+        if (moveButtonSwitch) {
+            moveButton.setVisible(true);
+        } else {
+            moveButton.setVisible(false);
         }
     }
 

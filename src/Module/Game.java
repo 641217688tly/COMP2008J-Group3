@@ -1,6 +1,9 @@
 package Module;
 
 import GUI.ApplicationStart;
+import Module.Cards.Card;
+import Module.Cards.CardsEnum.PropertyCardType;
+import Module.Cards.PropertyCard;
 import Module.PlayerAndComponents.Player;
 
 import java.util.ArrayList;
@@ -38,19 +41,40 @@ public class Game implements IGame {
     @Override
     public void updateGame() {
         nextPlayerTurn();
+        isGameOver();
     }
 
     @Override
     public void nextPlayerTurn() {
         if (Game.players.get(0).actionNumber == 0) { //玩家的行动次数为0
-            if (true) { //TODO 如果玩家间的互动也已经结束,待完成
+            boolean isInteractionComplete = true; //判断玩家间的互动是否结束以及是否持有超过七张卡
+            for (Player player : Game.players) {
+                if (player.interactivePlayers.size() > 0) {
+                    isInteractionComplete = false;
+                    break;
+                }
+            }
+            if (Game.players.get(0).numberOfHandCards() > 7) {
+                isInteractionComplete = false;
+            }
+            if (isInteractionComplete) {
                 Game.players.get(0).setPlayerTurn(false);
                 reDistributePlayersLocation(); //将会转动玩家以及玩家的数组
                 Game.players.get(0).setPlayerTurn(true); //为下一个玩家设置成是他的回合
+
+                //补牌:
+                int cardsCount = 0;
+                for (Card card : Game.players.get(0).cardsTable) {
+                    if (card != null) {
+                        cardsCount++;
+                    }
+                }
                 if (counter >= Game.players.size()) {
-                    if (Game.players.get(0).cardsList.size() <= 7 && Game.players.get(0).cardsList.size() >= 0) {
-                        if (Game.players.get(0).cardsList.size() == 0) {
+                    if (cardsCount <= 7) {
+                        if (cardsCount == 0) {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(5));
+                        } else if (cardsCount == 7) {
+                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(2));
                         } else {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(3));
                         }
@@ -79,7 +103,17 @@ public class Game implements IGame {
 
     @Override
     public boolean isGameOver() {
-        //方法待实现
+        for (Player player : Game.players) {
+            int wholeSetNumber = 0;
+            for (PropertyCardType propertyType : PropertyCardType.values()) {
+                if (PropertyCard.judgeCompleteSet(propertyType, player.property.propertyNumberMap.get(propertyType))) {
+                    wholeSetNumber++;
+                }
+                if (wholeSetNumber >= 3) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
