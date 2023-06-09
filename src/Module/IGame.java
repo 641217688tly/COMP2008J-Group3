@@ -7,6 +7,9 @@ public interface IGame {
     // 游戏结束
     boolean isGameOver();
 
+    // 游戏暂停
+    boolean isPaused();
+
     // 游戏的更新操作
     void updateGame();
 
