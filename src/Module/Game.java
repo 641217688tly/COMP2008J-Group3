@@ -1,9 +1,13 @@
 package Module;
 
 import GUI.ApplicationStart;
+import Module.Cards.Card;
+import Module.Cards.CardsEnum.PropertyCardType;
+import Module.Cards.PropertyCard;
 import Module.PlayerAndComponents.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Game implements IGame {
@@ -11,11 +15,7 @@ public class Game implements IGame {
     public static int[] playersJPanelYCoordinate = {(ApplicationStart.screenHeight * 4) / 5, (ApplicationStart.screenHeight * 2) / 5, 0, 0, (ApplicationStart.screenHeight * 2) / 5};
     public static CardsPile cardsPile = new CardsPile(); //中央牌区
     public static ArrayList<Player> players = new ArrayList<>(); //所有的Player对象(Player对象中包含有Bank,Property,PlayerCards以及PlayerCardsPile这些组件)
-    private boolean isPaused = false;
-
-    public Game() {
-
-    }
+    private int counter = 1;
 
     public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
         Game.players.clear();
@@ -25,44 +25,96 @@ public class Game implements IGame {
         }
     }
 
-    public void initPlayersCards() {
-        for (int i = 0; i < Game.players.size(); i++) {
-            Game.players.get(i).drawCards(cardsPile.drawCardFromDrawPile(5));
-        }
+    public Game() {
+
     }
 
     @Override
     public void startNewGame() {
         Game.players.get(0).setPlayerTurn(true); //从一号玩家开始开启回合
-        initPlayersCards();
+        for (Player player : Game.players) {
+            player.drawCards(Game.cardsPile.drawCardFromDrawPile(5)); //回合开始时每个玩家都先领取五张牌
+            player.moveToNextTurn(); //设置回合次数,打开或关闭卡牌的按钮
+        }
     }
 
     @Override
     public void updateGame() {
-
-    }
-
-    @Override
-    public boolean isPaused() {
-        return isPaused;
+        nextPlayerTurn();
+        isGameOver();
     }
 
     @Override
     public void nextPlayerTurn() {
+        if (Game.players.get(0).actionNumber == 0) { //玩家的行动次数为0
+            boolean isInteractionComplete = true; //判断玩家间的互动是否结束以及是否持有超过七张卡
+            for (Player player : Game.players) {
+                if (player.interactivePlayers.size() > 0) {
+                    isInteractionComplete = false;
+                    break;
+                }
+            }
+            if (Game.players.get(0).numberOfHandCards() > 7) {
+                isInteractionComplete = false;
+            }
+            if (isInteractionComplete) {
+                Game.players.get(0).setPlayerTurn(false);
+                reDistributePlayersLocation(); //将会转动玩家以及玩家的数组
+                Game.players.get(0).setPlayerTurn(true); //为下一个玩家设置成是他的回合
 
+                //补牌:
+                int cardsCount = 0;
+                for (Card card : Game.players.get(0).cardsTable) {
+                    if (card != null) {
+                        cardsCount++;
+                    }
+                }
+                if (counter >= Game.players.size()) {
+                    if (cardsCount <= 7) {
+                        if (cardsCount == 0) {
+                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(5));
+                        } else if (cardsCount == 7) {
+                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(2));
+                        } else {
+                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(3));
+                        }
+                    }
+                } else {
+                    counter++;
+                }
+                for (Player player : Game.players) {
+                    player.moveToNextTurn();
+                }
+            }
+        }
+    }
+
+    private void reDistributePlayersLocation() {
+        // Rotate the players list counter-clockwise by 1
+        Collections.rotate(Game.players, -1);
+        // Update the players' coordinates according to their new order
+        for (int i = 0; i < Game.players.size(); i++) {
+            Player player = Game.players.get(i);
+            player.playerJPanelX = playersJPanelXCoordinate[i];
+            player.playerJPanelY = playersJPanelYCoordinate[i];
+            player.setBounds(player.playerJPanelX, player.playerJPanelY, Player.playerWidth, Player.playerHeight);
+        }
     }
 
     @Override
     public boolean isGameOver() {
-        //方法待实现
+        for (Player player : Game.players) {
+            int wholeSetNumber = 0;
+            for (PropertyCardType propertyType : PropertyCardType.values()) {
+                if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) {
+                    wholeSetNumber++;
+                }
+                if (wholeSetNumber >= 3) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
-    public void setIsPaused(boolean isPaused) {
-        this.isPaused = isPaused;
-    }
-
-    public boolean getIsPaused() {
-        return this.isPaused;
-    }
 }

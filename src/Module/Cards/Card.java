@@ -25,18 +25,28 @@ package Module.Cards;
 
 import GUI.ApplicationStart;
 import Listener.ModuleListener.CardsListener.CardListener;
+import Module.PlayerAndComponents.Player;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+/*
+不同的回合中,卡牌的如下属性可能发生变化:
+1.位置: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
+2.正反面:isCardFront
+3.按钮的开关: 1.使用按钮的开关 2.储蓄按钮的开关 3.丢弃按钮的开关 (多色卡: 4.换色按钮的开关)
+4.是否可视: isDisplayable
+5.主人: owner
+*/
 
 public abstract class Card extends JPanel implements ICard {
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
     public static int cardWidth = (ApplicationStart.screenWidth) / 12;
+    public Player owner = null;
     protected int cardJPanelX;
     protected int cardJPanelY;
-    protected int value;
+    public int value;
     protected boolean isCardFront = false; //默认卡牌是背面的
     protected boolean isDisplayable = false; //默认卡牌时不被绘制的
     protected final ImageIcon cardBackImage = new ImageIcon("images/Card/CardsBack.jpg"); //卡牌的背面
@@ -46,6 +56,11 @@ public abstract class Card extends JPanel implements ICard {
     protected JButton playButton; //使用按钮
     protected JButton depositButton;//当做钱存进银行
     protected JButton discardButton;//丢弃按钮
+    protected JButton moveButton; //移动卡牌的按钮
+    protected boolean playButtonSwitch = false;
+    protected boolean depositButtonSwitch = false;
+    protected boolean discardButtonSwitch = false;
+    protected boolean moveButtonSwitch = false;
 
     public Card(ImageIcon image, int value) {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
@@ -57,12 +72,14 @@ public abstract class Card extends JPanel implements ICard {
     }
 
     private void initButtons() {
-        this.playButton = createButton("Play", cardWidth / 5, 0, 3 * cardWidth / 5, cardHeight / 10, this.cardListener.playAction);
-        this.depositButton = createButton("Save", 3 * cardWidth / 5 - cardWidth / 10, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.depositAction);
-        this.discardButton = createButton("Throw", 0, 7 * cardHeight / 8, 2 * cardWidth / 5 + cardWidth / 10, cardHeight / 8, this.cardListener.discardAction);
+        this.playButton = createButton("Play", cardWidth / 5, 0, 3 * cardWidth / 5, cardHeight / 10, this.cardListener.playCardButtonListener(this));
+        this.depositButton = createButton("S", 2 * cardWidth / 3, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.depositCardButtonListener(this));
+        this.moveButton = createButton("M", 1 * cardWidth / 3, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.moveCardButtonListener(this));
+        this.discardButton = createButton("T", 0, 7 * cardHeight / 8, cardWidth / 3, cardHeight / 8, this.cardListener.discardCardButtonListener(this));
         this.add(this.playButton);
         this.add(this.depositButton);
         this.add(this.discardButton);
+        this.add(this.moveButton);
     }
 
     private JButton createButton(String text, int x, int y, int buttonWidth, int buttonHeight, ActionListener listener) {
@@ -80,21 +97,66 @@ public abstract class Card extends JPanel implements ICard {
         this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
     }
 
-    protected abstract void drawCard(Graphics g);
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (isDisplayable) {
-            drawCard(g);
-        }
-    }
-
     public void setIsDisplayable(boolean isDisplayable) {
         this.isDisplayable = isDisplayable;
     }
 
     public void setIsCardFront(boolean isCardFront) {
         this.isCardFront = isCardFront;
+    }
+
+    public void openPlayButtonSwitch(boolean playButtonSwitch) {
+        this.playButtonSwitch = playButtonSwitch;
+    }
+
+    public void openDepositButtonSwitch(boolean depositButtonSwitch) {
+        this.depositButtonSwitch = depositButtonSwitch;
+    }
+
+    public void openDiscardButtonSwitch(boolean discardButtonSwitch) {
+        this.discardButtonSwitch = discardButtonSwitch;
+    }
+
+    public void openMoveButtonSwitch(boolean moveButtonSwitch) {
+        this.moveButtonSwitch = moveButtonSwitch;
+    }
+
+    //-------绘制方法:
+
+    protected abstract void paintCard(Graphics g);
+
+    protected void controlButtons() {
+        if (playButtonSwitch) {
+            playButton.setVisible(true);
+        } else {
+            playButton.setVisible(false);
+        }
+        if (depositButtonSwitch) {
+            depositButton.setVisible(true);
+        } else {
+            depositButton.setVisible(false);
+        }
+        if (discardButtonSwitch) {
+            discardButton.setVisible(true);
+        } else {
+            discardButton.setVisible(false);
+        }
+        if (moveButtonSwitch) {
+            moveButton.setVisible(true);
+        } else {
+            moveButton.setVisible(false);
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        if (isDisplayable) {
+            this.setVisible(true);
+        } else {
+            this.setVisible(false);
+        }
+        controlButtons(); //不断刷新着纸牌的按钮的状态
+        paintCard(g);
     }
 }
 

@@ -2,13 +2,14 @@ package GUI;
 
 import Listener.GUIListener.GameScreenListener;
 import Module.Game;
-import Module.PlayerAndComponents.PlayerCardsPile;
+import Module.PlayerAndComponents.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import Module.GameEngine;
 
@@ -19,14 +20,14 @@ public class GameScreen extends JPanel {
     public GameEngine gameEngine;
 
     public GameScreen(Game game) {
-        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight); // 设置GameScreen的大小和位置
+
         loadAndSetBackgroundImage();
         setPreferredSize(new Dimension(ApplicationStart.screenWidth, ApplicationStart.screenHeight)); // 设置GameScreen的理想大小
         this.game = game;
         this.gameEngine = new GameEngine(game, this);
-        gameScreenListener = new GameScreenListener(game);
-        this.addKeyListener(gameScreenListener);  //添加键盘监听器到这个面板
+        this.gameScreenListener = new GameScreenListener(game);
         this.setFocusable(true); //设置面板可以获取焦点
         this.requestFocusInWindow(); //请求焦点
     }
@@ -43,43 +44,58 @@ public class GameScreen extends JPanel {
 
     public void addComponentsIntoJPanel() {
         for (int i = 0; i < Game.players.size(); i++) {
+            Player player = Game.players.get(i);
             //将Player添加到JPanel中
-            this.add(Game.players.get(i));
-            //Player的PlayerCardsPile添加到JPanel中
-            Game.players.get(i).getPlayerCardsPile().setBounds(PlayerCardsPile.playerCardsPileJPanelX, PlayerCardsPile.playerCardsPileJPanelY, PlayerCardsPile.playerCardsPileJPanelWidth, PlayerCardsPile.playerCardsPileJPanelHeight);
-            this.add(Game.players.get(i).getPlayerCardsPile());
+            this.add(player);
+            //将Player的PlayerCardsPile添加到JPanel中
+            this.add(player.playerCardsPile);
+            //将Player的Bank添加到JPanel中:
+            this.add(player.bank);
+            //将Player的Property添加到JPanel中:
+            this.add(player.property);
+            //将Player的HandCards添加到JPanel中:
+            this.add(player.handCards);
         }
         //将中央的牌堆CardsPile添加到JPanel中
         this.add(Game.cardsPile);
     }
 
-    private void drawBackground(Graphics g) {
+    private void paintBackground(Graphics g) {
         if (gameScreenBackground != null) { // 如果背景图片已加载
             g.drawImage(gameScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight, null);
         }
     }
 
-    private void drawPausePrompt(Graphics g) {
-        if (game.getIsPaused()) {
-            Font originalFont = g.getFont(); // 保存原始字体
-            Color originalColor = g.getColor(); // 保存原始颜色
-
-            g.setFont(new Font("Arial", Font.BOLD, 24)); // 设置新的字体
-            g.setColor(Color.RED); // 设置新的颜色
-
-            int x = (ApplicationStart.screenWidth / 12) * 5;
-            int y = ApplicationStart.screenHeight / 5; // 对y坐标进行微调，以便字符串在指定的区域内垂直居中
-            g.drawString("Press P to cancel the pause", x, y);
-
-            g.setFont(originalFont); // 恢复原始字体
-            g.setColor(originalColor); // 恢复原始颜色
+    private void paintDiscardReminder(Graphics g) { //当回合结束前,如果玩家手上的牌大于7张,就提醒玩家弃牌!
+        if (Game.players.get(0).isPlayerTurn()) {
+            if (Game.players.get(0).actionNumber <= 0) {
+                if (Game.players.get(0).isInAction()) {
+                    boolean flag = true;
+                    for (Player player : Game.players) {
+                        if (player.interactivePlayers.size() > 0) { //玩家间的交互如果没完成,则
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (Game.players.get(0).numberOfHandCards() <= 7) { //牌若小于等于7
+                        flag = false;
+                    }
+                    if (flag) {
+                        g.setColor(Color.RED); // 设置文本颜色
+                        g.setFont(new Font("Arial", Font.BOLD, 30)); // 设置字体和大小
+                        g.drawString("Discard to 7 remaining!", 5 * ApplicationStart.screenWidth / 12 - ApplicationStart.screenWidth / 40, 4 * ApplicationStart.screenHeight / 5 - ApplicationStart.screenHeight / 10);
+                    }
+                }
+            }
         }
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawBackground(g);
-        drawPausePrompt(g);
+        paintBackground(g);
+        paintDiscardReminder(g);
     }
+
 }
