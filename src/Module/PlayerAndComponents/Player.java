@@ -239,6 +239,17 @@ public class Player extends JPanel {
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForSinglePropertyButtonListener(this));
     }
 
+    public void payForWholeProperty(Player propertyBreaker) {
+        this.setIsInAction(true);
+        this.interactivePlayers.add(propertyBreaker);
+        //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+        this.handCardsButton.setVisible(false);
+        //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+        this.sayNoButton.setVisible(true);
+        this.abandonSayNoButton.setVisible(true);
+        abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForWholePropertyButtonListener(this));
+    }
+
     public boolean whetherPlayerHasProperty() { //判断玩家是否拥有房产
         for (PropertyCardType propertyType : PropertyCardType.values()) {
             if (this.property.propertyNumberMap.get(propertyType) > 0) {
@@ -246,6 +257,41 @@ public class Player extends JPanel {
             }
         }
         return false;
+    }
+
+    public boolean whetherPlayerHasWholeProperty() { //判断玩家是否拥有一整套的房产
+        for (PropertyCardType propertyType : PropertyCardType.values()) {
+            if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) { //如果有一套完整的房产
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addAndPaintDealBreakerChooseButtons(Player breaker) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+        ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
+        for (Player player : Game.players) {
+            if (player != breaker) {
+                if (player.whetherPlayerHasWholeProperty()) { //如果玩家拥有一整套房产
+                    playersWhoHasTempButton.add(player);
+                    JButton chosenButton = new JButton("↓");
+                    chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
+                    Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                    chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    chosenButton.addActionListener(playerListener.dealBreakerChooseButtonListener(breaker, player, playersWhoHasTempButton));
+                    player.add(chosenButton);
+                    chosenButton.setVisible(true);
+                }
+            }
+        }
+    }
+
+    public void hideAndRemoveDealBreakerChooseButtons(ArrayList<Player> playersWhoHasTempButton) {
+        for (Player player : playersWhoHasTempButton) {
+            int lastIndex = player.getComponentCount() - 1;
+            player.getComponent(lastIndex).setVisible(false);
+            player.remove(lastIndex);
+        }
     }
 
     public void addAndPaintSlyDealChooseButtons(Player thief) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮

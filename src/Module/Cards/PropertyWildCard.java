@@ -127,6 +127,7 @@ public class PropertyWildCard extends Card {
         } else if (type == PropertyWildCardType.MULTI_COLOUR) {
             PropertyCardType[] allPropertyCardTypes = PropertyCardType.values(); //获取所有单色卡的类型
             for (int i = 0; i < allPropertyCardTypes.length; i++) {
+                //TODO 可能存在BUG
                 if (allPropertyCardTypes[i].equals(currentType)) {
                     currentType = allPropertyCardTypes[(i + 1) % 10];
                     break;

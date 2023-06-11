@@ -1,6 +1,7 @@
 package Listener.ModuleListener.CardsListener;
 
 import Module.Cards.*;
+import Module.Cards.CardsEnum.PropertyCardType;
 import Module.Cards.CardsEnum.RentCardType;
 import Module.PlayerAndComponents.Player;
 import Module.Game;
@@ -207,14 +208,15 @@ public class CardListener {
         };
     }
 
+    //只偷取一张房产卡
     public ActionListener stealSinglePropertyButtonListener(Player propertyOwner, Card stolenCard) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Player propertyThief = propertyOwner.interactivePlayers.get(0); //房产偷窃者
                 //将被偷的Card添加到对手的房产中:
-                propertyOwner.pledgeCardFromProperty.add(stolenCard);
-                propertyThief.property.placePropertyCardAndShowTable(propertyOwner.property.removeCardFromProperty(stolenCard));
+                propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
+                propertyThief.property.placePropertyCardAndShowTable(propertyOwner.pledgeCardFromProperty.get(0));
                 //将房产上的Steal按钮给删除:
                 propertyOwner.property.hideAndRemoveStolenButtons(propertyOwner);
                 //将被偷着在本次互动中受影响的参数进行回滚:
@@ -245,4 +247,88 @@ public class CardListener {
             }
         };
     }
+
+    //偷取一整套房产
+    public ActionListener stealWholePropertyButtonListener(Player propertyOwner, Card stolenCard) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //首次进行选牌
+                if (propertyOwner.pledgeCardFromProperty.size() == 0) {
+                    if (stolenCard instanceof PropertyCard || stolenCard instanceof PropertyWildCard) {
+                        PropertyCardType propertyCardType = null;
+                        if (stolenCard instanceof PropertyCard) {
+                            propertyCardType = ((PropertyCard) stolenCard).type;
+                        } else {
+                            propertyCardType = ((PropertyWildCard) stolenCard).currentType;
+                        }
+
+                        //判断被选中的牌组在Owner的房产中是否组成了一套:
+                        if (propertyOwner.property.propertyNumberMap.get(propertyCardType) >= PropertyCard.judgeCompleteSet(propertyCardType)) {
+                            propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
+                        }
+                    }
+                } else { //玩家已经选过接下来要偷取的房产的类型了
+                    if (stolenCard instanceof PropertyCard || stolenCard instanceof PropertyWildCard) {
+                        PropertyCardType propertyCardType = null;
+                        if (stolenCard instanceof PropertyCard) {
+                            propertyCardType = ((PropertyCard) stolenCard).type;
+                        } else {
+                            propertyCardType = ((PropertyWildCard) stolenCard).currentType;
+                        }
+                        PropertyCardType expectedCardType = null;
+                        if (propertyOwner.pledgeCardFromProperty.get(0) instanceof PropertyCard) {
+                            expectedCardType = ((PropertyCard) propertyOwner.pledgeCardFromProperty.get(0) ).type;
+                        } else {
+                            expectedCardType = ((PropertyWildCard) propertyOwner.pledgeCardFromProperty.get(0) ).currentType;
+                        }
+
+                        //判断被选中的牌组在Owner的房产中是否组成了一套:
+                        if (propertyCardType.equals(expectedCardType)) {
+                            //将被偷的Card添加到抵押列表中
+                            propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
+
+                            if (propertyOwner.pledgeCardFromProperty.size() == PropertyCard.judgeCompleteSet(expectedCardType)) { //已经收齐了一套房产了,结束本次回合
+                                Player propertyThief = propertyOwner.interactivePlayers.get(0); //房产偷窃者
+                                //将房产上的Steal按钮给删除:
+                                propertyOwner.property.hideAndRemoveStolenButtons(propertyOwner);
+                                //为小偷的Property中添加房产:
+                                for (Card propertyCard : propertyOwner.pledgeCardFromProperty) {
+                                    propertyThief.property.placePropertyCardAndShowTable(propertyCard);
+                                }
+
+                                //将被偷者在本次互动中受影响的参数进行回滚:
+                                propertyOwner.property.closeButton.setVisible(true);
+                                propertyOwner.debt = 0;
+                                propertyOwner.singleActionCardsBuffer.clear();
+                                propertyOwner.interactivePlayers.clear();
+                                propertyOwner.pledgeCardFromProperty.clear();
+                                propertyOwner.pledgeCardFromBank.clear();
+                                //propertyOwner.setIsInAction(false); //已经在打开房产面板时将该IsInAction设置为false了
+
+                                //小偷的本次action全部结束
+                                propertyThief.setIsInAction(true);
+                                propertyThief.interactivePlayers.remove(0);
+                                propertyThief.singleActionCardsBuffer.clear();
+                                propertyThief.interactivePlayers.clear();
+                                propertyThief.playerCardsPile.updateAndShowCards();
+
+                                //关闭被偷玩家的房产:
+                                propertyOwner.whetherViewComponent = false;
+                                propertyOwner.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                                for (Player player : Game.players) {
+                                    player.setVisible(true);
+                                    if (player.isPlayerTurn()) {
+                                        player.playerCardsPile.updateAndShowCards();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+
 }

@@ -50,50 +50,29 @@ public class PropertyCard extends Card {
         return propertyCards;
     }
 
-    public static boolean judgeCompleteSet(PropertyCardType propertyType, int number) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
-        boolean flag = false;
+    public static int judgeCompleteSet(PropertyCardType propertyType) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
         if (propertyType.equals(PropertyCardType.RAILROAD)) {
-            if (number >= 4) {
-                flag = true;
-            }
+            return 4;
         } else if (propertyType.equals(PropertyCardType.RED)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.ORANGE)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.YELLOW)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.GREEN)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.BLUE)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.LIGHTBLUE)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.PINK)) {
-            if (number >= 3) {
-                flag = true;
-            }
+            return 3;
         } else if (propertyType.equals(PropertyCardType.BROWN)) {
-            if (number >= 2) {
-                flag = true;
-            }
+            return 2;
         } else if (propertyType.equals(PropertyCardType.UTILITY)) {
-            if (number >= 2) {
-                flag = true;
-            }
+            return 2;
         }
-        return flag;
+        return 0;
     }
 
     @Override

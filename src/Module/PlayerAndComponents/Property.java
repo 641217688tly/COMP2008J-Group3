@@ -173,7 +173,7 @@ public class Property extends JPanel { //房产类
 
     private int calculateExtraRent(PropertyCardType propertyType, int propertyNumber, ArrayList<Integer> columns) {
         int extraRent = 0;
-        if (PropertyCard.judgeCompleteSet(propertyType, propertyNumber)) {
+        if (propertyNumber >= PropertyCard.judgeCompleteSet(propertyType)) {
             for (Integer column : columns) {
                 boolean flag = false;
                 for (int row = 0; row < 5; row++) {
@@ -212,7 +212,23 @@ public class Property extends JPanel { //房产类
         return totalAssets;
     }
 
-    public void addAndPaintStealButtons() { //创建用于选择想偷窃的房产的选择按钮
+    public void addAndPaintStealWholePropertyButtons() { //创建用于选择想偷窃的房产的选择按钮
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] != null) {
+                    JButton stealButton = new JButton("Steal");
+                    stealButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                    Font buttonFont = new Font("Arial", Font.BOLD, 8);
+                    stealButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    stealButton.addActionListener((new CardListener()).stealWholePropertyButtonListener(owner, cardsTable[row][column]));
+                    cardsTable[row][column].add(stealButton);
+                    stealButton.setVisible(true);
+                }
+            }
+        }
+    }
+
+    public void addAndPaintStealSinglePropertyButtons() { //创建用于选择想偷窃的房产的选择按钮
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 11; column++) {
                 if (cardsTable[row][column] != null) {
@@ -229,7 +245,7 @@ public class Property extends JPanel { //房产类
 
     }
 
-    public void hideAndRemoveStolenButtons(Player stolenPlayer) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的PledgeButtons
+    public void hideAndRemoveStolenButtons(Player stolenPlayer) {
         //先删除房产中现存卡牌上的按钮
         for (int row = 0; row < 5; row++) {
             for (int column = 0; column < 11; column++) {

@@ -19,14 +19,14 @@ public class ActionCard extends Card {
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> actionCards = new ArrayList<>();
-        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
-        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
+        //actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
+        //actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
         actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCard/ActionCardDealBreaker.jpg"), 5));
         actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCard/ActionCardDealBreaker.jpg"), 5));
         for (int i = 0; i < 3; i++) {
             actionCards.add(new ActionCard(ActionCardType.JUST_SAY_NO, new ImageIcon("images/Card/ActionCard/ActionCardSayNo.jpg"), 4));
         }
-        for (int i = 0; i < 4; i++) {
+        /*for (int i = 0; i < 4; i++) {
             actionCards.add(new ActionCard(ActionCardType.FORCE_DEAL, new ImageIcon("images/Card/ActionCard/ActionCardForcedDeal.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
@@ -46,7 +46,7 @@ public class ActionCard extends Card {
         }
         for (int i = 0; i < 3; i++) {
             actionCards.add(new ActionCard(ActionCardType.SLY_DEAL, new ImageIcon("images/Card/ActionCard/ActionCardSlyDeal.jpg"), 3));
-        }
+        }*/
         return actionCards;
     }
 
@@ -214,12 +214,49 @@ public class ActionCard extends Card {
             if (owner != null) {
                 if (owner.isPlayerTurn()) {
                     if (owner.actionNumber > 0) {
-                        if (whetherSlyDealCardCanPlay()) { //先判断场上的玩家是否有房产
-                            updatePlayerInteractiveState();
-                            //如果有,则为除了卡牌使用者外的所有玩家加上用于被选择的按钮
-                            owner.addAndPaintSlyDealChooseButtons(owner);
-                            owner.oneTurnCardsBuffer.add(this);
-                            discard();
+                        if (owner.isInAction()) {
+                            if (whetherSlyDealCardCanPlay()) { //先判断场上的玩家是否有房产
+                                updatePlayerInteractiveState();
+                                //如果有,则为除了卡牌使用者外的所有玩家加上用于被选择的按钮
+                                owner.addAndPaintSlyDealChooseButtons(owner);
+                                owner.oneTurnCardsBuffer.add(this);
+                                discard();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean whetherDealBreakerCardCanPlay() { //判断场上的玩家是否有一整套房产
+        for (Player player : Game.players) {
+            if (player != owner) {
+                for (PropertyCardType propertyType : PropertyCardType.values()) {
+                    if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) { //如果有一套完整的房产
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+
+    //TODO 被偷的玩家使用sayNO牌之后,轮到当前玩家选择是否SayNo,此时当前玩家的playerCardsPile会被呈现(此外,好像还会出现多色牌的PropertyType判定不正常的情况)
+    private void playDealBreaker() { //偷一整套房产
+        if (this.type.equals(ActionCardType.DEAL_BREAKER)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        if (owner.isInAction()) {
+                            if (whetherDealBreakerCardCanPlay()) { //先判断场上的玩家是否有房产
+                                updatePlayerInteractiveState();
+                                //如果有,则为除了卡牌使用者外的所有玩家加上用于被选择的按钮
+                                owner.addAndPaintDealBreakerChooseButtons(owner);
+                                owner.oneTurnCardsBuffer.add(this);
+                                discard();
+                            }
                         }
                     }
                 }
@@ -244,23 +281,24 @@ public class ActionCard extends Card {
                     owner.handCards.closeButton.setVisible(true);
                     owner.handCards.setVisible(false);
                     owner.handCards.removeAll(); //主要是防止JPanel组件上的冲突
-                    for (Player player : Game.players) {
-                        player.setVisible(true);
-                        if (player.isPlayerTurn()) {
-                            player.playerCardsPile.updateAndShowCards();
-                        }
-                    }
+
                     Player tempOwner = owner;
                     discard(); //因为discard()会将卡牌的owner设置成null,因此必须用一个变量暂存owner
                     //让对手行动
                     tempOwner.interactivePlayers.get(0).setIsInAction(true);
                     tempOwner.setIsInAction(false); //暂时结束自己的行动
                     tempOwner.interactivePlayers.get(0).respondSayNoCard(); //将选择权交给对手
+
+                    for (Player player : Game.players) {
+                        player.setVisible(true);
+                        if (player.isPlayerTurn()) {
+                            player.playerCardsPile.setVisible(false);
+                        }
+                    }
                 }
             }
         }
     }
-
 
     @Override
     public void play() { //(被)使用
@@ -271,6 +309,7 @@ public class ActionCard extends Card {
         playBirthday();
         playDebtCollector();
         playSlyDeal();
+        playDealBreaker();
     }
 
     @Override

@@ -45,7 +45,7 @@ public class CardsPile extends JPanel {
         //drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyWildCard.initializeCardsForCardsPile());
-        drawPile.addAll(RentCard.initializeCardsForCardsPile());
+        //drawPile.addAll(RentCard.initializeCardsForCardsPile());
         Collections.shuffle(drawPile); //洗牌
         for (int i = 0; i < drawPile.size(); i++) {
             this.setCardBounds(drawPile.get(i), drawPileX, drawPileY, false, false); //设置为不可视且背面朝上
@@ -71,8 +71,10 @@ public class CardsPile extends JPanel {
     public Card[] drawCardFromDrawPile(int number) { //抽牌,所有抽出来的牌都:1.没有按钮 2.不可视
         Card[] cards = new Card[number];
         if (drawPile.size() < number) {
-            drawPile.peek().setIsDisplayable(false);
-            this.remove(drawPile.peek());
+            if (drawPile.size() > 0) {
+                drawPile.peek().setIsDisplayable(false);
+                this.remove(drawPile.peek());
+            }
             reuseCardsFromDiscardPile();
         }
         for (int i = 0; i < number; i++) {
