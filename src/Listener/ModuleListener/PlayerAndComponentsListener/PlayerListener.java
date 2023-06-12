@@ -115,6 +115,22 @@ public class PlayerListener {
     }
 
     //对于SlyDeal牌(需要选择一个作用对象),为每个玩家有房产的玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
+    public ActionListener forcedDealChooseButtonListener(Player inTurnPlayer, Player forcedDealPlayer, ArrayList<Player> playersWhoHasTempButton) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inTurnPlayer.hideAndRemoveForcedDealChooseButtons(playersWhoHasTempButton); // 隐藏并删除所有被添加按钮的临时玩家身上的按钮
+                inTurnPlayer.interactivePlayers.add(forcedDealPlayer);
+                inTurnPlayer.actionNumber = inTurnPlayer.actionNumber - 1;
+                inTurnPlayer.setIsInAction(false);
+                forcedDealPlayer.setIsInAction(true);
+                inTurnPlayer.playerCardsPile.updateAndShowCards();
+                forcedDealPlayer.swapProperty(inTurnPlayer);
+            }
+        };
+    }
+
+    //对于SlyDeal牌(需要选择一个作用对象),为每个玩家有房产的玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
     public ActionListener slyDealChooseButtonListener(Player thief, Player stolenPlayer, ArrayList<Player> playersWhoHasTempButton) {
         return new ActionListener() {
             @Override
@@ -213,7 +229,7 @@ public class PlayerListener {
                             } else if (((ActionCard) playedCard).type.equals(ActionCardType.SLY_DEAL)) {
                                 nextCompetitor.payForProperty(inTurnPlayer);
                             } else if (((ActionCard) playedCard).type.equals(ActionCardType.FORCE_DEAL)) {
-                                //TODO 判断不同ActionCard的类型并给出不同的处理方案
+                                nextCompetitor.swapProperty(inTurnPlayer);
                             } else if (((ActionCard) playedCard).type.equals(ActionCardType.DEAL_BREAKER)) {
                                 nextCompetitor.payForWholeProperty(inTurnPlayer);
                             }
@@ -296,6 +312,47 @@ public class PlayerListener {
                 }
 
                 //将偷窃者的abandonSayNoButton的监听器也移除掉
+                Player inTurnPlayer = propertyOwner.interactivePlayers.get(0);
+                ActionListener[] inTurnPlayerAbandonSayNoButtonActionListeners = inTurnPlayer.abandonSayNoButton.getActionListeners();
+                for (ActionListener actionListener : inTurnPlayerAbandonSayNoButtonActionListeners) {
+                    inTurnPlayer.abandonSayNoButton.removeActionListener(actionListener);
+                }
+            }
+        };
+    }
+
+    public ActionListener abandonSayNoAndAcceptSwapPropertyButtonListener(Player propertyOwner) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                propertyOwner.setIsInAction(false);
+                propertyOwner.interactivePlayers.get(0).setIsInAction(true); //由SlyDeal的发起者选取被偷窃者的一张房产
+
+                //强制打开被交换者的房产:
+                for (Player player : Game.players) {
+                    player.setVisible(false);
+                    if (player.isPlayerTurn()) {
+                        player.playerCardsPile.setVisible(false);
+                    }
+                }
+                propertyOwner.whetherViewComponent = true;
+                propertyOwner.property.closeButton.setVisible(false);
+                propertyOwner.property.setVisible(true);
+                propertyOwner.property.reallocateAllCards();
+
+                //为被迫交换翻唱的玩家的房产牌添加"swap"按钮
+                propertyOwner.property.addAndPaintSwapPropertyButtons();
+                propertyOwner.handCardsButton.setVisible(true);
+
+                //隐藏SayNoCard的开关并清空监视器:
+                propertyOwner.sayNoButton.setVisible(false);
+                propertyOwner.abandonSayNoButton.setVisible(false);
+                ActionListener[] abandonSayNoButtonActionListeners = propertyOwner.abandonSayNoButton.getActionListeners();
+                for (ActionListener actionListener : abandonSayNoButtonActionListeners) {
+                    propertyOwner.abandonSayNoButton.removeActionListener(actionListener);
+                }
+
+                //将交换者的abandonSayNoButton的监听器也移除掉
                 Player inTurnPlayer = propertyOwner.interactivePlayers.get(0);
                 ActionListener[] inTurnPlayerAbandonSayNoButtonActionListeners = inTurnPlayer.abandonSayNoButton.getActionListeners();
                 for (ActionListener actionListener : inTurnPlayerAbandonSayNoButtonActionListeners) {

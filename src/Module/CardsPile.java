@@ -41,7 +41,7 @@ public class CardsPile extends JPanel {
     private void initializeCardsPile() {
         this.drawPile = new Stack<Card>(); //抽牌堆
         this.discardPile = new Stack<Card>(); //废牌回收堆
-        drawPile.addAll(ActionCard.initializeCardsForCardsPile());
+        //drawPile.addAll(ActionCard.initializeCardsForCardsPile());
         //drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyWildCard.initializeCardsForCardsPile());

@@ -106,11 +106,11 @@ public class Game implements IGame {
         for (Player player : Game.players) {
             int wholeSetNumber = 0;
             for (PropertyCardType propertyType : PropertyCardType.values()) {
-                if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) {
+                if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) {
                     wholeSetNumber++;
-                }
-                if (wholeSetNumber >= 3) {
-                    return true;
+                    if (wholeSetNumber >= 3) {
+                        return true;
+                    }
                 }
             }
         }

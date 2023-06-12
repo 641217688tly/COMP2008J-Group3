@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import Module.GameEngine;
 
@@ -90,12 +89,28 @@ public class GameScreen extends JPanel {
         }
     }
 
+    private void paintSwappedCard(Graphics g) {
+        //TODO 是否能够在swap卡牌的时候绘制卡牌到桌面上?
+        g.drawImage(gameScreenBackground, 0, 0, 7 * ApplicationStart.screenWidth / 12, 2 * ApplicationStart.screenHeight / 5, null);
+
+    }
+
+    private void paintGameOverMessage(Graphics g) {
+        if (game.isGameOver()) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("Game Over!", 5 * ApplicationStart.screenWidth / 12 + ApplicationStart.screenWidth / 100, ApplicationStart.screenHeight / 5);
+            g.drawString("The Winner Is: " + Game.players.get(0).name + "!", 5 * ApplicationStart.screenWidth / 12 - ApplicationStart.screenWidth / 48, 2 * ApplicationStart.screenHeight / 5 - ApplicationStart.screenHeight / 10);
+
+        }
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // 调用父类方法以确保正常绘制
         paintBackground(g);
         paintDiscardReminder(g);
+        paintGameOverMessage(g);
     }
 
 }

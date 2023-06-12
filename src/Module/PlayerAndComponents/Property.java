@@ -173,7 +173,7 @@ public class Property extends JPanel { //房产类
 
     private int calculateExtraRent(PropertyCardType propertyType, int propertyNumber, ArrayList<Integer> columns) {
         int extraRent = 0;
-        if (propertyNumber >= PropertyCard.judgeCompleteSet(propertyType)) {
+        if (propertyNumber >= PropertyCard.judgeCompleteSetNumber(propertyType)) {
             for (Integer column : columns) {
                 boolean flag = false;
                 for (int row = 0; row < 5; row++) {
@@ -210,6 +210,43 @@ public class Property extends JPanel { //房产类
             }
         }
         return totalAssets;
+    }
+
+    public void addAndPaintSwapPropertyButtons() { //创建用于选择想交换的房产的选择按钮
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] != null) {
+                    JButton stealButton = new JButton("Swap");
+                    stealButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
+                    Font buttonFont = new Font("Arial", Font.BOLD, 8);
+                    stealButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    stealButton.addActionListener((new CardListener()).swapPropertyButtonListener(owner, cardsTable[row][column]));
+                    cardsTable[row][column].add(stealButton);
+                    stealButton.setVisible(true);
+                }
+            }
+        }
+    }
+
+    public void hideAndRemoveSwapButtons() {
+        //先删除房产中现存卡牌上的按钮
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (cardsTable[row][column] != null) {
+                    int lastIndex = cardsTable[row][column].getComponentCount() - 1;
+                    cardsTable[row][column].getComponent(lastIndex).setVisible(false);
+                    cardsTable[row][column].remove(lastIndex);
+                }
+            }
+        }
+        //再删除被添加到抵押数组中卡牌上的按钮:
+        if (owner.pledgeCardFromProperty.size() > 0) {
+            for (Card card : owner.pledgeCardFromProperty) {
+                int lastIndex = card.getComponentCount() - 1;
+                card.getComponent(lastIndex).setVisible(false);
+                card.remove(lastIndex);
+            }
+        }
     }
 
     public void addAndPaintStealWholePropertyButtons() { //创建用于选择想偷窃的房产的选择按钮

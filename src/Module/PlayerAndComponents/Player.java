@@ -239,6 +239,17 @@ public class Player extends JPanel {
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForSinglePropertyButtonListener(this));
     }
 
+    public void swapProperty(Player inTurnPlayer) { //交换房产
+        this.setIsInAction(true);
+        this.interactivePlayers.add(inTurnPlayer);
+        //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+        this.handCardsButton.setVisible(false);
+        //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+        this.sayNoButton.setVisible(true);
+        this.abandonSayNoButton.setVisible(true);
+        abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndAcceptSwapPropertyButtonListener(this));
+    }
+
     public void payForWholeProperty(Player propertyBreaker) {
         this.setIsInAction(true);
         this.interactivePlayers.add(propertyBreaker);
@@ -250,9 +261,9 @@ public class Player extends JPanel {
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForWholePropertyButtonListener(this));
     }
 
-    public boolean whetherPlayerHasProperty() { //判断玩家是否拥有房产
+    public boolean whetherPlayerHasSingleProperty() { //判断玩家是否拥有单独的房产(判断它是否属于一整套房产中的一个)
         for (PropertyCardType propertyType : PropertyCardType.values()) {
-            if (this.property.propertyNumberMap.get(propertyType) > 0) {
+            if ((this.property.propertyNumberMap.get(propertyType) > 0 && this.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || this.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
                 return true;
             }
         }
@@ -261,7 +272,7 @@ public class Player extends JPanel {
 
     public boolean whetherPlayerHasWholeProperty() { //判断玩家是否拥有一整套的房产
         for (PropertyCardType propertyType : PropertyCardType.values()) {
-            if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) { //如果有一套完整的房产
+            if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
                 return true;
             }
         }
@@ -294,11 +305,37 @@ public class Player extends JPanel {
         }
     }
 
+    public void addAndPaintForcedDealChooseButtons(Player inTurnPlayer) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+        ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
+        for (Player player : Game.players) {
+            if (player != inTurnPlayer) {
+                if (player.whetherPlayerHasSingleProperty()) { //如果玩家拥有不成套的房产
+                    playersWhoHasTempButton.add(player);
+                    JButton chosenButton = new JButton("↓");
+                    chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
+                    Font buttonFont = new Font("Arial", Font.BOLD, 10);
+                    chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    chosenButton.addActionListener(playerListener.forcedDealChooseButtonListener(inTurnPlayer, player, playersWhoHasTempButton));
+                    player.add(chosenButton);
+                    chosenButton.setVisible(true);
+                }
+            }
+        }
+    }
+
+    public void hideAndRemoveForcedDealChooseButtons(ArrayList<Player> playersWhoHasTempButton) {
+        for (Player player : playersWhoHasTempButton) {
+            int lastIndex = player.getComponentCount() - 1;
+            player.getComponent(lastIndex).setVisible(false);
+            player.remove(lastIndex);
+        }
+    }
+
     public void addAndPaintSlyDealChooseButtons(Player thief) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
         ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
         for (Player player : Game.players) {
             if (player != thief) {
-                if (player.whetherPlayerHasProperty()) { //如果玩家拥有房产
+                if (player.whetherPlayerHasSingleProperty()) { //如果玩家拥有不成套的房产
                     playersWhoHasTempButton.add(player);
                     JButton chosenButton = new JButton("↓");
                     chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);

@@ -50,7 +50,7 @@ public class PropertyCard extends Card {
         return propertyCards;
     }
 
-    public static int judgeCompleteSet(PropertyCardType propertyType) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
+    public static int judgeCompleteSetNumber(PropertyCardType propertyType) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
         if (propertyType.equals(PropertyCardType.RAILROAD)) {
             return 4;
         } else if (propertyType.equals(PropertyCardType.RED)) {

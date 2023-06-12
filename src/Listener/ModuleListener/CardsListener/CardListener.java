@@ -208,40 +208,51 @@ public class CardListener {
         };
     }
 
-    //只偷取一张房产卡
+    //只偷取一张房产卡(该卡不能是完整的房产中的一个)
     public ActionListener stealSinglePropertyButtonListener(Player propertyOwner, Card stolenCard) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Player propertyThief = propertyOwner.interactivePlayers.get(0); //房产偷窃者
-                //将被偷的Card添加到对手的房产中:
-                propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
-                propertyThief.property.placePropertyCardAndShowTable(propertyOwner.pledgeCardFromProperty.get(0));
-                //将房产上的Steal按钮给删除:
-                propertyOwner.property.hideAndRemoveStolenButtons(propertyOwner);
-                //将被偷着在本次互动中受影响的参数进行回滚:
-                propertyOwner.property.closeButton.setVisible(true);
-                propertyOwner.debt = 0;
-                propertyOwner.singleActionCardsBuffer.clear();
-                propertyOwner.interactivePlayers.clear();
-                propertyOwner.pledgeCardFromProperty.clear();
-                propertyOwner.pledgeCardFromBank.clear();
-                //propertyOwner.setIsInAction(false); //已经在打开房产面板时将该IsInAction设置为false了
+                if (stolenCard instanceof PropertyCard || stolenCard instanceof PropertyWildCard) {
+                    PropertyCardType propertyCardType = null;
+                    if (stolenCard instanceof PropertyCard) {
+                        propertyCardType = ((PropertyCard) stolenCard).type;
+                    } else {
+                        propertyCardType = ((PropertyWildCard) stolenCard).currentType;
+                    }
+                    //确保玩家选择的property牌要么是未成套的,要么是虽然成套了,但有超过一套房产所需PropertyCard数量的Card
+                    if ((propertyOwner.property.propertyNumberMap.get(propertyCardType) > 0 && propertyOwner.property.propertyNumberMap.get(propertyCardType) < PropertyCard.judgeCompleteSetNumber(propertyCardType)) || propertyOwner.property.propertyNumberMap.get(propertyCardType) > PropertyCard.judgeCompleteSetNumber(propertyCardType)) {
+                        Player propertyThief = propertyOwner.interactivePlayers.get(0); //房产偷窃者
+                        //将被偷的Card添加到对手的房产中:
+                        propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
+                        propertyThief.property.placePropertyCardAndShowTable(propertyOwner.pledgeCardFromProperty.get(0));
+                        //将房产上的Steal按钮给删除:
+                        propertyOwner.property.hideAndRemoveStolenButtons(propertyOwner);
+                        //将被偷着在本次互动中受影响的参数进行回滚:
+                        propertyOwner.property.closeButton.setVisible(true);
+                        propertyOwner.debt = 0;
+                        propertyOwner.singleActionCardsBuffer.clear();
+                        propertyOwner.interactivePlayers.clear();
+                        propertyOwner.pledgeCardFromProperty.clear();
+                        propertyOwner.pledgeCardFromBank.clear();
+                        //propertyOwner.setIsInAction(false); //已经在打开房产面板时将该IsInAction设置为false了
 
-                //小偷的本次action全部结束
-                propertyThief.setIsInAction(true);
-                propertyThief.interactivePlayers.remove(0);
-                propertyThief.singleActionCardsBuffer.clear();
-                propertyThief.interactivePlayers.clear();
-                propertyThief.playerCardsPile.updateAndShowCards();
+                        //小偷的本次action全部结束
+                        propertyThief.setIsInAction(true);
+                        propertyThief.interactivePlayers.remove(0);
+                        propertyThief.singleActionCardsBuffer.clear();
+                        propertyThief.interactivePlayers.clear();
+                        propertyThief.playerCardsPile.updateAndShowCards();
 
-                //关闭被偷玩家的房产:
-                propertyOwner.whetherViewComponent = false;
-                propertyOwner.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
-                for (Player player : Game.players) {
-                    player.setVisible(true);
-                    if (player.isPlayerTurn()) {
-                        player.playerCardsPile.updateAndShowCards();
+                        //关闭被偷玩家的房产:
+                        propertyOwner.whetherViewComponent = false;
+                        propertyOwner.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                        for (Player player : Game.players) {
+                            player.setVisible(true);
+                            if (player.isPlayerTurn()) {
+                                player.playerCardsPile.updateAndShowCards();
+                            }
+                        }
                     }
                 }
             }
@@ -264,7 +275,7 @@ public class CardListener {
                         }
 
                         //判断被选中的牌组在Owner的房产中是否组成了一套:
-                        if (propertyOwner.property.propertyNumberMap.get(propertyCardType) >= PropertyCard.judgeCompleteSet(propertyCardType)) {
+                        if (propertyOwner.property.propertyNumberMap.get(propertyCardType) >= PropertyCard.judgeCompleteSetNumber(propertyCardType)) {
                             propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
                         }
                     }
@@ -278,9 +289,9 @@ public class CardListener {
                         }
                         PropertyCardType expectedCardType = null;
                         if (propertyOwner.pledgeCardFromProperty.get(0) instanceof PropertyCard) {
-                            expectedCardType = ((PropertyCard) propertyOwner.pledgeCardFromProperty.get(0) ).type;
+                            expectedCardType = ((PropertyCard) propertyOwner.pledgeCardFromProperty.get(0)).type;
                         } else {
-                            expectedCardType = ((PropertyWildCard) propertyOwner.pledgeCardFromProperty.get(0) ).currentType;
+                            expectedCardType = ((PropertyWildCard) propertyOwner.pledgeCardFromProperty.get(0)).currentType;
                         }
 
                         //判断被选中的牌组在Owner的房产中是否组成了一套:
@@ -288,7 +299,7 @@ public class CardListener {
                             //将被偷的Card添加到抵押列表中
                             propertyOwner.pledgeCardFromProperty.add(propertyOwner.property.removeCardFromProperty(stolenCard));
 
-                            if (propertyOwner.pledgeCardFromProperty.size() == PropertyCard.judgeCompleteSet(expectedCardType)) { //已经收齐了一套房产了,结束本次回合
+                            if (propertyOwner.pledgeCardFromProperty.size() == PropertyCard.judgeCompleteSetNumber(expectedCardType)) { //已经收齐了一套房产了,结束本次回合
                                 Player propertyThief = propertyOwner.interactivePlayers.get(0); //房产偷窃者
                                 //将房产上的Steal按钮给删除:
                                 propertyOwner.property.hideAndRemoveStolenButtons(propertyOwner);
@@ -323,6 +334,94 @@ public class CardListener {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    public ActionListener swapPropertyButtonListener(Player inTurnPlayerOrForcedDealPlayer, Card swappedCard) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (inTurnPlayerOrForcedDealPlayer.isPlayerTurn()) {
+                    if (swappedCard instanceof PropertyCard || swappedCard instanceof PropertyWildCard) {
+                        PropertyCardType propertyCardType = null;
+                        if (swappedCard instanceof PropertyCard) {
+                            propertyCardType = ((PropertyCard) swappedCard).type;
+                        } else {
+                            propertyCardType = ((PropertyWildCard) swappedCard).currentType;
+                        }
+                        //确保玩家选择的property牌要么是未成套的,要么是虽然成套了,但有超过一套房产所需PropertyCard数量的Card
+                        if ((inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) > 0 && inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) < PropertyCard.judgeCompleteSetNumber(propertyCardType)) || inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) > PropertyCard.judgeCompleteSetNumber(propertyCardType)) {
+                            //先移除所有房产的按钮:
+                            inTurnPlayerOrForcedDealPlayer.property.hideAndRemoveSwapButtons();
+                            //将被选中的房产添加到队列中:
+                            inTurnPlayerOrForcedDealPlayer.pledgeCardFromProperty.add(inTurnPlayerOrForcedDealPlayer.property.removeCardFromProperty(swappedCard));
+                            //关闭房产:
+                            inTurnPlayerOrForcedDealPlayer.whetherViewComponent = false;
+                            inTurnPlayerOrForcedDealPlayer.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                            for (Player player : Game.players) {
+                                player.setVisible(true);
+                                if (player.isPlayerTurn()) {
+                                    player.playerCardsPile.setVisible(false);
+                                }
+                            }
+                            //TODO 调用GameScreen中的方法将卡牌绘制出来?
+                        }
+                    }
+                } else {
+                    if (swappedCard instanceof PropertyCard || swappedCard instanceof PropertyWildCard) {
+                        PropertyCardType propertyCardType = null;
+                        if (swappedCard instanceof PropertyCard) {
+                            propertyCardType = ((PropertyCard) swappedCard).type;
+                        } else {
+                            propertyCardType = ((PropertyWildCard) swappedCard).currentType;
+                        }
+                        //确保玩家选择的property牌要么是未成套的,要么是虽然成套了,但有超过一套房产所需PropertyCard数量的Card
+                        if ((inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) > 0 && inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) < PropertyCard.judgeCompleteSetNumber(propertyCardType)) || inTurnPlayerOrForcedDealPlayer.property.propertyNumberMap.get(propertyCardType) > PropertyCard.judgeCompleteSetNumber(propertyCardType)) {
+                            //先移除所有房产的按钮:
+                            inTurnPlayerOrForcedDealPlayer.property.hideAndRemoveSwapButtons();
+                            //将被选中的房产添加到队列中:
+                            inTurnPlayerOrForcedDealPlayer.pledgeCardFromProperty.add(inTurnPlayerOrForcedDealPlayer.property.removeCardFromProperty(swappedCard));
+                            //为双方交换房产:
+                            Player inTurnPlayer = inTurnPlayerOrForcedDealPlayer.interactivePlayers.get(0);
+                            for (Card swappedProperty : inTurnPlayer.pledgeCardFromProperty) {
+                                inTurnPlayerOrForcedDealPlayer.property.placePropertyCardAndShowTable(swappedProperty);
+                            }
+                            for (Card swappedProperty : inTurnPlayerOrForcedDealPlayer.pledgeCardFromProperty) {
+                                inTurnPlayer.property.placePropertyCardAndShowTable(swappedProperty);
+                            }
+
+                            //将被交换的玩家在本次互动中受影响的参数进行回滚:
+                            inTurnPlayerOrForcedDealPlayer.property.closeButton.setVisible(true);
+                            inTurnPlayerOrForcedDealPlayer.debt = 0;
+                            inTurnPlayerOrForcedDealPlayer.singleActionCardsBuffer.clear();
+                            inTurnPlayerOrForcedDealPlayer.interactivePlayers.clear();
+                            inTurnPlayerOrForcedDealPlayer.pledgeCardFromProperty.clear();
+                            inTurnPlayerOrForcedDealPlayer.pledgeCardFromBank.clear();
+                            //propertyOwner.setIsInAction(false); //已经在打开房产面板时将该IsInAction设置为false了
+
+                            //交易发起者的本次action全部结束
+                            inTurnPlayer.setIsInAction(true);
+                            inTurnPlayer.interactivePlayers.remove(0);
+                            inTurnPlayer.singleActionCardsBuffer.clear();
+                            inTurnPlayer.interactivePlayers.clear();
+                            inTurnPlayer.playerCardsPile.updateAndShowCards();
+                            inTurnPlayer.pledgeCardFromProperty.clear();
+                            inTurnPlayer.pledgeCardFromBank.clear();
+
+                            //关闭房产:
+                            inTurnPlayerOrForcedDealPlayer.whetherViewComponent = false;
+                            inTurnPlayerOrForcedDealPlayer.property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                            for (Player player : Game.players) {
+                                player.setVisible(true);
+                                if (player.isPlayerTurn()) {
+                                    player.playerCardsPile.updateAndShowCards();
+                                }
+                            }
+                            //TODO 调用GameScreen中的方法将卡牌绘制出来?
                         }
                     }
                 }

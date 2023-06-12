@@ -1,5 +1,4 @@
 package Module;
-
 import javax.swing.*;
 
 public final class GameEngine {
@@ -27,15 +26,20 @@ public final class GameEngine {
         game.startNewGame();
 
         int delay = 1000 / 60; // Delay for 60 updates per second
-        new Timer(delay, e -> {
+        Timer timer = new Timer(delay, null);
+        timer.addActionListener(e -> {
             if (game.isGameOver()) {
-                exitGame();
+                // 启动一个新的计时器，5秒后退出程序
+                new Timer(10000, ex -> {
+                    timer.stop();
+                    exitGame();
+                }).start();
             } else {
                 game.updateGame();
-                gameScreen.repaint();
             }
-        }).start();
-
+            gameScreen.repaint();
+        });
+        timer.start();
     }
 
     private void exitGame() {

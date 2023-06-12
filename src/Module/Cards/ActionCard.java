@@ -19,14 +19,14 @@ public class ActionCard extends Card {
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> actionCards = new ArrayList<>();
-        //actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
-        //actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
+        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
+        actionCards.add(new ActionCard(ActionCardType.DOUBLE_RENT, new ImageIcon("images/Card/ActionCard/ActionCardDoubleRent.jpg"), 1));
         actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCard/ActionCardDealBreaker.jpg"), 5));
         actionCards.add(new ActionCard(ActionCardType.DEAL_BREAKER, new ImageIcon("images/Card/ActionCard/ActionCardDealBreaker.jpg"), 5));
         for (int i = 0; i < 3; i++) {
             actionCards.add(new ActionCard(ActionCardType.JUST_SAY_NO, new ImageIcon("images/Card/ActionCard/ActionCardSayNo.jpg"), 4));
         }
-        /*for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             actionCards.add(new ActionCard(ActionCardType.FORCE_DEAL, new ImageIcon("images/Card/ActionCard/ActionCardForcedDeal.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
@@ -46,7 +46,7 @@ public class ActionCard extends Card {
         }
         for (int i = 0; i < 3; i++) {
             actionCards.add(new ActionCard(ActionCardType.SLY_DEAL, new ImageIcon("images/Card/ActionCard/ActionCardSlyDeal.jpg"), 3));
-        }*/
+        }
         return actionCards;
     }
 
@@ -196,11 +196,11 @@ public class ActionCard extends Card {
         }
     }
 
-    private boolean whetherSlyDealCardCanPlay() {
+    private boolean whetherSlyDealOrForcedDealCardCanPlay() {
         for (Player player : Game.players) {
             if (player != owner) {
                 for (PropertyCardType propertyType : PropertyCardType.values()) {
-                    if (player.property.propertyNumberMap.get(propertyType) > 0) {
+                    if ((player.property.propertyNumberMap.get(propertyType) > 0 && player.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || player.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
                         return true;
                     }
                 }
@@ -209,13 +209,56 @@ public class ActionCard extends Card {
         return false;
     }
 
+    private void playForcedDeal() { //偷一张房产卡
+        if (this.type.equals(ActionCardType.FORCE_DEAL)) {
+            if (owner != null) {
+                if (owner.isPlayerTurn()) {
+                    if (owner.actionNumber > 0) {
+                        if (owner.isInAction()) {
+                            if (whetherSlyDealOrForcedDealCardCanPlay()) { //先判断场上的玩家是否有不成套的房产
+                                //再判断自己是否有不成套的房产可以用于交易:
+                                boolean flag = false;
+                                for (PropertyCardType propertyType : PropertyCardType.values()) {
+                                    if ((owner.property.propertyNumberMap.get(propertyType) > 0 && owner.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || owner.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                                if (flag) { //自己也有不成套的房产可以用于交换
+                                    updatePlayerInteractiveState();
+                                    //为除了卡牌使用者外的所有玩家加上用于被选择的按钮
+                                    owner.addAndPaintForcedDealChooseButtons(owner);
+                                    owner.oneTurnCardsBuffer.add(this);
+                                    //为玩家的房产添加上选择按钮:
+                                    owner.property.addAndPaintSwapPropertyButtons();
+                                    //强制打开该玩家的房产,让他选择自己之后要用于交易的房产牌:
+                                    for (Player player : Game.players) {
+                                        player.setVisible(false);
+                                        if (player.isPlayerTurn()) {
+                                            player.playerCardsPile.setVisible(false);
+                                        }
+                                    }
+                                    owner.whetherViewComponent = true;
+                                    owner.property.setVisible(true);
+                                    owner.property.reallocateAllCards();
+
+                                    discard();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void playSlyDeal() { //偷一张房产卡
         if (this.type.equals(ActionCardType.SLY_DEAL)) {
             if (owner != null) {
                 if (owner.isPlayerTurn()) {
                     if (owner.actionNumber > 0) {
                         if (owner.isInAction()) {
-                            if (whetherSlyDealCardCanPlay()) { //先判断场上的玩家是否有房产
+                            if (whetherSlyDealOrForcedDealCardCanPlay()) { //先判断场上的玩家是否有房产
                                 updatePlayerInteractiveState();
                                 //如果有,则为除了卡牌使用者外的所有玩家加上用于被选择的按钮
                                 owner.addAndPaintSlyDealChooseButtons(owner);
@@ -233,7 +276,7 @@ public class ActionCard extends Card {
         for (Player player : Game.players) {
             if (player != owner) {
                 for (PropertyCardType propertyType : PropertyCardType.values()) {
-                    if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSet(propertyType)) { //如果有一套完整的房产
+                    if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
                         return true;
                     }
                 }
@@ -243,7 +286,7 @@ public class ActionCard extends Card {
         return false;
     }
 
-    //TODO 被偷的玩家使用sayNO牌之后,轮到当前玩家选择是否SayNo,此时当前玩家的playerCardsPile会被呈现(此外,好像还会出现多色牌的PropertyType判定不正常的情况)
+    //TODO 好像还会出现多色牌的PropertyType判定不正常的情况
     private void playDealBreaker() { //偷一整套房产
         if (this.type.equals(ActionCardType.DEAL_BREAKER)) {
             if (owner != null) {
@@ -310,6 +353,7 @@ public class ActionCard extends Card {
         playDebtCollector();
         playSlyDeal();
         playDealBreaker();
+        playForcedDeal();
     }
 
     @Override
