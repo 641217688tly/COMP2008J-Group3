@@ -33,144 +33,165 @@ public class RentCard extends Card {
         return rentCards;
     }
 
+    public RentCard(RentCardType type, ImageIcon image, int value) {
+        super(image, value);
+        this.type = type;
+    }
+
     public static int obtainRentNumber(PropertyCardType type, int cardsNumber) {
-        if (type.equals(PropertyCardType.BLUE)) {
-            if (cardsNumber == 1) {
-                return 3;
-            } else if (cardsNumber >= 2) {
-                return 8;
-            }
-        } else if (type.equals(PropertyCardType.BROWN)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber >= 2) {
-                return 2;
-            }
-        } else if (type.equals(PropertyCardType.GREEN)) {
-            if (cardsNumber == 1) {
-                return 2;
-            } else if (cardsNumber == 2) {
-                return 4;
-            } else if (cardsNumber >= 3) {
-                return 7;
-            }
-        } else if (type.equals(PropertyCardType.LIGHTBLUE)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber == 2) {
-                return 2;
-            } else if (cardsNumber >= 3) {
-                return 3;
-            }
-        } else if (type.equals(PropertyCardType.ORANGE)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber == 2) {
-                return 3;
-            } else if (cardsNumber >= 3) {
-                return 5;
-            }
-        } else if (type.equals(PropertyCardType.PINK)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber == 2) {
-                return 2;
-            } else if (cardsNumber >= 3) {
-                return 4;
-            }
-        } else if (type.equals(PropertyCardType.RAILROAD)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber == 2) {
-                return 2;
-            } else if (cardsNumber == 3) {
-                return 3;
-            } else if (cardsNumber >= 4) {
-                return 4;
-            }
-        } else if (type.equals(PropertyCardType.RED)) {
-            if (cardsNumber == 1) {
-                return 2;
-            } else if (cardsNumber == 2) {
-                return 3;
-            } else if (cardsNumber >= 3) {
-                return 6;
-            }
-        } else if (type.equals(PropertyCardType.YELLOW)) {
-            if (cardsNumber == 1) {
-                return 2;
-            } else if (cardsNumber == 2) {
-                return 4;
-            } else if (cardsNumber >= 3) {
-                return 6;
-            }
-        } else if (type.equals(PropertyCardType.UTILITY)) {
-            if (cardsNumber == 1) {
-                return 1;
-            } else if (cardsNumber >= 2) {
-                return 2;
-            }
+        switch (type) {
+            case BLUE:
+                if (cardsNumber == 1) {
+                    return 3;
+                } else if (cardsNumber >= 2) {
+                    return 8;
+                }
+                break;
+            case BROWN:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber >= 2) {
+                    return 2;
+                }
+                break;
+            case GREEN:
+                if (cardsNumber == 1) {
+                    return 2;
+                } else if (cardsNumber == 2) {
+                    return 4;
+                } else if (cardsNumber >= 3) {
+                    return 7;
+                }
+                break;
+            case LIGHTBLUE:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber == 2) {
+                    return 2;
+                } else if (cardsNumber >= 3) {
+                    return 3;
+                }
+                break;
+            case ORANGE:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber == 2) {
+                    return 3;
+                } else if (cardsNumber >= 3) {
+                    return 5;
+                }
+                break;
+            case PINK:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber == 2) {
+                    return 2;
+                } else if (cardsNumber >= 3) {
+                    return 4;
+                }
+                break;
+            case RAILROAD:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber == 2) {
+                    return 2;
+                } else if (cardsNumber == 3) {
+                    return 3;
+                } else if (cardsNumber >= 4) {
+                    return 4;
+                }
+                break;
+            case RED:
+                if (cardsNumber == 1) {
+                    return 2;
+                } else if (cardsNumber == 2) {
+                    return 3;
+                } else if (cardsNumber >= 3) {
+                    return 6;
+                }
+                break;
+            case YELLOW:
+                if (cardsNumber == 1) {
+                    return 2;
+                } else if (cardsNumber == 2) {
+                    return 4;
+                } else if (cardsNumber >= 3) {
+                    return 6;
+                }
+                break;
+            case UTILITY:
+                if (cardsNumber == 1) {
+                    return 1;
+                } else if (cardsNumber >= 2) {
+                    return 2;
+                }
+                break;
         }
         return 0;
     }
 
     public boolean whetherRentCardCanBeUsed(Card propertyCard) {
-        boolean flag = false;
         PropertyCardType propertyCardType = null;
         if (propertyCard instanceof PropertyCard) {
             propertyCardType = ((PropertyCard) propertyCard).type;
         } else if (propertyCard instanceof PropertyWildCard) {
             propertyCardType = ((PropertyWildCard) propertyCard).currentType;
         } else {
-            return flag;
+            return false;
         }
-        if (propertyCardType.equals(PropertyCardType.BLUE)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.BROWN)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.GREEN)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.LIGHTBLUE)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.ORANGE)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.PINK)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.RAILROAD)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.RED)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.YELLOW)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
-                flag = true;
-            }
-        } else if (propertyCardType.equals(PropertyCardType.UTILITY)) {
-            if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
-                flag = true;
-            }
+        switch (propertyCardType) {
+            case BLUE:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
+                    return true;
+                }
+                break;
+            case BROWN:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
+                    return true;
+                }
+                break;
+            case GREEN:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.BLUE_GREEN)) {
+                    return true;
+                }
+                break;
+            case LIGHTBLUE:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.LIGHTBLUE_BROWN)) {
+                    return true;
+                }
+                break;
+            case ORANGE:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
+                    return true;
+                }
+                break;
+            case PINK:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.PINK_ORANGE)) {
+                    return true;
+                }
+                break;
+            case RAILROAD:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
+                    return true;
+                }
+                break;
+            case RED:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
+                    return true;
+                }
+                break;
+            case YELLOW:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RED_YELLOW)) {
+                    return true;
+                }
+                break;
+            case UTILITY:
+                if (this.type.equals(RentCardType.WILD_RENT) || this.type.equals(RentCardType.RAILROAD_UTILITY)) {
+                    return true;
+                }
+                break;
         }
-        return flag;
-    }
-
-    public RentCard(RentCardType type, ImageIcon image, int value) {
-        super(image, value);
-        this.type = type;
+        return false;
     }
 
     private void updatePlayerInteractiveState() {
@@ -195,7 +216,7 @@ public class RentCard extends Card {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
-                        if (owner.property.whetherRentCardCanPlay(this)) {
+                        if (owner.property.whetherHasPropertyCards(this)) {
                             updatePlayerInteractiveState();
                             //检查有无双倍卡
                             Integer oldRentCardIndex = null;

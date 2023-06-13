@@ -21,6 +21,15 @@ HandCards:
     6 cards of 1M, 5 cards of 2M, 3 cards of 3M,
     3 cards of 4M, 2 cards of 5M, 1 card of 10M.
 */
+/*
+不同的回合中,卡牌的如下属性可能发生变化:
+1.位置: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
+2.正反面:isCardFront
+3.按钮的开关: 1.使用按钮的开关 2.储蓄按钮的开关 3.丢弃按钮的开关 (多色卡: 4.换色按钮的开关)
+4.是否可视: isDisplayable
+5.主人: owner
+*/
+
 package Module.Cards;
 
 import GUI.ApplicationStart;
@@ -30,15 +39,6 @@ import Module.PlayerAndComponents.Player;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-
-/*
-不同的回合中,卡牌的如下属性可能发生变化:
-1.位置: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
-2.正反面:isCardFront
-3.按钮的开关: 1.使用按钮的开关 2.储蓄按钮的开关 3.丢弃按钮的开关 (多色卡: 4.换色按钮的开关)
-4.是否可视: isDisplayable
-5.主人: owner
-*/
 
 public abstract class Card extends JPanel implements ICard {
     public static int cardHeight = (ApplicationStart.screenHeight) / 5;
@@ -91,10 +91,16 @@ public abstract class Card extends JPanel implements ICard {
         return button;
     }
 
+    //-------get和Set方法:
+
     public void setCardJPanelBounds(int cardJPanelX, int cardJPanelY) {
         this.cardJPanelX = cardJPanelX;
         this.cardJPanelY = cardJPanelY;
         this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
+    }
+
+    public boolean isCardDisplayable() {
+        return this.isDisplayable;
     }
 
     public void setIsDisplayable(boolean isDisplayable) {

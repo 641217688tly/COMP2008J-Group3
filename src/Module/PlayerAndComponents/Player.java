@@ -66,6 +66,7 @@ public class Player extends JPanel {
     public Player(String name, Image playerImage, int playerJPanelX, int playerJPanelY) {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
         setOpaque(false);
+
         this.name = name;
         this.playerImage = playerImage;
         this.playerJPanelX = playerJPanelX;
@@ -81,8 +82,8 @@ public class Player extends JPanel {
         this.property = new Property(this);
         this.interactivePlayers = new ArrayList<>();
         this.playerListener = new PlayerListener();
-        initButtons();
 
+        initButtons();
         this.setBounds(this.playerJPanelX, this.playerJPanelY, playerWidth, playerHeight); // 设置Player的大小和位置
     }
 
@@ -113,19 +114,6 @@ public class Player extends JPanel {
         return button;
     }
 
-    public void drawCards(Card[] cards) { //抽牌
-        for (int i = 0, j = 0; i < cardsTable.length; i++) {
-            if (cardsTable[i] == null) {
-                cards[j].owner = this;
-                cardsTable[i] = cards[j];
-                j = j + 1;
-                if (j >= cards.length) {
-                    break;
-                }
-            }
-        }
-    }
-
     public void moveToNextTurn() {
         this.oneTurnCardsBuffer.clear();
         this.interactivePlayers.clear();
@@ -141,6 +129,21 @@ public class Player extends JPanel {
         }
     }
 
+    public void drawCards(Card[] cards) { //抽牌
+        for (int i = 0, j = 0; i < cardsTable.length; i++) {
+            if (cardsTable[i] == null) {
+                cards[j].owner = this;
+                cardsTable[i] = cards[j];
+                j = j + 1;
+                if (j >= cards.length) {
+                    break;
+                }
+            }
+        }
+    }
+
+    //-------对Player所拥有Card的一些判定方法:
+
     public boolean containsCard(Card card) {
         boolean flag = false;
         for (int column = 0; column < 12; column++) {
@@ -150,6 +153,16 @@ public class Player extends JPanel {
             }
         }
         return flag;
+    }
+
+    public int numberOfHandCards() {
+        int counter = 0;
+        for (int i = 0; i < cardsTable.length; i++) {
+            if (cardsTable[i] != null) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     public boolean whetherHasSayNoCard() {
@@ -164,6 +177,26 @@ public class Player extends JPanel {
         }
         return false;
     }
+
+    public boolean whetherPlayerHasSingleProperty() { //判断玩家是否拥有单独的房产(判断它是否属于一整套房产中的一个)
+        for (PropertyCardType propertyType : PropertyCardType.values()) {
+            if ((this.property.propertyNumberMap.get(propertyType) > 0 && this.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || this.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean whetherPlayerHasWholeProperty() { //判断玩家是否拥有一整套的房产
+        for (PropertyCardType propertyType : PropertyCardType.values()) {
+            if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //-------回应ActionCard和RentCard的方法:
 
     //TODO inTurnPlayer在使用sayNoCard的时候,手牌区中的其他牌仍然有Play,discard等按钮,而且依然能够被使用,这点需要优化
     //回应sayNoCard
@@ -261,23 +294,7 @@ public class Player extends JPanel {
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForWholePropertyButtonListener(this));
     }
 
-    public boolean whetherPlayerHasSingleProperty() { //判断玩家是否拥有单独的房产(判断它是否属于一整套房产中的一个)
-        for (PropertyCardType propertyType : PropertyCardType.values()) {
-            if ((this.property.propertyNumberMap.get(propertyType) > 0 && this.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || this.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean whetherPlayerHasWholeProperty() { //判断玩家是否拥有一整套的房产
-        for (PropertyCardType propertyType : PropertyCardType.values()) {
-            if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
-                return true;
-            }
-        }
-        return false;
-    }
+    //-------添加或删除临时按钮的方法:
 
     public void addAndPaintDealBreakerChooseButtons(Player breaker) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
         ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
@@ -381,15 +398,7 @@ public class Player extends JPanel {
         }
     }
 
-    public int numberOfHandCards() {
-        int counter = 0;
-        for (int i = 0; i < cardsTable.length; i++) {
-            if (cardsTable[i] != null) {
-                counter++;
-            }
-        }
-        return counter;
-    }
+    //-------get和set方法:
 
     public boolean isPlayerTurn() {
         return isPlayerTurn;
@@ -459,7 +468,6 @@ public class Player extends JPanel {
         paintChosenMark(g);
         paintPlayerActionNumber(g);
         paintDebtNumber(g);
-
     }
 
 }

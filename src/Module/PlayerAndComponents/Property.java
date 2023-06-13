@@ -49,7 +49,7 @@ public class Property extends JPanel { //房产类
         loadAndSetPlayerCardsPileBackground();
         initButtons();
         initCardsCoordinates();
-        countPropertiesNumber();
+        updatePropertiesNumber();
     }
 
     private void loadAndSetPlayerCardsPileBackground() {
@@ -83,19 +83,6 @@ public class Property extends JPanel { //房产类
         card.setIsCardFront(isCardFront);
     }
 
-    public boolean whetherRentCardCanPlay(RentCard rentCard) { //检查Property是否为空,或者是虽然不为空的但没有可以用于收租的房产
-        for (int row = 0; row < 5; row++) {
-            for (int column = 0; column < 11; column++) {
-                if (this.cardsTable[row][column] instanceof PropertyCard || this.cardsTable[row][column] instanceof PropertyWildCard) {
-                    if (rentCard.whetherRentCardCanBeUsed(this.cardsTable[row][column])) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean containsCard(Card card) {
         boolean flag = false;
         for (int row = 0; row < 5; row++) {
@@ -109,7 +96,32 @@ public class Property extends JPanel { //房产类
         return flag;
     }
 
-    public void countPropertiesNumber() {
+    public int calculateTotalAssetsInProperty() { //计算银行的总资产
+        int totalAssets = 0;
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (this.cardsTable[row][column] != null) {
+                    totalAssets = totalAssets + this.cardsTable[row][column].value;
+                }
+            }
+        }
+        return totalAssets;
+    }
+
+    public boolean whetherHasPropertyCards(RentCard rentCard) { //检查Property是否为空,或者是虽然不为空的但没有可以用于收租的房产
+        for (int row = 0; row < 5; row++) {
+            for (int column = 0; column < 11; column++) {
+                if (this.cardsTable[row][column] instanceof PropertyCard || this.cardsTable[row][column] instanceof PropertyWildCard) {
+                    if (rentCard.whetherRentCardCanBeUsed(this.cardsTable[row][column])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void updatePropertiesNumber() { //更新玩家各个类型的房产的数量
         for (PropertyCardType propertyType : PropertyCardType.values()) {
             propertyNumberMap.put(propertyType, 0);
         }
@@ -134,6 +146,8 @@ public class Property extends JPanel { //房产类
             }
         }
     }
+
+    //-------计算RentCard对房产所收取的租金的方法:
 
     public int calculatedRent(Card propertyCard, boolean isDoubleRent) { //给定房产卡的类型和租金是否翻倍,计算最后的总租金
         PropertyCardType searchedType = null;
@@ -200,17 +214,7 @@ public class Property extends JPanel { //房产类
         return extraRent;
     }
 
-    public int calculateTotalAssetsInProperty() { //计算银行的总资产
-        int totalAssets = 0;
-        for (int row = 0; row < 5; row++) {
-            for (int column = 0; column < 11; column++) {
-                if (this.cardsTable[row][column] != null) {
-                    totalAssets = totalAssets + this.cardsTable[row][column].value;
-                }
-            }
-        }
-        return totalAssets;
-    }
+    //-------为Property添加和移除临时按钮的方法:
 
     public void addAndPaintSwapPropertyButtons() { //创建用于选择想交换的房产的选择按钮
         for (int row = 0; row < 5; row++) {
@@ -427,6 +431,8 @@ public class Property extends JPanel { //房产类
         reallocateAllCards();
     }
 
+    //-------放置房产和取出房产的方法:
+
     public Card removeCardFromProperty(Card removedCard) {
         for (int row = 0; row < 5; row++) {
             boolean flag = false;
@@ -442,12 +448,9 @@ public class Property extends JPanel { //房产类
             }
         }
         this.remove(removedCard);
-        countPropertiesNumber();
+        updatePropertiesNumber();
         return removedCard;
     }
-
-
-    //-----------存牌:
 
     public void placePropertyCardAndShowTable(Card card) { //将新进入Property的Card按序排放
         card.owner = this.owner;
@@ -467,7 +470,7 @@ public class Property extends JPanel { //房产类
         }
         reallocateAllCards(); //为所有的牌重新分配坐标和可视化状态
         this.add(card); //添加卡牌到JPanel中
-        countPropertiesNumber();
+        updatePropertiesNumber();
     }
 
     //-------绘制方法:
@@ -519,8 +522,5 @@ public class Property extends JPanel { //房产类
     @Override
     protected void paintComponent(Graphics g) {
         paintPropertyPile(g);
-        //reallocateAllCards();
     }
-
-
 }

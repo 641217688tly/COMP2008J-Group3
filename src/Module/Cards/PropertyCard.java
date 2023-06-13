@@ -50,29 +50,45 @@ public class PropertyCard extends Card {
         return propertyCards;
     }
 
-    public static int judgeCompleteSetNumber(PropertyCardType propertyType) { //给定房产种类和数量,判断玩家是否已经凑齐了一整套房产
-        if (propertyType.equals(PropertyCardType.RAILROAD)) {
-            return 4;
-        } else if (propertyType.equals(PropertyCardType.RED)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.ORANGE)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.YELLOW)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.GREEN)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.BLUE)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.LIGHTBLUE)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.PINK)) {
-            return 3;
-        } else if (propertyType.equals(PropertyCardType.BROWN)) {
-            return 2;
-        } else if (propertyType.equals(PropertyCardType.UTILITY)) {
-            return 2;
+    public static int judgeCompleteSetNumber(PropertyCardType propertyType) {
+        int completeSetNumber;
+
+        switch (propertyType) {
+            case RAILROAD:
+                completeSetNumber = 4;
+                break;
+            case RED:
+                completeSetNumber = 3;
+                break;
+            case ORANGE:
+                completeSetNumber = 3;
+                break;
+            case YELLOW:
+                completeSetNumber = 3;
+                break;
+            case GREEN:
+                completeSetNumber = 3;
+                break;
+            case BLUE:
+                completeSetNumber = 3;
+                break;
+            case LIGHTBLUE:
+                completeSetNumber = 3;
+                break;
+            case PINK:
+                completeSetNumber = 3;
+                break;
+            case BROWN:
+                completeSetNumber = 2;
+                break;
+            case UTILITY:
+                completeSetNumber = 2;
+                break;
+            default:
+                completeSetNumber = 0;
+                break;
         }
-        return 0;
+        return completeSetNumber;
     }
 
     @Override

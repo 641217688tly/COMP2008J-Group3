@@ -51,26 +51,6 @@ public class PropertyWildCard extends Card {
         initButtons();
     }
 
-    public void initCurrentType(PropertyWildCardType type) {
-        if (type == PropertyWildCardType.BLUE_GREEN) {
-            currentType = PropertyCardType.GREEN;
-        } else if (type == PropertyWildCardType.GREEN_RAILROAD) {
-            currentType = PropertyCardType.GREEN;
-        } else if (type == PropertyWildCardType.UTILITY_RAILROAD) {
-            currentType = PropertyCardType.UTILITY;
-        } else if (type == PropertyWildCardType.LIGHTBLUE_RAILROAD) {
-            currentType = PropertyCardType.LIGHTBLUE;
-        } else if (type == PropertyWildCardType.LIGHTBLUE_BROWN) {
-            currentType = PropertyCardType.LIGHTBLUE;
-        } else if (type == PropertyWildCardType.PINK_ORANGE) {
-            currentType = PropertyCardType.ORANGE;
-        } else if (type == PropertyWildCardType.RED_YELLOW) {
-            currentType = PropertyCardType.YELLOW;
-        } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-            currentType = PropertyCardType.RAILROAD;
-        }
-    }
-
     private void initButtons() {
         JButton button = new JButton("");
         button.setBounds(0, 0, cardHeight / 8, cardHeight / 8);
@@ -81,58 +61,68 @@ public class PropertyWildCard extends Card {
         this.add(this.reverseButton);
     }
 
-    public void switchCardColor() {
-        if (type == PropertyWildCardType.BLUE_GREEN) {
-            if (currentType == PropertyCardType.GREEN) {
-                currentType = PropertyCardType.BLUE;
-            } else {
+    public void initCurrentType(PropertyWildCardType type) {
+        switch (type) {
+            case BLUE_GREEN:
                 currentType = PropertyCardType.GREEN;
-            }
-        } else if (type == PropertyWildCardType.GREEN_RAILROAD) {
-            if (currentType == PropertyCardType.GREEN) {
-                currentType = PropertyCardType.RAILROAD;
-            } else {
+                break;
+            case GREEN_RAILROAD:
                 currentType = PropertyCardType.GREEN;
-            }
-        } else if (type == PropertyWildCardType.UTILITY_RAILROAD) {
-            if (currentType == PropertyCardType.UTILITY) {
-                currentType = PropertyCardType.RAILROAD;
-            } else {
+                break;
+            case UTILITY_RAILROAD:
                 currentType = PropertyCardType.UTILITY;
-            }
-        } else if (type == PropertyWildCardType.LIGHTBLUE_RAILROAD) {
-            if (currentType == PropertyCardType.LIGHTBLUE) {
-                currentType = PropertyCardType.RAILROAD;
-            } else {
+                break;
+            case LIGHTBLUE_RAILROAD:
                 currentType = PropertyCardType.LIGHTBLUE;
-            }
-        } else if (type == PropertyWildCardType.LIGHTBLUE_BROWN) {
-            if (currentType == PropertyCardType.LIGHTBLUE) {
-                currentType = PropertyCardType.BROWN;
-            } else {
+                break;
+            case LIGHTBLUE_BROWN:
                 currentType = PropertyCardType.LIGHTBLUE;
-            }
-        } else if (type == PropertyWildCardType.PINK_ORANGE) {
-            if (currentType == PropertyCardType.ORANGE) {
-                currentType = PropertyCardType.PINK;
-            } else {
+                break;
+            case PINK_ORANGE:
                 currentType = PropertyCardType.ORANGE;
-            }
-        } else if (type == PropertyWildCardType.RED_YELLOW) {
-            if (currentType == PropertyCardType.YELLOW) {
-                currentType = PropertyCardType.RED;
-            } else {
+                break;
+            case RED_YELLOW:
                 currentType = PropertyCardType.YELLOW;
-            }
-        } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-            PropertyCardType[] allPropertyCardTypes = PropertyCardType.values(); //获取所有单色卡的类型
-            for (int i = 0; i < allPropertyCardTypes.length; i++) {
-                //TODO 可能存在BUG
-                if (allPropertyCardTypes[i].equals(currentType)) {
-                    currentType = allPropertyCardTypes[(i + 1) % 10];
-                    break;
+                break;
+            case MULTI_COLOUR:
+                currentType = PropertyCardType.RAILROAD;
+                break;
+        }
+    }
+
+    public void switchCardColor() {
+        switch (type) {
+            case BLUE_GREEN:
+                currentType = (currentType == PropertyCardType.GREEN) ? PropertyCardType.BLUE : PropertyCardType.GREEN;
+                break;
+            case GREEN_RAILROAD:
+                currentType = (currentType == PropertyCardType.GREEN) ? PropertyCardType.RAILROAD : PropertyCardType.GREEN;
+                break;
+            case UTILITY_RAILROAD:
+                currentType = (currentType == PropertyCardType.UTILITY) ? PropertyCardType.RAILROAD : PropertyCardType.UTILITY;
+                break;
+            case LIGHTBLUE_RAILROAD:
+                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.RAILROAD : PropertyCardType.LIGHTBLUE;
+                break;
+            case LIGHTBLUE_BROWN:
+                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.BROWN : PropertyCardType.LIGHTBLUE;
+                break;
+            case PINK_ORANGE:
+                currentType = (currentType == PropertyCardType.ORANGE) ? PropertyCardType.PINK : PropertyCardType.ORANGE;
+                break;
+            case RED_YELLOW:
+                currentType = (currentType == PropertyCardType.YELLOW) ? PropertyCardType.RED : PropertyCardType.YELLOW;
+                break;
+            case MULTI_COLOUR:
+                PropertyCardType[] allPropertyCardTypes = PropertyCardType.values();
+                for (int i = 0; i < allPropertyCardTypes.length; i++) {
+                    if (allPropertyCardTypes[i] == currentType) {
+                        //TODO 可能存在BUG
+                        currentType = allPropertyCardTypes[(i + 1) % allPropertyCardTypes.length];
+                        break;
+                    }
                 }
-            }
+                break;
         }
     }
 
@@ -254,56 +244,66 @@ public class PropertyWildCard extends Card {
     public void paintCard(Graphics g) {
         paintReverseButton();
         if (isDisplayable) {
-            if (isCardFront) { //牌的正面
-                if (type == PropertyWildCardType.BLUE_GREEN) {
-                    if (currentType == PropertyCardType.GREEN) {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
+            if (isCardFront) {
+                switch (type) {
+                    case BLUE_GREEN:
+                        if (currentType == PropertyCardType.GREEN) {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case GREEN_RAILROAD:
+                        if (currentType == PropertyCardType.GREEN) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case UTILITY_RAILROAD:
+                        if (currentType == PropertyCardType.UTILITY) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case LIGHTBLUE_RAILROAD:
+                        if (currentType == PropertyCardType.LIGHTBLUE) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case LIGHTBLUE_BROWN:
+                        if (currentType == PropertyCardType.LIGHTBLUE) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case PINK_ORANGE:
+                        if (currentType == PropertyCardType.ORANGE) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case RED_YELLOW:
+                        if (currentType == PropertyCardType.YELLOW) {
+                            g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        } else {
+                            g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
+                        }
+                        break;
+                    case MULTI_COLOUR:
                         g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.GREEN_RAILROAD) {
-                    if (currentType == PropertyCardType.GREEN) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.UTILITY_RAILROAD) {
-                    if (currentType == PropertyCardType.UTILITY) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.LIGHTBLUE_RAILROAD) {
-                    if (currentType == PropertyCardType.LIGHTBLUE) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.LIGHTBLUE_BROWN) {
-                    if (currentType == PropertyCardType.LIGHTBLUE) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.PINK_ORANGE) {
-                    if (currentType == PropertyCardType.ORANGE) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.RED_YELLOW) {
-                    if (currentType == PropertyCardType.YELLOW) {
-                        g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    } else {
-                        g.drawImage(reversedCardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    }
-                } else if (type == PropertyWildCardType.MULTI_COLOUR) {
-                    g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
-                    paintMULTICOLOURCardColour(g);
+                        paintMULTICOLOURCardColour(g);
+                        break;
                 }
             } else {
                 g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);
             }
         }
     }
+
 }

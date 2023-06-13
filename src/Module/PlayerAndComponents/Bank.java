@@ -3,11 +3,7 @@ package Module.PlayerAndComponents;
 import GUI.ApplicationStart;
 import Listener.ModuleListener.CardsListener.CardListener;
 import Listener.ModuleListener.PlayerAndComponentsListener.BankListener;
-import Module.Cards.ActionCard;
 import Module.Cards.Card;
-import Module.Cards.CardsEnum.ActionCardType;
-import Module.Cards.PropertyCard;
-import Module.Cards.PropertyWildCard;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -93,6 +89,8 @@ public class Bank extends JPanel {
         }
         return totalAssets;
     }
+
+    //-------为Bank添加和移除临时按钮的方法:
 
     public void addAndPaintPledgeButtons(int totalRent) { //创建用于选择抵押债务的选择按钮
         if (owner.isInAction()) {
@@ -188,6 +186,8 @@ public class Bank extends JPanel {
         paintAllCardsFront();
     }
 
+    //-------存钱和取钱方法:
+
     public Card removeCardFromBank(Card removedCard) {
         for (int row = 0; row < 3; row++) {
             boolean flag = false;
@@ -264,8 +264,5 @@ public class Bank extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         paintBankPile(g);
-        //paintAllCardsFront();
     }
 }
-
-
