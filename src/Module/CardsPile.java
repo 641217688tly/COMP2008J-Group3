@@ -38,14 +38,14 @@ public class CardsPile extends JPanel {
         initializeCardsPile(); //向抽牌堆中加入所有的卡牌
     }
 
-    private void initializeCardsPile() {
+    public void initializeCardsPile() {
         this.drawPile = new Stack<Card>(); //抽牌堆
         this.discardPile = new Stack<Card>(); //废牌回收堆
-        //drawPile.addAll(ActionCard.initializeCardsForCardsPile());
-        //drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
+        drawPile.addAll(ActionCard.initializeCardsForCardsPile());
+        drawPile.addAll(MoneyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyCard.initializeCardsForCardsPile());
         drawPile.addAll(PropertyWildCard.initializeCardsForCardsPile());
-        //drawPile.addAll(RentCard.initializeCardsForCardsPile());
+        drawPile.addAll(RentCard.initializeCardsForCardsPile());
         Collections.shuffle(drawPile); //洗牌
         for (int i = 0; i < drawPile.size(); i++) {
             this.setCardBounds(drawPile.get(i), drawPileX, drawPileY, false, false); //设置为不可视且背面朝上
