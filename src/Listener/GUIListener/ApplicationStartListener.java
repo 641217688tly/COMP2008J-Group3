@@ -1,4 +1,4 @@
-package Listener.GUIListener;// 导入所需的库
+package Listener.GUIListener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,8 +23,8 @@ public class ApplicationStartListener {
         // a button) is triggered
         @Override
         public void actionPerformed(ActionEvent e) {
-            applicationStart.showPanel(panelName); // Call the showPanel method of the ApplicationStart object to switch
-                                                   // to the specified pane
+            applicationStart.showPanel(panelName); // Call the showPanel method of the ApplicationStart object to switch to the specified pane
+
         }
     }
 }

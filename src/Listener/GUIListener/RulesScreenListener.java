@@ -1,9 +1,8 @@
-package Listener.GUIListener;// 导入所需的库
+package Listener.GUIListener;
 import GUI.ApplicationStart;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-// 这个类包含了一些内部类，用于处理规则屏幕上按钮的事件
 public class RulesScreenListener {
 
     // Inner class: Handles the event for the "Back" button

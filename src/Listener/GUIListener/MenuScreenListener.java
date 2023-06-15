@@ -1,4 +1,4 @@
-package Listener.GUIListener;// 导入所需的库
+package Listener.GUIListener;
 
 import GUI.ApplicationStart;
 

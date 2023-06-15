@@ -71,10 +71,8 @@ public class Game implements IGame {
                     if (cardsCount <= 7) {
                         if (cardsCount == 0) {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(5));
-                        } else if (cardsCount == 7) {
+                        }  else {
                             Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(2));
-                        } else {
-                            Game.players.get(0).drawCards(Game.cardsPile.drawCardFromDrawPile(3));
                         }
                     }
                 } else {

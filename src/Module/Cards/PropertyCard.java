@@ -131,7 +131,10 @@ public class PropertyCard extends Card {
 
     @Override
     public void deposit() { // (Used) - needs to update the bank
-        if (owner != null) {
+        //As a result of our final discussion, we removed the saving feature of the house cards,
+        // which would have resulted in a lack of enough house cards to be distributed to players,
+        // so that players would never be able to achieve victory conditions
+      /*  if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
@@ -153,7 +156,7 @@ public class PropertyCard extends Card {
                     }
                 }
             }
-        }
+        }*/
     }
 
     @Override

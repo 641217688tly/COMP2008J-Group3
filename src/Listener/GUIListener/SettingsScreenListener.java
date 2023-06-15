@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-// 这个类包含了处理设置屏幕上各种按钮事件的内部类
+
 public class SettingsScreenListener {
 
     // Inner class: Handles the event for the player count combo box

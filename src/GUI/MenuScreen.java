@@ -11,8 +11,7 @@ public class MenuScreen extends JPanel {
     private Image menuScreenBackground; // Variable to store the background image
 
     // Constructor to initialize the MenuScreen
-    public MenuScreen(ActionListener rulesButtonListener, ActionListener settingsButtonListener,
-            ActionListener gameButtonListener) {
+    public MenuScreen(ActionListener rulesButtonListener, ActionListener settingsButtonListener, ActionListener gameButtonListener) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Set the layout to a vertical BoxLayout
         loadAndSetBackgroundImage(); // Load and set the background image
         createAndAddButtons(rulesButtonListener, settingsButtonListener, gameButtonListener); // Create and add buttons
@@ -30,7 +29,7 @@ public class MenuScreen extends JPanel {
 
     // Create and add buttons
     private void createAndAddButtons(ActionListener rulesListener, ActionListener settingsListener,
-            ActionListener gameListener) {
+                                     ActionListener gameListener) {
         // Add spacing
         add(Box.createRigidArea(new Dimension(0, 100)));
         // Create and add the Start Game button
