@@ -18,12 +18,12 @@ public class Bank extends JPanel {
     public Card[][] cardsTable;
     public ArrayList<JButton> hereButtons;
     private Player owner;
-    private JButton closeButton; // 新增一个关闭按钮
+    private JButton closeButton; // add a new close button
     private BankListener bankListener;
     private Image bankImage;
 
     public Bank(Player owner) {
-        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.setLayout(null); //need to set the button position and size by hands 
         this.setBounds(0, ApplicationStart.screenHeight / 5 - (ApplicationStart.screenHeight / 25), ApplicationStart.screenWidth, 3 * ApplicationStart.screenHeight / 5 + (ApplicationStart.screenHeight / 25)); // 设置提示框的位置和大小
         this.setVisible(false); // 初始时设为不可见
 
@@ -38,7 +38,7 @@ public class Bank extends JPanel {
 
     private void loadAndSetPlayerCardsPileBackground() {
         try {
-            // 从文件中读取背景图片
+           // Load the background image from a file
             bankImage = ImageIO.read(new File("images/Module/PlayerAndComponents/PlayerComponentsBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,7 +47,7 @@ public class Bank extends JPanel {
 
     private void initButtons() {
         closeButton = new JButton("Close");
-        this.add(closeButton); // 将关闭按钮添加到这个JPanel
+        this.add(closeButton); //add the close button into the Jpanel 
         closeButton.setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight / 25); // 这个值可能需要调整，以便将关闭按钮放在适当的位置
         closeButton.addActionListener(bankListener.closeButtonListener(owner, this));
     }
@@ -62,7 +62,7 @@ public class Bank extends JPanel {
     }
 
     private void setCardBounds(Card card, int x, int y, boolean isDisplayable, boolean isCardFront) {
-        card.setCardJPanelBounds(x, y); //为Card重新分配它在该JPanel下的坐标
+        card.setCardJPanelBounds(x, y); //Reassign the Card its coordinates under the JPanel
         card.setIsDisplayable(isDisplayable);
         card.setIsCardFront(isCardFront);
     }
@@ -78,7 +78,7 @@ public class Bank extends JPanel {
         return false;
     }
 
-    public int calculateTotalAssetsInBank() { //计算银行的总资产
+    public int calculateTotalAssetsInBank() { //Calculate the total assets of the bank
         int totalAssets = 0;
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 12; column++) {
@@ -90,9 +90,9 @@ public class Bank extends JPanel {
         return totalAssets;
     }
 
-    //-------为Bank添加和移除临时按钮的方法:
+    //-------To add and remove temporary buttons from the Bank:
 
-    public void addAndPaintPledgeButtons(int totalRent) { //创建用于选择抵押债务的选择按钮
+    public void addAndPaintPledgeButtons(int totalRent) { //Create a selection button to select mortgage debt
         if (owner.isInAction()) {
             for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 12; column++) {
@@ -100,7 +100,7 @@ public class Bank extends JPanel {
                         JButton pledgeButton = new JButton("Pledge");
                         pledgeButton.setBounds(1 * Card.cardWidth / 5, 0, 3 * Card.cardWidth / 5, Card.cardHeight / 8);
                         Font buttonFont = new Font("Arial", Font.BOLD, 8);
-                        pledgeButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        pledgeButton.setFont(buttonFont); // Sets the font and font size of the button
                         pledgeButton.addActionListener((new CardListener()).pledgeButtonListener(owner, totalRent, cardsTable[row][column], false));
                         cardsTable[row][column].add(pledgeButton);
                         pledgeButton.setVisible(true);
@@ -110,7 +110,7 @@ public class Bank extends JPanel {
         }
     }
 
-    public void hideAndRemovePledgeButtons(Player debtor) { //可能导致BUG:移除PropertyCard和PropertyWildCard中最新被添加的PledgeButtons
+    public void hideAndRemovePledgeButtons(Player debtor) { //Possible BUG: Remove the newly added PledgeButtons from PropertyCard and PropertyWildCard
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 12; column++) {
                 if (cardsTable[row][column] != null) {
@@ -120,7 +120,7 @@ public class Bank extends JPanel {
                 }
             }
         }
-        //再删除被添加到抵押数组中卡牌上的按钮:
+        //Then remove the button from the card that was added to the mortgage array:
         if (debtor.pledgeCardFromBank.size() > 0) {
             for (Card card : debtor.pledgeCardFromBank) {
                 int lastIndex = card.getComponentCount() - 1;
@@ -130,8 +130,8 @@ public class Bank extends JPanel {
         }
     }
 
-    public void addAndPaintHereButtons(Card movedCard) { ///HereButton:用于实现Card在Bank内的自由移动
-        //仅当玩家在自己的回合时,且使用了Card上的Move按钮后Here按钮才会被创建
+    public void addAndPaintHereButtons(Card movedCard) { ///HereButton:It is used to realize the free movement of the Card in the Bank
+        //The Here button will only be created if the player is on their turn and uses the Move button on the Card
         hereButtons.clear();
         if (owner.isPlayerTurn()) {
             for (int row = 0; row < 3; row++) {
@@ -140,7 +140,7 @@ public class Bank extends JPanel {
                         JButton herebutton = new JButton("Here");
                         herebutton.setBounds(cardsCoordinates[row][column].x, cardsCoordinates[row][column].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
                         Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                        herebutton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                        herebutton.setFont(buttonFont); // Sets the font and font size of the button
                         herebutton.addActionListener(bankListener.moveButtonListener(owner, movedCard, herebutton));
                         this.add(herebutton);
                         hereButtons.add(herebutton);
@@ -156,7 +156,7 @@ public class Bank extends JPanel {
         Point hereButtonPoint = new Point(hereButton.getX(), hereButton.getY());
         Point movedCardIndex = new Point();
         Point hereButtonIndex = new Point();
-        //先找到被移动的卡牌和空位在二维数组中的位置
+        //First, we find the position of the moved card and the slot in the two-dimensional array
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 12; column++) {
                 if (movedCardPoint.x == owner.bank.cardsCoordinates[row][column].x && movedCardPoint.getY() == owner.bank.cardsCoordinates[row][column].y) {
@@ -166,27 +166,27 @@ public class Bank extends JPanel {
                 }
             }
         }
-        //先改变卡牌的位置
+        //Change the position of the cards first
         movedCard.setBounds(hereButtonPoint.x, hereButtonPoint.y, Card.cardWidth, Card.cardHeight);
-        //再改变按钮的位置:
+        //Change the button's position again::
         hereButton.setBounds(movedCardPoint.x, movedCardPoint.y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
-        //改变bank中卡牌的位置:
+        //Change the position of cards in the bank:
         owner.bank.cardsTable[hereButtonIndex.x][hereButtonIndex.y] = movedCard;
         owner.bank.cardsTable[movedCardIndex.x][movedCardIndex.y] = null;
-        //隐藏所有的JButton:
+        //Hide all JButtons:
         Iterator<JButton> iterator = owner.bank.hereButtons.iterator();
         while (iterator.hasNext()) {
             JButton button = iterator.next();
             button.setVisible(false);
-            owner.bank.remove(button); //从JPanel中移除这个按钮
-            iterator.remove(); //从ArrayList中移除这个按钮
+            owner.bank.remove(button); //Hide botton JButtons
+            iterator.remove(); //Remove the button from the ArrayList
         }
         owner.bank.hereButtons.clear();
-        //更新屏幕
+        //update the screen
         paintAllCardsFront();
     }
 
-    //-------存钱和取钱方法:
+    //-------How to deposit and withdraw money:
 
     public Card removeCardFromBank(Card removedCard) {
         for (int row = 0; row < 3; row++) {
@@ -206,9 +206,9 @@ public class Bank extends JPanel {
         return removedCard;
     }
 
-    public void saveMoneyAndShowCards(Card card) {//每次调用都会添加钱卡进银行并且刷新Card的呈现状态
+    public void saveMoneyAndShowCards(Card card) {//Each call will add money to the bank and refresh the Card's rendering state
         card.owner = this.owner;
-        //先将牌存进容器中:
+        //First, store the cards in the container:
         for (int row = 0; row < 3; row++) {
             boolean flag = false;
             for (int column = 0; column < 12; column++) {
@@ -222,12 +222,12 @@ public class Bank extends JPanel {
                 break;
             }
         }
-        //为所有牌重新分配坐标并设置状态
+        //Reassign coordinates and set states for all cards
         paintAllCardsFront();
         this.add(card);
     }
 
-    //-------绘制方法:
+    //-------Drawing method:
 
     public void paintAllCardsFront() {
         for (int row = 0; row < 3; row++) {

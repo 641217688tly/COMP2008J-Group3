@@ -14,19 +14,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class HandCards extends JPanel { //该类为玩家边框上的按钮,用于查看玩家的手牌
+public class HandCards extends JPanel { //This class is a button on the player's border that is used to view the player's hand
     public Card[] cardsTable;
     public Point[] cardsCoordinates;
     public ArrayList<JButton> hereButtons;
     private Player owner;
-    public JButton closeButton; // 新增一个关闭按钮
+    public JButton closeButton; // Add a close button
     private HandCardsListener handCardsListener;
     private Image handCardsImage;
 
     public HandCards(Player owner) {
-        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.setLayout(null); // The position and size of each component need to be set manually
         this.setBounds(0, 3 * ApplicationStart.screenHeight / 5 - (ApplicationStart.screenHeight / 25), ApplicationStart.screenWidth, ApplicationStart.screenHeight / 5 + (ApplicationStart.screenHeight / 25)); // 设置提示框的位置和大小
-        this.setVisible(false); // 初始时设为不可见
+        this.setVisible(false); // Initially set to invisible
 
         this.cardsTable = new Card[12];
         this.hereButtons = new ArrayList<>();
@@ -39,7 +39,7 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
 
     private void loadAndSetPlayerCardsPileBackground() {
         try {
-            // 从文件中读取背景图片
+            // Read a background image from a file
             handCardsImage = ImageIO.read(new File("images/Module/PlayerAndComponents/PlayerComponentsBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,20 +55,20 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
 
     private void initButtons() {
         closeButton = new JButton("Close");
-        this.add(closeButton); // 将关闭按钮添加到这个JPanel
-        closeButton.setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight / 25); // 这个值可能需要调整，以便将关闭按钮放在适当的位置
+        this.add(closeButton); // Add the close button to the JPanel
+        closeButton.setBounds(0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight / 25); // This value may need to be adjusted to place the close button in the proper place
         closeButton.addActionListener(handCardsListener.closeButtonListener(owner, this));
     }
 
     public void addAndPaintHereButtons(Card movedCard) {
         hereButtons.clear();
-        if (owner.isPlayerTurn()) { //仅当玩家处于自己的回合时才能创建JButtons
+        if (owner.isPlayerTurn()) { //JButtons can only be created when the player is in their turn
             for (int i = 0; i < 12; i++) {
                 if (cardsTable[i] == null) {
                     JButton herebutton = new JButton("Here");
                     herebutton.setBounds(cardsCoordinates[i].x, cardsCoordinates[i].y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
                     Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                    herebutton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    herebutton.setFont(buttonFont); // Sets the font and font size of the button
                     herebutton.addActionListener(handCardsListener.moveButtonListener(owner, movedCard, herebutton));
                     this.add(herebutton);
                     hereButtons.add(herebutton);
@@ -91,44 +91,45 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
             }
         }
 
-        //先改变卡牌的位置
+        //Change the position of the cards first
         movedCard.setBounds(hereButtonPoint.x, hereButtonPoint.y, Card.cardWidth, Card.cardHeight);
-        //再改变按钮的位置:
+        //Change the position of the button:
         hereButton.setBounds(movedCardPoint.x, movedCardPoint.y, ApplicationStart.screenWidth / 12, ApplicationStart.screenHeight / 5);
-        //改变cardsTable中卡牌的位置:
+        //Change the position of cards in the cardsTable:
         owner.cardsTable[hereButtonIndex] = movedCard;
         owner.handCards.cardsTable[hereButtonIndex] = movedCard;
         owner.cardsTable[movedCardIndex] = null;
         owner.handCards.cardsTable[movedCardIndex] = null;
-        //隐藏所有的JButton:
+        //Hide all JButtons:
         Iterator<JButton> iterator = owner.handCards.hereButtons.iterator();
         while (iterator.hasNext()) {
             JButton button = iterator.next();
             button.setVisible(false);
-            owner.handCards.remove(button); //从JPanel中移除这个按钮
-            iterator.remove(); //从ArrayList中移除这个按钮
+            owner.handCards.remove(button); //Remove the button from the JPanel
+            iterator.remove(); //Remove the button from the ArrayList
         }
         owner.handCards.hereButtons.clear();
-        //更新屏幕
+        //Update the screen
         paintAllCards();
     }
 
-    public void updateAndShowCards() { //每次调用都需要清除列表中已有的牌并移除JPanel中牌对应的组件,相当于HandCards的刷新方法
-        this.cardsTable = owner.cardsTable; //克隆玩家的数组
-        this.removeAll(); //将旧牌(组件)全部丢弃,但这会导致按钮也丢失
-        this.add(closeButton); //将被丢失的按钮加上
+    public void updateAndShowCards() { //Each call needs to clear the existing cards from the list and remove the components from the JPanel, equivalent to the refresh method for HandCards
+        this.cardsTable = owner.cardsTable; //Clone an array of players
+        this.removeAll(); //Discard all the old cards (components), but this will cause the buttons to be lost as well
+        this.add(closeButton); 
+        //Add the missing button
         paintAllCards();
     }
 
-    //-------绘制方法:
+    //-------paint method:
 
     private void paintAllCards() {
         for (int i = 0; i < cardsTable.length; i++) {
             if (cardsTable[i] != null) {
                 Card card = cardsTable[i];
                 card.setCardJPanelBounds(cardsCoordinates[i].x, cardsCoordinates[i].y); //为Card重新分配它在该JPanel下的坐标
-                if (owner.isPlayerTurn()) { //处于自己的回合
-                    if (owner.isInAction()) {//处于行动中
+                if (owner.isPlayerTurn()) { //Be in your own turn
+                    if (owner.isInAction()) {//in action
                         if (owner.interactivePlayers.size() > 0) {
                             card.setIsCardFront(true);
                             card.openPlayButtonSwitch(false);
@@ -147,15 +148,15 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                             card.openDiscardButtonSwitch(true);
                             card.openMoveButtonSwitch(true);
                         }
-                    } else { //处于自己的回合但不在行动中
+                    } else { //in turn but not in action
                         card.setIsCardFront(false);
                         card.openPlayButtonSwitch(false);
                         card.openDepositButtonSwitch(false);
                         card.openDiscardButtonSwitch(false);
                         card.openMoveButtonSwitch(false);
                     }
-                } else { //不处于自己的回合
-                    if (owner.isInAction()) { //处于行动中
+                } else { //not own turn
+                    if (owner.isInAction()) { //in  action
                         card.setIsCardFront(true);
                         card.openPlayButtonSwitch(false);
                         card.openDepositButtonSwitch(false);
@@ -166,7 +167,7 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                                 card.openPlayButtonSwitch(true);
                             }
                         }
-                    } else { //不处于自己的回合,也不在行动中
+                    } else { //not in my turn and not in the action
                         card.setIsCardFront(false);
                         card.openPlayButtonSwitch(false);
                         card.openDepositButtonSwitch(false);

@@ -22,24 +22,24 @@ public class Player extends JPanel {
 
     public String name;
     public Card[] cardsTable;
-    public ArrayList<Card> oneTurnCardsBuffer; //用于该回合下玩家每次行动中所用过的牌
-    public ArrayList<Card> singleActionCardsBuffer; //用于存储玩家某次行动中所用过的牌,其中index=0处的牌是玩家在本次行动中最先使用的牌
+    public ArrayList<Card> oneTurnCardsBuffer; //Used for the cards used in each of the player's actions in that turn
+    public ArrayList<Card> singleActionCardsBuffer; //Used to store the cards used in an action, where the card at index=0 is the card used first in the action
     public ArrayList<Player> interactivePlayers;
     public ArrayList<Card> pledgeCardFromBank;
     public ArrayList<Card> pledgeCardFromProperty;
     public int playerJPanelX;
     public int playerJPanelY;
-    public int actionNumber = 3; //行动次数
+    public int actionNumber = 3; //num of action
     public int debt = 0;
     public boolean whetherViewComponent = false;
     private boolean isInAction = false;
     private boolean isPlayerTurn = false;
 
     private Image playerImage;
-    public Bank bank; //玩家的银行
-    public Property property; //玩家的房产区
-    public HandCards handCards; //玩家的手牌
-    public PlayerCardsPile playerCardsPile; //玩家左边的牌堆
+    public Bank bank; //player bank
+    public Property property; //player property
+    public HandCards handCards; //player handscard
+    public PlayerCardsPile playerCardsPile; //player card pile
     private PlayerListener playerListener;
     public JButton handCardsButton;
     public JButton bankButton;
@@ -64,7 +64,7 @@ public class Player extends JPanel {
     }
 
     public Player(String name, Image playerImage, int playerJPanelX, int playerJPanelY) {
-        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.setLayout(null); // The position and size of each component need to be set manually
         setOpaque(false);
 
         this.name = name;
@@ -109,7 +109,7 @@ public class Player extends JPanel {
         JButton button = new JButton(text);
         button.setBounds(x, y, width, height);
         Font buttonFont = new Font("Arial", Font.BOLD, fontSize); // 设置形状为粗体，大小为10的Arial字体
-        button.setFont(buttonFont); // 设置按钮的字体和字体大小
+        button.setFont(buttonFont); // Sets the font and font size of the button
         button.addActionListener(listener);
         return button;
     }
@@ -126,14 +126,14 @@ public class Player extends JPanel {
                 isInAction = true;
                 playerCardsPile.updateAndShowCards();
             });
-            timer.setRepeats(false);  // 让计时器只运行一次
+            timer.setRepeats(false);  // Let the timer run only once
             timer.start();
         } else {
             isInAction = false;
         }
     }
 
-    public void drawCards(Card[] cards) { //抽牌
+    public void drawCards(Card[] cards) { //Draw cards
         for (int i = 0, j = 0; i < cardsTable.length; i++) {
             if (cardsTable[i] == null) {
                 cards[j].owner = this;
@@ -146,7 +146,7 @@ public class Player extends JPanel {
         }
     }
 
-    //-------对Player所拥有Card的一些判定方法:
+    //-------Here are some ways to determine the cards a Player has::
 
     public boolean containsCard(Card card) {
         boolean flag = false;
@@ -182,7 +182,7 @@ public class Player extends JPanel {
         return false;
     }
 
-    public boolean whetherPlayerHasSingleProperty() { //判断玩家是否拥有单独的房产(判断它是否属于一整套房产中的一个)
+    public boolean whetherPlayerHasSingleProperty() { // Determines if the player owns a separate property (determines if it is part of a set of properties)
         for (PropertyCardType propertyType : PropertyCardType.values()) {
             if ((this.property.propertyNumberMap.get(propertyType) > 0 && this.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || this.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
                 return true;
@@ -191,7 +191,7 @@ public class Player extends JPanel {
         return false;
     }
 
-    public boolean whetherPlayerHasWholeProperty() { //判断玩家是否拥有一整套的房产
+    public boolean whetherPlayerHasWholeProperty() { //Determine if the player owns a full set of properties
         for (PropertyCardType propertyType : PropertyCardType.values()) {
             if (this.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
                 return true;
@@ -200,36 +200,35 @@ public class Player extends JPanel {
         return false;
     }
 
-    //-------回应ActionCard和RentCard的方法:
+ //------- methods responding to ActionCard and RentCard:
 
-    //TODO inTurnPlayer在使用sayNoCard的时候,手牌区中的其他牌仍然有Play,discard等按钮,而且依然能够被使用,这点需要优化
-    //回应sayNoCard
+// When TODO inTurnPlayer uses sayNoCard, the other cards in the hand still have Play,discard, etc buttons and can still be used   
+ //// Respond to sayNoCard
     public void respondSayNoCard() {
-        this.setIsInAction(true); //为要回应SayNoCard的玩家设置为可以自由行动
-        //打开sayNo卡的开关:让玩家选择是否使用say No卡:
+        this.setIsInAction(true); //Set the player who responds to the SayNoCard to be free to act
+        //Turn on the sayNo card: Let the player choose whether to use the sayNo card or not:
         this.sayNoButton.setVisible(true);
         this.abandonSayNoButton.setVisible(true);
         if (this.isPlayerTurn()) {
-            //关闭玩家的牌堆和手牌,避免玩家直接使用sayNo牌出现BUG:
+            //Close the player's deck and hand to avoid bugs when players directly use sayNo cards:
             this.playerCardsPile.setVisible(false);
             this.handCardsButton.setVisible(false);
             abandonSayNoButton.addActionListener(playerListener.inTurnPlayerAbandonSayNoButtonListener(this));
-        } else { //如果是回应InTurnPlayer的普通玩家
-            //关闭玩家的手牌,避免玩家直接使用sayNO牌出现BUG:
+        } else { //If it's a regular player who responds to InTurnPlayer
+            //Close the player's hand to avoid bugs when the player directly uses the sayNO card:
             this.handCardsButton.setVisible(false);
-            //不需要干任何事,因为abandonSayNoButton上的Listener还未清除,因此此时单击abandonSayNoButton,会直接触发交租金/交房产等操作
+            //Nothing needs to be done, because the Listener on abandonSayNoButton hasn't been cleared yet, so clicking on abandonSayNoButton will directly trigger the surrender of rent/property, and so on
         }
     }
 
-    //为玩家的房产和银行中的卡牌都加上Use按钮,并且设置该玩家的债务为totalRent
-    public void payForMoney(Player renter, int totalRent) { //renter是处于当前回合的玩家,也是收租人
-        this.setIsInAction(true);
-        if (this.bank.calculateTotalAssetsInBank() == 0 && this.property.calculateTotalAssetsInProperty() == 0) { //什么都没有,无法还债
-            //从对手的交互队列中移除自己:
+    //Add Use buttons to the player's house and cards in the bank, and set the player's debt to totalRent
+    public void payForMoney(Player renter, int totalRent) { //The renter is the player in the current turn and the renter
+        if (this.bank.calculateTotalAssetsInBank() == 0 && this.property.calculateTotalAssetsInProperty() == 0) { //Nothing. Can't pay your debts
+            //Remove itself from the adversary's interaction queue::
             renter.interactivePlayers.remove(0);
             this.setIsInAction(false);
-            //判断对手接下来的行动
-            if (renter.interactivePlayers.size() > 0) { //对手还要继续与别的玩家交互:
+            //Determine the opponent's next move
+            if (renter.interactivePlayers.size() > 0) { //The opponent has to continue to interact with other players:
                 renter.interactivePlayers.get(0).setIsInAction(true);
                 if (renter.singleActionCardsBuffer.size() > 1) {
                     Card tempCard = renter.singleActionCardsBuffer.get(0);
@@ -237,9 +236,9 @@ public class Player extends JPanel {
                     renter.singleActionCardsBuffer.add(tempCard);
                 }
                 renter.interactivePlayers.get(0).payForMoney(renter, totalRent);
-            } else { //对手的本次action全部结束
+            } else { //The action of the opponent is all over
                 Timer timer = new Timer(3000, a -> {
-                    //延迟两秒再呈现当前的玩家的卡牌
+                    //Delay for two seconds before showing the current player's card
                     renter.setIsInAction(true);
                     renter.singleActionCardsBuffer.clear();
                     renter.interactivePlayers.clear();
@@ -253,12 +252,12 @@ public class Player extends JPanel {
                 timer.start(); // start the timer
             }
 
-        } else { //玩家的银行或房产中还有牌可抵债
+        } else { //The player still has cards in the bank or house that can be repaid
             this.interactivePlayers.add(renter);
             this.debt = totalRent;
-            //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+            //Hide the hand button switch to avoid bugs (hide hands for the first time):
             this.handCardsButton.setVisible(false);
-            //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+            //Toggle the sayNo button: Let the player choose whether to use the sayNo card or not:
             this.sayNoButton.setVisible(true);
             this.abandonSayNoButton.setVisible(true);
             abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForMoneyButtonListener(this, totalRent));
@@ -268,9 +267,9 @@ public class Player extends JPanel {
     public void payForProperty(Player propertyThief) {
         this.setIsInAction(true);
         this.interactivePlayers.add(propertyThief);
-        //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+        //Hide the hand button switch to avoid bugs (hide hands for the first time):
         this.handCardsButton.setVisible(false);
-        //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+        //Toggle the sayNo button: Let the player choose whether to use the sayNo card or not:
         this.sayNoButton.setVisible(true);
         this.abandonSayNoButton.setVisible(true);
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForSinglePropertyButtonListener(this));
@@ -279,9 +278,9 @@ public class Player extends JPanel {
     public void swapProperty(Player inTurnPlayer) { //交换房产
         this.setIsInAction(true);
         this.interactivePlayers.add(inTurnPlayer);
-        //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+        //Hide the hand button switch to avoid bugs (hide hands for the first time):
         this.handCardsButton.setVisible(false);
-        //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+        //Toggle the sayNo button: Let the player choose whether to use the sayNo card or not:
         this.sayNoButton.setVisible(true);
         this.abandonSayNoButton.setVisible(true);
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndAcceptSwapPropertyButtonListener(this));
@@ -290,26 +289,26 @@ public class Player extends JPanel {
     public void payForWholeProperty(Player propertyBreaker) {
         this.setIsInAction(true);
         this.interactivePlayers.add(propertyBreaker);
-        //隐藏手牌按钮的开关避免出现BUG(首次隐藏手牌):
+        //Hide the hand button switch to avoid bugs (hide hands for the first time):
         this.handCardsButton.setVisible(false);
-        //打开sayNo按钮的开关:让玩家选择是否使用say No卡:
+        //Toggle the sayNo button: Let the player choose whether to use the sayNo card or not:
         this.sayNoButton.setVisible(true);
         this.abandonSayNoButton.setVisible(true);
         abandonSayNoButton.addActionListener(playerListener.abandonSayNoAndPayForWholePropertyButtonListener(this));
     }
 
-    //-------添加或删除临时按钮的方法:
+    //-------To add or remove a temporary button::
 
-    public void addAndPaintDealBreakerChooseButtons(Player breaker) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+    public void addAndPaintDealBreakerChooseButtons(Player breaker) { //When certain cards need to specify which player to use, create a choose button for each player
         ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
         for (Player player : Game.players) {
             if (player != breaker) {
-                if (player.whetherPlayerHasWholeProperty()) { //如果玩家拥有一整套房产
+                if (player.whetherPlayerHasWholeProperty()) { //If the player owns a whole set of properties
                     playersWhoHasTempButton.add(player);
                     JButton chosenButton = new JButton("↓");
                     chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                     Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                    chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    chosenButton.setFont(buttonFont); // Sets the font and font size of the button
                     chosenButton.addActionListener(playerListener.dealBreakerChooseButtonListener(breaker, player, playersWhoHasTempButton));
                     player.add(chosenButton);
                     chosenButton.setVisible(true);
@@ -326,16 +325,16 @@ public class Player extends JPanel {
         }
     }
 
-    public void addAndPaintForcedDealChooseButtons(Player inTurnPlayer) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+    public void addAndPaintForcedDealChooseButtons(Player inTurnPlayer) { //When certain cards need to specify which player to use, create a choose button for each player
         ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
         for (Player player : Game.players) {
             if (player != inTurnPlayer) {
-                if (player.whetherPlayerHasSingleProperty()) { //如果玩家拥有不成套的房产
+                if (player.whetherPlayerHasSingleProperty()) { //If the player has an incomplete set of properties
                     playersWhoHasTempButton.add(player);
                     JButton chosenButton = new JButton("↓");
                     chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                     Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                    chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    chosenButton.setFont(buttonFont); // Sets the font and font size of the button
                     chosenButton.addActionListener(playerListener.forcedDealChooseButtonListener(inTurnPlayer, player, playersWhoHasTempButton));
                     player.add(chosenButton);
                     chosenButton.setVisible(true);
@@ -352,16 +351,16 @@ public class Player extends JPanel {
         }
     }
 
-    public void addAndPaintSlyDealChooseButtons(Player thief) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+    public void addAndPaintSlyDealChooseButtons(Player thief) { //When certain cards need to specify which player to use, create a choose button for each player
         ArrayList<Player> playersWhoHasTempButton = new ArrayList<>();
         for (Player player : Game.players) {
             if (player != thief) {
-                if (player.whetherPlayerHasSingleProperty()) { //如果玩家拥有不成套的房产
+                if (player.whetherPlayerHasSingleProperty()) { //If the player has an incomplete set of properties
                     playersWhoHasTempButton.add(player);
                     JButton chosenButton = new JButton("↓");
                     chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                     Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                    chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                    chosenButton.setFont(buttonFont); // Sets the font and font size of the button
                     chosenButton.addActionListener(playerListener.slyDealChooseButtonListener(thief, player, playersWhoHasTempButton));
                     player.add(chosenButton);
                     chosenButton.setVisible(true);
@@ -378,13 +377,13 @@ public class Player extends JPanel {
         }
     }
 
-    public void addAndPaintRentChooseButtons(Player renter, int totalRent) { //当某些卡牌需要指定要作用的玩家时,为每个玩家都创建一个choose按钮
+    public void addAndPaintRentChooseButtons(Player renter, int totalRent) { //When certain cards need to specify which player to use, create a choose button for each player
         for (int i = 0; i < Game.players.size(); i++) {
-            if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
+            if (!Game.players.get(i).isPlayerTurn()) { //For players who are not in their turn
                 JButton chosenButton = new JButton("↓");
                 chosenButton.setBounds(Player.playerWidth / 3, Player.playerHeight / 3, playerWidth / 3, playerHeight / 4);
                 Font buttonFont = new Font("Arial", Font.BOLD, 10);
-                chosenButton.setFont(buttonFont); // 设置按钮的字体和字体大小
+                chosenButton.setFont(buttonFont); // Sets the font and font size of the button
                 chosenButton.addActionListener(playerListener.rentChooseButtonListener(renter, Game.players.get(i), totalRent));
                 Game.players.get(i).add(chosenButton);
                 chosenButton.setVisible(true);
@@ -394,7 +393,7 @@ public class Player extends JPanel {
 
     public void hideAndRemoveRentChooseButtons() {
         for (int i = 0; i < Game.players.size(); i++) {
-            if (!Game.players.get(i).isPlayerTurn()) { //对于那些不处于自己的回合内的Player
+            if (!Game.players.get(i).isPlayerTurn()) { //For players who are not in their turn
                 int lastIndex = Game.players.get(i).getComponentCount() - 1;
                 Game.players.get(i).getComponent(lastIndex).setVisible(false);
                 Game.players.get(i).remove(lastIndex);
@@ -402,7 +401,7 @@ public class Player extends JPanel {
         }
     }
 
-    //-------get和set方法:
+    //-------get and set methods::
 
     public boolean isPlayerTurn() {
         return isPlayerTurn;
@@ -420,53 +419,53 @@ public class Player extends JPanel {
         isInAction = inAction;
     }
 
-    //-------绘制方法:
+    //-------Drawing method:
 
     private void paintPlayerImage(Graphics g) {
-        if (playerImage != null) { // 如果背景图片已加载
+        if (playerImage != null) { // If the background image is loaded
             g.drawImage(playerImage, 0, 0, playerWidth, playerHeight, null);
         }
     }
 
-    private void paintPlayerName(Graphics g) { //绘制玩家的名字
-        if (playerImage != null) { // 如果背景图片已加载
-            g.setColor(Color.BLACK); // 设置文本颜色
-            g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
+    private void paintPlayerName(Graphics g) { //Draws the player's name
+        if (playerImage != null) { // If the background image is loaded
+            g.setColor(Color.BLACK); // Setting the text color
+            g.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font and size
             FontMetrics fm = g.getFontMetrics();
-            int textHeight = fm.getAscent(); //获得Name的基线高度
-            g.drawString(name, 0, textHeight); // 在图片内部的左上角绘制玩家名字
+            int textHeight = fm.getAscent(); //Gets the baseline height of Name
+            g.drawString(name, 0, textHeight); // Draw the player name in the top left corner inside the image
         }
     }
 
-    private void paintChosenMark(Graphics g) { //被允许行动的玩家的头像上将会有标记
+    private void paintChosenMark(Graphics g) { //Players who are allowed to act will be marked on their avatars
         if (isInAction) {
-            g.setColor(Color.GREEN); // 设置文本颜色
-            g.setFont(new Font("Arial", Font.BOLD, 20)); // 设置字体和大小
+            g.setColor(Color.GREEN); // Setting the text color
+            g.setFont(new Font("Arial", Font.BOLD, 20)); // Set the font and size
             g.drawString("Move", Player.playerWidth / 5 + Player.playerWidth / 15, 2 * Player.playerHeight / 8 + Player.playerHeight / 16);
         }
     }
 
-    private void paintDebtNumber(Graphics g) { //被允许行动的玩家的头像上将会有标记
+    private void paintDebtNumber(Graphics g) { //Players who are allowed to act will be marked on their avatars
         if (isInAction) {
             if (this.debt > 0) {
-                g.setColor(Color.RED); // 设置文本颜色
-                g.setFont(new Font("Arial", Font.BOLD, 18)); // 设置字体和大小
+                g.setColor(Color.RED); // Setting the text color
+                g.setFont(new Font("Arial", Font.BOLD, 18)); // Set the font and size
                 g.drawString("Debt: " + this.debt, Player.playerWidth / 5 + Player.playerWidth / 25, 3 * Player.playerHeight / 8 + Player.playerHeight / 10);
             }
         }
     }
 
-    private void paintPlayerActionNumber(Graphics g) { //处于自己回合的玩家头像上将会有行动次数
+    private void paintPlayerActionNumber(Graphics g) { //Players in their turn will have a number of actions on their avatar
         if (isPlayerTurn) {
-            g.setColor(Color.GREEN); // 设置文本颜色
-            g.setFont(new Font("Arial", Font.BOLD, 18)); // 设置字体和大小
+            g.setColor(Color.GREEN); // Setting the text color
+            g.setFont(new Font("Arial", Font.BOLD, 18)); // Set the font and size
             g.drawString("Actions: " + this.actionNumber, Player.playerWidth / 7, 5 * Player.playerHeight / 8 - Player.playerHeight / 16);
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        super.paintComponent(g); // Use a superclass method to ensure proper drawing
         paintPlayerImage(g);
         paintPlayerName(g);
         paintChosenMark(g);
