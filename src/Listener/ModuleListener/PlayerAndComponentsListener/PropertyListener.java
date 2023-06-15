@@ -16,7 +16,7 @@ public class PropertyListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 owner.whetherViewComponent = false;
-                property.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
+                property.setVisible(false); // When the player clicks the Close button, hide the JPanel
                 for (Player player : Game.players) {
                     player.setVisible(true);
                     if (player.isPlayerTurn()) {

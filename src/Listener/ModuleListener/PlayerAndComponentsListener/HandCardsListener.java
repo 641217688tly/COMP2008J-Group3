@@ -18,8 +18,8 @@ public class HandCardsListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 owner.whetherViewComponent = false;
-                handCards.setVisible(false); // 当玩家点击关闭按钮时，隐藏这个JPanel
-                handCards.removeAll(); //主要是防止JPanel组件上的冲突
+                handCards.setVisible(false); // When the player clicks the Close button, hide the JPanel
+                handCards.removeAll(); //Primarily to prevent collisions on JPanel components
                 for (Player player : Game.players) {
                     player.setVisible(true);
                     if (player.isPlayerTurn()) {
