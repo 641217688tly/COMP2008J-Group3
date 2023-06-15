@@ -40,10 +40,10 @@ public class RulesScreen extends JPanel {
         rulesTextArea.setText("Before the game starts:\n" + "Shuffle the cards and assign 5 cards to each player, leaving the remaining cards in the center collar for collection\n" + "\n" +
                 "The game begins:\n" +
                 "1. Draw 2 cards on your turn. If you don't have any cards in your hand, you pick up 5 cards on your next turn.\n" +
-                "2, can play 1-3 cards.\n" +
+                "2. Can play 1-3 cards.\n" +
                 "3. You can deposit currency or action cards into your bank. Action cards can be used as currency. When an action card is placed in the bank, it can only be used as currency in the game. Even if it is transferred to another player, it can no longer be used as an action card.\n" +
                 "4. Collect your property cards. Put the property cards in front of you and build the property. Each card shows the number of property cards required to complete the colour series.\n" +
-                "5, the use of action card, put it in the central position according to the instructions on the action card.\n" +
+                "5. the use of action card, put it in the central position according to the instructions on the action card.\n" +
                 "6. Make sure you have no more than 7 cards in your hand after you play a card. Otherwise, selectively discard the card and place the discard card at the bottom of the deck until there are 7 cards left in your hand.\n" + "\n" +
                 "How to win:\n" +
                 "A complete set of 3 sets of property cards in different colors will win."); // 设置游戏规则文本，已省略以节省空间

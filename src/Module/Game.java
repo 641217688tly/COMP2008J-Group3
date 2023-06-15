@@ -6,6 +6,7 @@ import Module.Cards.CardsEnum.PropertyCardType;
 import Module.Cards.PropertyCard;
 import Module.PlayerAndComponents.Player;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Game implements IGame {
     public static int[] playersJPanelYCoordinate = {(ApplicationStart.screenHeight * 4) / 5, (ApplicationStart.screenHeight * 2) / 5, 0, 0, (ApplicationStart.screenHeight * 2) / 5};
     public static CardsPile cardsPile = new CardsPile(); //中央牌区
     public static ArrayList<Player> players = new ArrayList<>(); //所有的Player对象(Player对象中包含有Bank,Property,PlayerCards以及PlayerCardsPile这些组件)
+    public boolean isMoveToNextTurn = false;
     private int counter = 1;
 
     public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
@@ -23,10 +25,6 @@ public class Game implements IGame {
             Player player = new Player(playerNames.get(i), Player.images[i], Game.playersJPanelXCoordinate[i], Game.playersJPanelYCoordinate[i]);
             players.add(player);
         }
-    }
-
-    public Game() {
-
     }
 
     @Override
@@ -40,12 +38,12 @@ public class Game implements IGame {
 
     @Override
     public void updateGame() {
-        nextPlayerTurn();
+        moveToNextPlayerTurn();
         isGameOver();
     }
 
     @Override
-    public void nextPlayerTurn() {
+    public void moveToNextPlayerTurn() {
         if (Game.players.get(0).actionNumber == 0) { //玩家的行动次数为0
             boolean isInteractionComplete = true; //判断玩家间的互动是否结束以及是否持有超过七张卡
             for (Player player : Game.players) {
@@ -82,6 +80,15 @@ public class Game implements IGame {
                 } else {
                     counter++;
                 }
+
+                isMoveToNextTurn = true;  // 开始显示下一回合的消息
+                Timer timer = new Timer(3000, e -> {
+                    isMoveToNextTurn = false;  // 5秒后停止显示消息
+
+                });
+                timer.setRepeats(false);  // 让计时器只运行一次
+                timer.start();
+
                 for (Player player : Game.players) {
                     player.moveToNextTurn();
                 }

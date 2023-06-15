@@ -1,6 +1,5 @@
 package GUI;
 
-import Listener.GUIListener.GameScreenListener;
 import Module.Game;
 import Module.PlayerAndComponents.Player;
 
@@ -14,9 +13,9 @@ import Module.GameEngine;
 
 public class GameScreen extends JPanel {
     private Image gameScreenBackground; // 存储背景图像的变量
-    private GameScreenListener gameScreenListener;
     private Game game;
     public GameEngine gameEngine;
+
 
     public GameScreen(Game game) {
         this.setLayout(null); // 需要手动设置每个组件的位置和大小
@@ -26,7 +25,6 @@ public class GameScreen extends JPanel {
         setPreferredSize(new Dimension(ApplicationStart.screenWidth, ApplicationStart.screenHeight)); // 设置GameScreen的理想大小
         this.game = game;
         this.gameEngine = new GameEngine(game, this);
-        this.gameScreenListener = new GameScreenListener(game);
         this.setFocusable(true); //设置面板可以获取焦点
         this.requestFocusInWindow(); //请求焦点
     }
@@ -95,6 +93,14 @@ public class GameScreen extends JPanel {
 
     }
 
+    private void paintMoveToNextTurnMessage(Graphics g) {
+        if (game.isMoveToNextTurn) {
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Arial", Font.BOLD, 40));
+            g.drawString("The Current Turn Ends! The Next Turn Is Player " + Game.players.get(0).name + "'s Turn!", 1 * ApplicationStart.screenWidth / 12 + ApplicationStart.screenWidth / 18, 1 * ApplicationStart.screenHeight / 5 + ApplicationStart.screenHeight / 10);
+        }
+    }
+
     private void paintGameOverMessage(Graphics g) {
         if (game.isGameOver()) {
             g.setColor(Color.RED);
@@ -111,6 +117,7 @@ public class GameScreen extends JPanel {
         paintBackground(g);
         paintDiscardReminder(g);
         paintGameOverMessage(g);
+        paintMoveToNextTurnMessage(g);
     }
 
 }

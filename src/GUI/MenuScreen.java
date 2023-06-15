@@ -48,7 +48,7 @@ public class MenuScreen extends JPanel {
     // 创建并添加开始游戏按钮
     private void createAndAddStartGameButton(ActionListener settingsListener) {
         JButton gameButton = new JButton("Start Game");
-        gameButton.setMaximumSize(new Dimension(200, 150));
+        gameButton.setMaximumSize(new Dimension(300, 500));
         gameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         gameButton.addActionListener(settingsListener);
         add(gameButton);
@@ -57,7 +57,7 @@ public class MenuScreen extends JPanel {
     // 创建并添加规则按钮
     private void createAndAddRulesButton(ActionListener rulesListener) {
         JButton rulesButton = new JButton("Rules");
-        rulesButton.setMaximumSize(new Dimension(200, 150));
+        rulesButton.setMaximumSize(new Dimension(300, 500));
         rulesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         rulesButton.addActionListener(rulesListener);
         add(rulesButton);
@@ -66,7 +66,7 @@ public class MenuScreen extends JPanel {
     // 创建并添加退出按钮
     private void createAndAddExitButton() {
         JButton exitButton = new JButton("Exit");
-        exitButton.setMaximumSize(new Dimension(200, 150));
+        exitButton.setMaximumSize(new Dimension(300, 500));
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.addActionListener(e -> System.exit(0));
         add(exitButton);

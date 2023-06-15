@@ -114,7 +114,7 @@ public class PlayerListener {
         };
     }
 
-    //对于SlyDeal牌(需要选择一个作用对象),为每个玩家有房产的玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
+    //对于forceDeal牌(需要选择一个作用对象),为每个玩家有房产的玩家(除了自己之外)创建一个Button,这个Listener负责控制该button的行为
     public ActionListener forcedDealChooseButtonListener(Player inTurnPlayer, Player forcedDealPlayer, ArrayList<Player> playersWhoHasTempButton) {
         return new ActionListener() {
             @Override
@@ -247,7 +247,7 @@ public class PlayerListener {
     }
 
 
-    //放弃了拒绝的机会,选择交租金(本次互动即将结束):
+    //player放弃了Say No,选择交租金(本次互动即将结束):
     public ActionListener abandonSayNoAndPayForMoneyButtonListener(Player debtor, int totalRent) {
         return new ActionListener() {
             @Override
@@ -279,7 +279,7 @@ public class PlayerListener {
         };
     }
 
-    //propertOwner放弃了拒绝的机会,选择交一个PropertyCard(本次互动即将结束):
+    //propertyOwner放弃了Say No,选择交出一个PropertyCard(本次互动即将结束):
     public ActionListener abandonSayNoAndPayForSinglePropertyButtonListener(Player propertyOwner) {
         return new ActionListener() {
             @Override
@@ -321,6 +321,7 @@ public class PlayerListener {
         };
     }
 
+    //propertyOwner放弃了Say No并同意交换卡牌
     public ActionListener abandonSayNoAndAcceptSwapPropertyButtonListener(Player propertyOwner) {
         return new ActionListener() {
             @Override
@@ -362,7 +363,7 @@ public class PlayerListener {
         };
     }
 
-    //propertOwner放弃了拒绝的机会,选择交出一整套PropertyCard(本次互动即将结束):
+    //propertyOwner放弃了Say No,选择交出一整套PropertyCard(本次互动即将结束):
     public ActionListener abandonSayNoAndPayForWholePropertyButtonListener(Player propertyOwner) {
         return new ActionListener() {
             @Override

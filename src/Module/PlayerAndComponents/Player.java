@@ -122,8 +122,12 @@ public class Player extends JPanel {
         this.actionNumber = 3;
         handCards.updateAndShowCards();
         if (this.isPlayerTurn) {
-            isInAction = true;
-            playerCardsPile.updateAndShowCards();
+            Timer timer = new Timer(3000, e -> {
+                isInAction = true;
+                playerCardsPile.updateAndShowCards();
+            });
+            timer.setRepeats(false);  // 让计时器只运行一次
+            timer.start();
         } else {
             isInAction = false;
         }

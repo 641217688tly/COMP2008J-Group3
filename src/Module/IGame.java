@@ -11,5 +11,5 @@ public interface IGame {
     void updateGame();
 
     // 进入下一个玩家的回合
-    void nextPlayerTurn();
+    void moveToNextPlayerTurn();
 }

@@ -106,6 +106,7 @@ public class CardListener {
         };
     }
 
+    //控制卡牌的抵押按钮的行为
     public ActionListener pledgeButtonListener(Player debtor, int totalRent, Card pledgeCard, boolean isInPropertyOrBank) {
         return new ActionListener() {
             @Override
@@ -208,7 +209,7 @@ public class CardListener {
         };
     }
 
-    //只偷取一张房产卡(该卡不能是完整的房产中的一个)
+    //控制卡牌上的Steal按钮的行为(只偷取一张房产卡(该卡不能是完整的房产中的一个))
     public ActionListener stealSinglePropertyButtonListener(Player propertyOwner, Card stolenCard) {
         return new ActionListener() {
             @Override
@@ -259,7 +260,7 @@ public class CardListener {
         };
     }
 
-    //偷取一整套房产
+    //控制卡牌上的Steal按钮的行为(偷取一整套房产)
     public ActionListener stealWholePropertyButtonListener(Player propertyOwner, Card stolenCard) {
         return new ActionListener() {
             @Override
@@ -341,6 +342,7 @@ public class CardListener {
         };
     }
 
+    //控制卡牌上的swap按钮的行为
     public ActionListener swapPropertyButtonListener(Player inTurnPlayerOrForcedDealPlayer, Card swappedCard) {
         return new ActionListener() {
             @Override
@@ -368,7 +370,7 @@ public class CardListener {
                                     player.playerCardsPile.setVisible(false);
                                 }
                             }
-                            //TODO 调用GameScreen中的方法将卡牌绘制出来?
+                            //TODO 调用GameScreen中的方法将卡牌绘制出来?可能没时间写了
                         }
                     }
                 } else {
@@ -421,7 +423,7 @@ public class CardListener {
                                     player.playerCardsPile.updateAndShowCards();
                                 }
                             }
-                            //TODO 调用GameScreen中的方法将卡牌绘制出来?
+                            //TODO 调用GameScreen中的方法将卡牌绘制出来?可能没时间写了
                         }
                     }
                 }

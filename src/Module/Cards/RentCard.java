@@ -209,8 +209,8 @@ public class RentCard extends Card {
         }
     }
 
-    @Override
     //多色卡是选择一个玩家;双色卡是选择所有玩家
+    @Override
     public void play() { //(被)使用
         if (owner != null) {
             if (owner.isPlayerTurn()) {
@@ -312,18 +312,20 @@ public class RentCard extends Card {
     public void move() {
         //先判断自己所属的容器:
         if (owner != null) {
-            if (owner.containsCard(this)) {
-                if (owner.whetherViewComponent) { //玩家正在看HandCards
-                    //给HandCards内的空位置加上按钮
-                    owner.handCards.addAndPaintHereButtons(this);
-                } else { //玩家正在看PlayerCardsPile
-                    //给PlayerCardsPile内的空位置加上按钮
-                    owner.playerCardsPile.addAndPaintHereButtons(this);
+            if (owner.isPlayerTurn()) {
+                if (owner.containsCard(this)) {
+                    if (owner.whetherViewComponent) { //玩家正在看HandCards
+                        //给HandCards内的空位置加上按钮
+                        owner.handCards.addAndPaintHereButtons(this);
+                    } else { //玩家正在看PlayerCardsPile
+                        //给PlayerCardsPile内的空位置加上按钮
+                        owner.playerCardsPile.addAndPaintHereButtons(this);
+                    }
+                } else if (owner.bank.containsCard(this)) {
+                    owner.bank.addAndPaintHereButtons(this);
+                } else if (owner.property.containsCard(this)) {
+                    owner.property.addAndPaintHereButtons(this);
                 }
-            } else if (owner.bank.containsCard(this)) {
-                owner.bank.addAndPaintHereButtons(this);
-            } else if (owner.property.containsCard(this)) {
-                owner.property.addAndPaintHereButtons(this);
             }
         }
     }

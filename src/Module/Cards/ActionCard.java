@@ -65,6 +65,35 @@ public class ActionCard extends Card {
         }
     }
 
+    private boolean whetherSlyDealOrForcedDealCardCanPlay() {
+        for (Player player : Game.players) {
+            if (player != owner) {
+                for (PropertyCardType propertyType : PropertyCardType.values()) {
+                    if ((player.property.propertyNumberMap.get(propertyType) > 0 && player.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || player.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean whetherDealBreakerCardCanPlay() { //判断场上的玩家是否有一整套房产
+        for (Player player : Game.players) {
+            if (player != owner) {
+                for (PropertyCardType propertyType : PropertyCardType.values()) {
+                    if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+
+    //-------不同类型的ActionCard的各自的方法:
+
     private void playHouseOrHotel() {
         if (this.type.equals(ActionCardType.HOUSE) || this.type.equals(ActionCardType.HOTEL)) {
             if (owner != null) {
@@ -196,19 +225,6 @@ public class ActionCard extends Card {
         }
     }
 
-    private boolean whetherSlyDealOrForcedDealCardCanPlay() {
-        for (Player player : Game.players) {
-            if (player != owner) {
-                for (PropertyCardType propertyType : PropertyCardType.values()) {
-                    if ((player.property.propertyNumberMap.get(propertyType) > 0 && player.property.propertyNumberMap.get(propertyType) < PropertyCard.judgeCompleteSetNumber(propertyType)) || player.property.propertyNumberMap.get(propertyType) > PropertyCard.judgeCompleteSetNumber(propertyType)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private void playForcedDeal() { //偷一张房产卡
         if (this.type.equals(ActionCardType.FORCE_DEAL)) {
             if (owner != null) {
@@ -272,21 +288,6 @@ public class ActionCard extends Card {
         }
     }
 
-    private boolean whetherDealBreakerCardCanPlay() { //判断场上的玩家是否有一整套房产
-        for (Player player : Game.players) {
-            if (player != owner) {
-                for (PropertyCardType propertyType : PropertyCardType.values()) {
-                    if (player.property.propertyNumberMap.get(propertyType) >= PropertyCard.judgeCompleteSetNumber(propertyType)) { //如果有一套完整的房产
-                        return true;
-                    }
-                }
-            }
-
-        }
-        return false;
-    }
-
-    //TODO 好像还会出现多色牌的PropertyType判定不正常的情况
     private void playDealBreaker() { //偷一整套房产
         if (this.type.equals(ActionCardType.DEAL_BREAKER)) {
             if (owner != null) {
@@ -421,18 +422,20 @@ public class ActionCard extends Card {
     public void move() {
         //先判断自己所属的容器:
         if (owner != null) {
-            if (owner.containsCard(this)) {
-                if (owner.whetherViewComponent) { //玩家正在看HandCards
-                    //给HandCards内的空位置加上按钮
-                    owner.handCards.addAndPaintHereButtons(this);
-                } else { //玩家正在看PlayerCardsPile
-                    //给PlayerCardsPile内的空位置加上按钮
-                    owner.playerCardsPile.addAndPaintHereButtons(this);
+            if (owner.isPlayerTurn()) {
+                if (owner.containsCard(this)) {
+                    if (owner.whetherViewComponent) { //玩家正在看HandCards
+                        //给HandCards内的空位置加上按钮
+                        owner.handCards.addAndPaintHereButtons(this);
+                    } else { //玩家正在看PlayerCardsPile
+                        //给PlayerCardsPile内的空位置加上按钮
+                        owner.playerCardsPile.addAndPaintHereButtons(this);
+                    }
+                } else if (owner.bank.containsCard(this)) {
+                    owner.bank.addAndPaintHereButtons(this);
+                } else if (owner.property.containsCard(this)) {
+                    owner.property.addAndPaintHereButtons(this);
                 }
-            } else if (owner.bank.containsCard(this)) {
-                owner.bank.addAndPaintHereButtons(this);
-            } else if (owner.property.containsCard(this)) {
-                owner.property.addAndPaintHereButtons(this);
             }
         }
     }

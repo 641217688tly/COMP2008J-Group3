@@ -129,11 +129,24 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                 card.setCardJPanelBounds(cardsCoordinates[i].x, cardsCoordinates[i].y); //为Card重新分配它在该JPanel下的坐标
                 if (owner.isPlayerTurn()) { //处于自己的回合
                     if (owner.isInAction()) {//处于行动中
-                        card.setIsCardFront(true);
-                        card.openPlayButtonSwitch(true);
-                        card.openDepositButtonSwitch(true);
-                        card.openDiscardButtonSwitch(true);
-                        card.openMoveButtonSwitch(true);
+                        if (owner.interactivePlayers.size() > 0) {
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(false);
+                            card.openDepositButtonSwitch(false);
+                            card.openDiscardButtonSwitch(false);
+                            card.openMoveButtonSwitch(false);
+                            if (card instanceof ActionCard) {
+                                if (((ActionCard) card).type.equals(ActionCardType.JUST_SAY_NO)) {
+                                    card.openPlayButtonSwitch(true);
+                                }
+                            }
+                        } else {
+                            card.setIsCardFront(true);
+                            card.openPlayButtonSwitch(true);
+                            card.openDepositButtonSwitch(true);
+                            card.openDiscardButtonSwitch(true);
+                            card.openMoveButtonSwitch(true);
+                        }
                     } else { //处于自己的回合但不在行动中
                         card.setIsCardFront(false);
                         card.openPlayButtonSwitch(false);
@@ -151,8 +164,6 @@ public class HandCards extends JPanel { //该类为玩家边框上的按钮,用�
                         if (card instanceof ActionCard) {
                             if (((ActionCard) card).type.equals(ActionCardType.JUST_SAY_NO)) {
                                 card.openPlayButtonSwitch(true);
-                            } else {
-                                card.openPlayButtonSwitch(false);
                             }
                         }
                     } else { //不处于自己的回合,也不在行动中

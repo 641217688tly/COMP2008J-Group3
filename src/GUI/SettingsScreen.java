@@ -14,12 +14,14 @@ public class SettingsScreen extends JPanel {
     private JComboBox<Integer> playerCountComboBox; // 用于选择玩家数量的下拉框
     private JPanel playerNamePanel; // 用于输入玩家名称的面板
     private JButton startGameButton; // 开始游戏按钮
+    private JButton backButton;
     private Image settingsScreenBackground; // 存储背景图像的变量
     private Game game; // 游戏对象
     private GameScreen gameScreen; // GameScreen对象,添加它的目的是为了之后将Player对象和CardsPile对象添加到GameScreen这一JPanel上
 
     public SettingsScreen(ActionListener backButtonListener, ActionListener showPanelActionListener, Game game, GameScreen gameScreen) {
         setLayout(new BorderLayout()); // 设置布局为边界布局
+
         this.game = game;
         this.gameScreen = gameScreen;
         loadAndSetBackgroundImage();
@@ -49,12 +51,13 @@ public class SettingsScreen extends JPanel {
     // 设置按钮面板（开始游戏和返回按钮）
     private void setupButtonsPanel(ActionListener backListener, ActionListener gameListener) {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // 创建按钮面板，使用流式布局，靠右对齐
+
         startGameButton = new JButton("Start Game"); // 创建开始游戏按钮
         startGameButton.addActionListener(new SettingsScreenListener.StartGameButtonListener(game, gameScreen, playerNamePanel, gameListener));
         startGameButton.setEnabled(false); // 初始时设置为禁用
         buttonPanel.add(startGameButton); // 将开始游戏按钮添加到按钮面板
 
-        JButton backButton = new JButton("Back"); // 创建返回按钮
+        backButton = new JButton("Back"); // 创建返回按钮
         backButton.addActionListener(backListener); // 添加监听器
         buttonPanel.add(backButton); // 将返回按钮添加到按钮面板
 
