@@ -11,100 +11,109 @@ import java.io.File;
 import java.io.IOException;
 
 public class SettingsScreen extends JPanel {
-    private JComboBox<Integer> playerCountComboBox; // 用于选择玩家数量的下拉框
-    private JPanel playerNamePanel; // 用于输入玩家名称的面板
-    private JButton startGameButton; // 开始游戏按钮
+    private JComboBox<Integer> playerCountComboBox; // Combo box for selecting the number of players
+    private JPanel playerNamePanel; // Panel for entering player names
+    private JButton startGameButton; // Start game button
     private JButton backButton;
-    private Image settingsScreenBackground; // 存储背景图像的变量
-    private Game game; // 游戏对象
-    private GameScreen gameScreen; // GameScreen对象,添加它的目的是为了之后将Player对象和CardsPile对象添加到GameScreen这一JPanel上
+    private Image settingsScreenBackground; // Variable to store the background image
+    private Game game; // Game object
+    private GameScreen gameScreen; // GameScreen object, added for later adding Player and CardsPile objects to the
+                                   // GameScreen JPanel
 
-    public SettingsScreen(ActionListener backButtonListener, ActionListener showPanelActionListener, Game game, GameScreen gameScreen) {
-        setLayout(new BorderLayout()); // 设置布局为边界布局
+    public SettingsScreen(ActionListener backButtonListener, ActionListener showPanelActionListener, Game game,
+            GameScreen gameScreen) {
+        setLayout(new BorderLayout()); // Set the layout to BorderLayout
 
         this.game = game;
         this.gameScreen = gameScreen;
         loadAndSetBackgroundImage();
-        setupPlayerCountPanel(); // 设置玩家数量选择面板
-        setupPlayerNamePanel(); // 设置玩家名称输入面板
-        setupButtonsPanel(backButtonListener, showPanelActionListener); // 设置按钮面板（开始游戏和返回按钮）
-        createPlayerNameInputs(); // 在面板初始化时创建玩家姓名输入框
+        setupPlayerCountPanel(); // Set up the player count selection panel
+        setupPlayerNamePanel(); // Set up the player name input panel
+        setupButtonsPanel(backButtonListener, showPanelActionListener); // Set up the buttons panel (start game and back
+                                                                        // buttons)
+        createPlayerNameInputs(); // Create player name inputs when the panel is initialized
     }
 
-    // 加载并设置背景图片
+    // Load and set the background image
     private void loadAndSetBackgroundImage() {
         try {
-            // 从文件中读取背景图片
+            // Read the background image from a file
             settingsScreenBackground = ImageIO.read(new File("images/GUI/SettingsScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // 设置玩家名称输入面板
+    // Set up the player name input panel
     private void setupPlayerNamePanel() {
         playerNamePanel = new JPanel();
-        playerNamePanel.setLayout(new BoxLayout(playerNamePanel, BoxLayout.Y_AXIS)); // 设置布局为垂直BoxLayout
-        add(playerNamePanel, BorderLayout.CENTER); // 将面板添加到中间位置
+        playerNamePanel.setLayout(new BoxLayout(playerNamePanel, BoxLayout.Y_AXIS)); // Set the layout to vertical
+                                                                                     // BoxLayout
+        add(playerNamePanel, BorderLayout.CENTER); // Add the panel to the center position
     }
 
-    // 设置按钮面板（开始游戏和返回按钮）
+    // Set up the buttons panel (start game and back buttons)
     private void setupButtonsPanel(ActionListener backListener, ActionListener gameListener) {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // 创建按钮面板，使用流式布局，靠右对齐
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Create a button panel using flow layout,
+                                                                           // aligned to the right
 
-        startGameButton = new JButton("Start Game"); // 创建开始游戏按钮
-        startGameButton.addActionListener(new SettingsScreenListener.StartGameButtonListener(game, gameScreen, playerNamePanel, gameListener));
-        startGameButton.setEnabled(false); // 初始时设置为禁用
-        buttonPanel.add(startGameButton); // 将开始游戏按钮添加到按钮面板
+        startGameButton = new JButton("Start Game"); // Create the start game button
+        startGameButton.addActionListener(
+                new SettingsScreenListener.StartGameButtonListener(game, gameScreen, playerNamePanel, gameListener));
+        startGameButton.setEnabled(false); // Set it initially disabled
+        buttonPanel.add(startGameButton); // Add the start game button to the button panel
 
-        backButton = new JButton("Back"); // 创建返回按钮
-        backButton.addActionListener(backListener); // 添加监听器
-        buttonPanel.add(backButton); // 将返回按钮添加到按钮面板
+        backButton = new JButton("Back"); // Create the back button
+        backButton.addActionListener(backListener); // Add the listener
+        buttonPanel.add(backButton); // Add the back button to the button panel
 
-        add(buttonPanel, BorderLayout.SOUTH); // 将按钮面板添加到面板的南部（下方）
+        add(buttonPanel, BorderLayout.SOUTH); // Add the button panel to the south position (bottom)
     }
 
-    // 设置玩家数量选择面板
+    // Set up the player count selection panel
     private void setupPlayerCountPanel() {
-        playerCountComboBox = new JComboBox<>(new Integer[]{2, 3, 4, 5}); // 创建玩家数量下拉框，允许选择2到5名玩家
-        playerCountComboBox.setPreferredSize(new Dimension(100, 30)); // 设置下拉框的首选大小
-        playerCountComboBox.setSelectedIndex(0); // 默认选择玩家人数为2，索引为0
-        playerCountComboBox.addActionListener(new SettingsScreenListener.PlayerCountComboBoxListener(this)); // 添加监听器
-        JPanel playerCountPanel = new JPanel(); // 创建玩家数量选择面板
-        playerCountPanel.add(new JLabel("Player count: ")); // 添加标签
-        playerCountPanel.add(playerCountComboBox); // 将下拉框添加到面板
-        add(playerCountPanel, BorderLayout.NORTH); // 将玩家数量选择面板添加到面板的北部（上方）
+        playerCountComboBox = new JComboBox<>(new Integer[] { 2, 3, 4, 5 }); // Create a combo box for selecting the
+                                                                             // number of players (2-5)
+        playerCountComboBox.setPreferredSize(new Dimension(100, 30)); // Set the preferred size of the combo box
+        playerCountComboBox.setSelectedIndex(0); // Default selection is 2 players, index 0
+        playerCountComboBox.addActionListener(new SettingsScreenListener.PlayerCountComboBoxListener(this)); // Add the
+                                                                                                             // listener
+        JPanel playerCountPanel = new JPanel(); // Create the player count selection panel
+        playerCountPanel.add(new JLabel("Player count: ")); // Add a label
+        playerCountPanel.add(playerCountComboBox); // Add the combo box to the panel
+        add(playerCountPanel, BorderLayout.NORTH); // Add the player count panel to the north position (top)
     }
 
-    // 创建玩家名称输入框
+    // Create player name inputs
     public void createPlayerNameInputs() {
-        playerNamePanel.removeAll(); // 清除面板上的所有组件
+        playerNamePanel.removeAll(); // Clear all components from the panel
 
-        int playerCount = (Integer) playerCountComboBox.getSelectedItem(); // 获取选中的玩家数量
+        int playerCount = (Integer) playerCountComboBox.getSelectedItem(); // Get the selected player count
         for (int i = 0; i < playerCount; i++) {
-            JPanel inputPanel = new JPanel(); // 创建输入面板
-            inputPanel.add(new JLabel("Player " + (i + 1) + " name: ")); // 添加玩家名称标签
-            JTextField playerNameTextField = new JTextField(); // 创建文本输入框，用于输入玩家名称
-            playerNameTextField.setPreferredSize(new Dimension(200, 30)); // 设置文本框的首选大小
-            inputPanel.add(playerNameTextField); // 将文本输入框添加到输入面板
-            playerNamePanel.add(inputPanel); // 将输入面板添加到玩家名称面板
+            JPanel inputPanel = new JPanel(); // Create an input panel
+            inputPanel.add(new JLabel("Player " + (i + 1) + " name: ")); // Add the player name label
+            JTextField playerNameTextField = new JTextField(); // Create a text field for entering player names
+            playerNameTextField.setPreferredSize(new Dimension(200, 30)); // Set the preferred size of the text field
+            inputPanel.add(playerNameTextField); // Add the text field to the input panel
+            playerNamePanel.add(inputPanel); // Add the input panel to the player name panel
         }
-        playerNamePanel.revalidate(); // 重新验证面板，确保所有组件按照新布局正确排列
-        playerNamePanel.repaint(); // 重新绘制面板，确保所有组件正确显示
-        startGameButton.setEnabled(true); // 启用开始游戏按钮
+        playerNamePanel.revalidate(); // Revalidate the panel to ensure correct layout of all components
+        playerNamePanel.repaint(); // Repaint the panel to ensure correct display of all components
+        startGameButton.setEnabled(true); // Enable the start game button
     }
 
     private void drawBackground(Graphics g) {
-        if (settingsScreenBackground != null) { // 如果背景图片已加载
-            // 在面板上绘制背景图片，使其填充整个面板
-            g.drawImage(settingsScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight, this);
+        if (settingsScreenBackground != null) { // If the background image is loaded
+            // Draw the background image on the panel, filling the entire panel
+            g.drawImage(settingsScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight,
+                    this);
         }
     }
 
-    // 重写paintComponent方法以在面板上绘制背景图片
+    // Override the paintComponent method to draw the background image on the panel
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
-        drawBackground(g); //TODO 无法正常加载背景图
+        super.paintComponent(g); // Call the superclass method to ensure proper painting
+        drawBackground(g); // TODO Unable to load the background image correctly
     }
 }

@@ -10,88 +10,96 @@ import java.io.File;
 import java.io.IOException;
 
 public class RulesScreen extends JPanel {
-    private Image rulesScreenBackground; // 存储背景图像的变量
+    private Image rulesScreenBackground; // Variable to store the background image
 
-    // 构造函数，初始化RulesScreen
+    // Constructor to initialize the RulesScreen
     public RulesScreen(ActionListener backButtonListener) {
-        setLayout(new BorderLayout()); // 设置布局为边界布局
-        loadAndSetBackgroundImage();// 加载背景图
-        setupRulesTextArea(); // 设置规则文本区域
-        setupBackButton(backButtonListener); // 设置返回按钮
+        setLayout(new BorderLayout()); // Set the layout to BorderLayout
+        loadAndSetBackgroundImage();// Load the background image
+        setupRulesTextArea(); // Set up the rules text area
+        setupBackButton(backButtonListener); // Set up the back button
     }
 
-    // 加载并设置背景图片
+    // Load and set the background image
     private void loadAndSetBackgroundImage() {
         try {
-            // 从文件中读取背景图片
+            // Read the background image from a file
             rulesScreenBackground = ImageIO.read(new File("images/GUI/RulesScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // 设置规则文本区域
+    // Set up the rules text area
     private void setupRulesTextArea() {
-        JTextArea rulesTextArea = new JTextArea(); // 创建文本区域
-        rulesTextArea.setEditable(false); // 设置为不可编辑
-        rulesTextArea.setTabSize(24); // 设置制表符大小
-        Font x1 = new Font("Arial", 0, 24); // 创建字体
-        rulesTextArea.setFont(x1); // 设置字体
-        rulesTextArea.setText("Before the game starts:\n" + "Shuffle the cards and assign 5 cards to each player, leaving the remaining cards in the center collar for collection\n" + "\n" +
+        JTextArea rulesTextArea = new JTextArea(); // Create a text area
+        rulesTextArea.setEditable(false); // Set it to non-editable
+        rulesTextArea.setTabSize(24); // Set the tab size
+        Font font = new Font("Arial", Font.PLAIN, 24); // Create a font
+        rulesTextArea.setFont(font); // Set the font
+        rulesTextArea.setText("Before the game starts:\n"
+                + "Shuffle the cards and assign 5 cards to each player, leaving the remaining cards in the center collar for collection\n"
+                + "\n" +
                 "The game begins:\n" +
-                "1. Draw 2 cards on your turn. If you don't have any cards in your hand, you pick up 5 cards on your next turn.\n" +
+                "1. Draw 2 cards on your turn. If you don't have any cards in your hand, you pick up 5 cards on your next turn.\n"
+                +
                 "2. Can play 1-3 cards.\n" +
-                "3. You can deposit currency or action cards into your bank. Action cards can be used as currency. When an action card is placed in the bank, it can only be used as currency in the game. Even if it is transferred to another player, it can no longer be used as an action card.\n" +
-                "4. Collect your property cards. Put the property cards in front of you and build the property. Each card shows the number of property cards required to complete the colour series.\n" +
-                "5. the use of action card, put it in the central position according to the instructions on the action card.\n" +
-                "6. Make sure you have no more than 7 cards in your hand after you play a card. Otherwise, selectively discard the card and place the discard card at the bottom of the deck until there are 7 cards left in your hand.\n" + "\n" +
+                "3. You can deposit currency or action cards into your bank. Action cards can be used as currency. When an action card is placed in the bank, it can only be used as currency in the game. Even if it is transferred to another player, it can no longer be used as an action card.\n"
+                +
+                "4. Collect your property cards. Put the property cards in front of you and build the property. Each card shows the number of property cards required to complete the colour series.\n"
+                +
+                "5. the use of action card, put it in the central position according to the instructions on the action card.\n"
+                +
+                "6. Make sure you have no more than 7 cards in your hand after you play a card. Otherwise, selectively discard the card and place the discard card at the bottom of the deck until there are 7 cards left in your hand.\n"
+                + "\n" +
                 "How to win:\n" +
-                "A complete set of 3 sets of property cards in different colors will win."); // 设置游戏规则文本，已省略以节省空间
+                "A complete set of 3 sets of property cards in different colors will win."); // Set the game rules text
+                                                                                             // (omitted for brevity)
         SimpleAttributeSet green = new SimpleAttributeSet();
         StyleConstants.setBackground(green, Color.CYAN);
-        rulesTextArea.setLineWrap(true); // 设置自动换行
-        rulesTextArea.setWrapStyleWord(true); // 设置按单词换行
-        rulesTextArea.setOpaque(false); // 设置文本区域为透明
+        rulesTextArea.setLineWrap(true); // Enable line wrapping
+        rulesTextArea.setWrapStyleWord(true); // Wrap at word boundaries
+        rulesTextArea.setOpaque(false); // Set the text area to be transparent
 
-        // 将文本区域添加到滚动面板，并将滚动面板添加到面板的中间位置
+        // Add the text area to a scroll pane and add the scroll pane to the center of
+        // the panel
         JScrollPane scrollPane = new JScrollPane(rulesTextArea);
-        scrollPane.setOpaque(false); // 设置滚动面板为透明
-        scrollPane.getViewport().setOpaque(false); // 设置滚动面板的视口为透明
+        scrollPane.setOpaque(false); // Set the scroll pane to be transparent
+        scrollPane.getViewport().setOpaque(false); // Set the viewport of the scroll pane to be transparent
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    // 设置返回按钮
+    // Set up the back button
     private void setupBackButton(ActionListener backListener) {
-        JPanel buttonPanel = new JPanel(); // 创建按钮面板
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS)); // 设置为水平BoxLayout布局
+        JPanel buttonPanel = new JPanel(); // Create a button panel
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS)); // Set it to have a horizontal BoxLayout
 
-        buttonPanel.add(Box.createHorizontalGlue()); // 添加可调整大小的水平间距
+        buttonPanel.add(Box.createHorizontalGlue()); // Add horizontally resizable glue
 
-        // 创建返回按钮
+        // Create the back button
         JButton backButton = new JButton("Back");
-        backButton.setMaximumSize(new Dimension(120, 30)); // 设置最大尺寸
-        backButton.addActionListener(backListener); // 添加监听器
-        buttonPanel.add(backButton); // 将按钮添加到按钮面板
+        backButton.setMaximumSize(new Dimension(120, 30)); // Set the maximum size
+        backButton.addActionListener(backListener); // Add the listener
+        buttonPanel.add(backButton); // Add the button to the button panel
 
-        buttonPanel.add(Box.createHorizontalGlue()); // 添加可调整大小的水平间距
+        buttonPanel.add(Box.createHorizontalGlue()); // Add horizontally resizable glue
 
-        // 将按钮面板添加到面板的南部（下方）
+        // Add the button panel to the south (bottom) of the panel
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
     private void drawBackground(Graphics g) {
-        if (rulesScreenBackground != null) { // 如果背景图片已加载
-            // 在面板上绘制背景图片，使其填充整个面板
+        if (rulesScreenBackground != null) { // If the background image is loaded
+            // Draw the background image on the panel, filling the entire panel
             g.drawImage(rulesScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight, this);
         }
     }
 
-    // 重写paintComponent方法以在面板上绘制背景图片
+    // Override the paintComponent method to draw the background image on the panel
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        super.paintComponent(g); // Call the parent class method to ensure normal painting
         drawBackground(g);
     }
+
 }
-
-

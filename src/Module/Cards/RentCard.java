@@ -17,18 +17,29 @@ public class RentCard extends Card {
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> rentCards = new ArrayList<>();
 
-        rentCards.add(new RentCard(RentCardType.BLUE_GREEN, new ImageIcon("images/Card/RentCard/RentGreenBlue.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.BLUE_GREEN, new ImageIcon("images/Card/RentCard/RentGreenBlue.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.RED_YELLOW, new ImageIcon("images/Card/RentCard/RentRedYellow.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.RED_YELLOW, new ImageIcon("images/Card/RentCard/RentRedYellow.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.PINK_ORANGE, new ImageIcon("images/Card/RentCard/RentPinkOrange.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.PINK_ORANGE, new ImageIcon("images/Card/RentCard/RentPinkOrange.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.LIGHTBLUE_BROWN, new ImageIcon("images/Card/RentCard/RentLightBlueBrown.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.LIGHTBLUE_BROWN, new ImageIcon("images/Card/RentCard/RentLightBlueBrown.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.RAILROAD_UTILITY, new ImageIcon("images/Card/RentCard/RentRailroadUtility.jpg"), 1));
-        rentCards.add(new RentCard(RentCardType.RAILROAD_UTILITY, new ImageIcon("images/Card/RentCard/RentRailroadUtility.jpg"), 1));
+        rentCards
+                .add(new RentCard(RentCardType.BLUE_GREEN, new ImageIcon("images/Card/RentCard/RentGreenBlue.jpg"), 1));
+        rentCards
+                .add(new RentCard(RentCardType.BLUE_GREEN, new ImageIcon("images/Card/RentCard/RentGreenBlue.jpg"), 1));
+        rentCards
+                .add(new RentCard(RentCardType.RED_YELLOW, new ImageIcon("images/Card/RentCard/RentRedYellow.jpg"), 1));
+        rentCards
+                .add(new RentCard(RentCardType.RED_YELLOW, new ImageIcon("images/Card/RentCard/RentRedYellow.jpg"), 1));
+        rentCards.add(
+                new RentCard(RentCardType.PINK_ORANGE, new ImageIcon("images/Card/RentCard/RentPinkOrange.jpg"), 1));
+        rentCards.add(
+                new RentCard(RentCardType.PINK_ORANGE, new ImageIcon("images/Card/RentCard/RentPinkOrange.jpg"), 1));
+        rentCards.add(new RentCard(RentCardType.LIGHTBLUE_BROWN,
+                new ImageIcon("images/Card/RentCard/RentLightBlueBrown.jpg"), 1));
+        rentCards.add(new RentCard(RentCardType.LIGHTBLUE_BROWN,
+                new ImageIcon("images/Card/RentCard/RentLightBlueBrown.jpg"), 1));
+        rentCards.add(new RentCard(RentCardType.RAILROAD_UTILITY,
+                new ImageIcon("images/Card/RentCard/RentRailroadUtility.jpg"), 1));
+        rentCards.add(new RentCard(RentCardType.RAILROAD_UTILITY,
+                new ImageIcon("images/Card/RentCard/RentRailroadUtility.jpg"), 1));
         for (int i = 0; i < 3; i++) {
-            rentCards.add(new RentCard(RentCardType.WILD_RENT, new ImageIcon("images/Card/RentCard/RentAllColor.jpg"), 3));
+            rentCards.add(
+                    new RentCard(RentCardType.WILD_RENT, new ImageIcon("images/Card/RentCard/RentAllColor.jpg"), 3));
         }
         return rentCards;
     }
@@ -195,7 +206,8 @@ public class RentCard extends Card {
     }
 
     private void updatePlayerInteractiveState() {
-        //每次使用RentCard后都代表玩家开启了一轮新的交互,因此需要确保上次交互中的数据被清除
+        // Clear the data from the previous interaction each time the RentCard is used,
+        // indicating the start of a new interaction
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.isInAction()) {
@@ -209,36 +221,41 @@ public class RentCard extends Card {
         }
     }
 
-    //多色卡是选择一个玩家;双色卡是选择所有玩家
+    // For multicolor cards, select one player; for dual-color cards, select all
+    // players
     @Override
-    public void play() { //(被)使用
+    public void play() {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         if (owner.property.whetherHasPropertyCards(this)) {
                             updatePlayerInteractiveState();
-                            //检查有无双倍卡
+                            // Check if there is a double card
                             Integer oldRentCardIndex = null;
                             Integer doubleCardIndex = null;
                             for (int i = 0; i < owner.oneTurnCardsBuffer.size(); i++) {
                                 if (owner.oneTurnCardsBuffer.get(i) instanceof RentCard) {
                                     oldRentCardIndex = i;
                                 } else if (owner.oneTurnCardsBuffer.get(i) instanceof ActionCard) {
-                                    if (((ActionCard) owner.oneTurnCardsBuffer.get(i)).type.equals(ActionCardType.DOUBLE_RENT)) {
+                                    if (((ActionCard) owner.oneTurnCardsBuffer.get(i)).type
+                                            .equals(ActionCardType.DOUBLE_RENT)) {
                                         doubleCardIndex = i;
                                     }
                                 }
                             }
-                            //检查是否用了双倍卡,小心这种情况:双倍 租金卡 当前租金卡(双倍卡已经被用过了)和 双倍 其他卡 租金卡
-                            boolean isDoubleRentUsed = ((oldRentCardIndex == null && doubleCardIndex != null) || (doubleCardIndex != null && oldRentCardIndex != null && oldRentCardIndex < doubleCardIndex));
+                            // Check if the double card is used, be careful of cases like: double rent card,
+                            // current rent card (double card already used), and double other card rent card
+                            boolean isDoubleRentUsed = ((oldRentCardIndex == null && doubleCardIndex != null)
+                                    || (doubleCardIndex != null && oldRentCardIndex != null
+                                            && oldRentCardIndex < doubleCardIndex));
                             Player tempOwner = this.owner;
-                            //从玩家的手牌中消除
+                            // Remove the card from the player's hand
                             discard();
-                            //强制打开玩家的房产:
+                            // Force the player's property to be opened
                             tempOwner.whetherViewComponent = true;
                             for (Player player : Game.players) {
-                                //将所有玩家和PlayerCardsPile设置为不可视
+                                // Set all players and PlayerCardsPile to invisible
                                 player.setVisible(false);
                                 if (player.isPlayerTurn()) {
                                     player.playerCardsPile.setVisible(false);
@@ -246,14 +263,20 @@ public class RentCard extends Card {
                             }
                             tempOwner.property.setVisible(true);
                             tempOwner.property.reallocateAllCards();
-                            tempOwner.property.closeButton.setVisible(false); //将关闭按钮隐藏,直到玩家选择完房产
-                            //为使用RentCard的玩家的所有房产牌上增加临时的"choose"按钮
+                            tempOwner.property.closeButton.setVisible(false); // Hide the close button until the player
+                                                                              // has selected the properties
+                            // Add temporary "choose" buttons to all property cards of the player who used
+                            // the RentCard
                             tempOwner.property.addAndPaintChooseButtons(this, isDoubleRentUsed);
-                            //为choose按钮添加监听事件,获得:1.所选择的卡牌的种类 2.统计这种卡牌一共多少张 3.计算要支付的钱 4.查看玩家是否之前使用了翻倍租金卡,如果有,计算结果翻倍
-
-                            //inTurnPlayer.actionNumber = inTurnPlayer.actionNumber - 1;
-                            //上述扣除玩家行动次数的语句不能在这里写!必须要等到玩家在interactivePlayers中添加互动对象后才能扣除行动次数
-                            //不然游戏会直接进入下一个回合
+                            // Add event listeners to the choose buttons to get: 1. the selected card type,
+                            // 2. the total count of this card type, 3. calculate the payment amount, 4.
+                            // check if the player has used a double rent card before, if so, double the
+                            // result
+                            // inTurnPlayer.actionNumber = inTurnPlayer.actionNumber - 1;
+                            // The statement for deducting the player's action number cannot be placed here!
+                            // It must wait until the player adds interactive objects to the
+                            // interactivePlayers list to deduct the action number
+                            // Otherwise, the game will directly move to the next turn
                         }
                     }
                 }
@@ -262,24 +285,24 @@ public class RentCard extends Card {
     }
 
     @Override
-    public void deposit() { //(被)储蓄-需要更新银行
+    public void deposit() {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) {
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) {
+                            owner.playerCardsPile.updateAndShowCards();
+                        } else {
+                            owner.handCards.updateAndShowCards();
                         }
-                        //将牌存进银行并刷新银行的状态
+                        // Save the card in the bank and update the bank's state
                         owner.bank.saveMoneyAndShowCards(this);
                         owner.actionNumber = owner.actionNumber - 1;
                     }
@@ -289,36 +312,33 @@ public class RentCard extends Card {
     }
 
     @Override
-    public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
+    public void discard() {
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                for (int i = 0; i < owner.cardsTable.length; i++) {
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
                         break;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                if (!owner.whetherViewComponent) {
+                    owner.playerCardsPile.updateAndShowCards();
+                } else {
+                    owner.handCards.updateAndShowCards();
                 }
-                Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+                Game.cardsPile.recycleCardIntoDiscardPile(this);
             }
         }
     }
 
     @Override
     public void move() {
-        //先判断自己所属的容器:
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.containsCard(this)) {
-                    if (owner.whetherViewComponent) { //玩家正在看HandCards
-                        //给HandCards内的空位置加上按钮
+                    if (owner.whetherViewComponent) {
                         owner.handCards.addAndPaintHereButtons(this);
-                    } else { //玩家正在看PlayerCardsPile
-                        //给PlayerCardsPile内的空位置加上按钮
+                    } else {
                         owner.playerCardsPile.addAndPaintHereButtons(this);
                     }
                 } else if (owner.bank.containsCard(this)) {
@@ -330,16 +350,17 @@ public class RentCard extends Card {
         }
     }
 
-    //-------绘制方法:
+    // -------Drawing methods:
 
     @Override
     public void paintCard(Graphics g) {
         if (isDisplayable) {
-            if (isCardFront) { //牌的正面
+            if (isCardFront) {
                 g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
             } else {
                 g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);
             }
         }
     }
+
 }

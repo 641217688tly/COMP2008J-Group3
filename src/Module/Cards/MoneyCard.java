@@ -13,47 +13,47 @@ public class MoneyCard extends Card {
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> moneyCards = new ArrayList<>();
-        for (int i = 0; i < 6; i++) { // 初始化6张1$MoneyCard
+        for (int i = 0; i < 6; i++) { // Initialize 6 $1 MoneyCards
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/1.jpg"), 1));
         }
-        for (int i = 0; i < 5; i++) { // 初始化5张2$MoneyCar
+        for (int i = 0; i < 5; i++) { // Initialize 5 $2 MoneyCards
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/2.jpg"), 2));
         }
-        for (int i = 0; i < 3; i++) { // 初始化3张3$MoneyCard
+        for (int i = 0; i < 3; i++) { // Initialize 3 $3 MoneyCards
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/3.jpg"), 3));
         }
-        for (int i = 0; i < 3; i++) { // 初始化3张4$MoneyCard
+        for (int i = 0; i < 3; i++) { // Initialize 3 $4 MoneyCards
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/4.jpg"), 4));
         }
-        for (int i = 0; i < 2; i++) { // 初始化2张5$MoneyCard
+        for (int i = 0; i < 2; i++) { // Initialize 2 $5 MoneyCards
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/5.jpg"), 5));
         }
-        for (int i = 0; i < 1; i++) { // 初始化1张10$MoneyCard
+        for (int i = 0; i < 1; i++) { // Initialize 1 $10 MoneyCard
             moneyCards.add(new MoneyCard(new ImageIcon("images/Card/MoneyCard/10.jpg"), 10));
         }
         return moneyCards;
     }
 
     @Override
-    public void play() { //(被)使用
-        //play()功能 == deposit()功能
+    public void play() { // (Used) - same as deposit() function
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                if (owner.actionNumber > 0) { //由于每次存钱都会消耗行动次数,因此要求玩家行动次数大于0
+                if (owner.actionNumber > 0) { // Require the player to have action points greater than 0, as depositing
+                                              // money consumes action points
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing components
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
-                        //将牌存进银行并刷新银行的状态
+                        // Store the card in the bank and update the bank's status
                         owner.bank.saveMoneyAndShowCards(this);
                         owner.actionNumber = owner.actionNumber - 1;
                     }
@@ -63,24 +63,24 @@ public class MoneyCard extends Card {
     }
 
     @Override
-    public void deposit() { //(被)储蓄-需要更新银行
+    public void deposit() { // Deposit (Used) - needs to update the bank
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing components
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
-                        //将牌存进银行并刷新银行的状态
+                        // Store the card in the bank and update the bank's status
                         owner.bank.saveMoneyAndShowCards(this);
                         owner.actionNumber = owner.actionNumber - 1;
                     }
@@ -91,36 +91,37 @@ public class MoneyCard extends Card {
     }
 
     @Override
-    public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
+    public void discard() { // Discard (Used) - only called by the player during their turn - needs to
+                            // update the player's HandCards or PlayerCardsPile status
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
                         break;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                    owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                } else { // If the player is viewing components
+                    owner.handCards.updateAndShowCards(); // Update HandCards directly
                 }
-                Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+                Game.cardsPile.recycleCardIntoDiscardPile(this); // Place the card into the discard pile
             }
         }
     }
 
     @Override
     public void move() {
-        //先判断自己所属的容器:
+        // First check the container the card belongs to:
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.containsCard(this)) {
-                    if (owner.whetherViewComponent) { //玩家正在看HandCards
-                        //给HandCards内的空位置加上按钮
+                    if (owner.whetherViewComponent) { // The player is viewing HandCards
+                        // Add buttons to the empty positions in HandCards
                         owner.handCards.addAndPaintHereButtons(this);
-                    } else { //玩家正在看PlayerCardsPile
-                        //给PlayerCardsPile内的空位置加上按钮
+                    } else { // The player is viewing PlayerCardsPile
+                        // Add buttons to the empty positions in PlayerCardsPile
                         owner.playerCardsPile.addAndPaintHereButtons(this);
                     }
                 } else if (owner.bank.containsCard(this)) {
@@ -132,12 +133,12 @@ public class MoneyCard extends Card {
         }
     }
 
-    //-------绘制方法:
+    // Drawing methods:
 
     @Override
     public void paintCard(Graphics g) {
         if (isDisplayable) {
-            if (isCardFront) { //牌的正面
+            if (isCardFront) { // Front side of the card
                 g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
             } else {
                 g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);

@@ -1,15 +1,15 @@
 package Module;
 
 public interface IGame {
-    // 游戏开始
+    // game start
     void startNewGame();
 
-    // 游戏结束
+    // game over
     boolean isGameOver();
 
-    // 游戏的更新操作
+    // Update operations
     void updateGame();
 
-    // 进入下一个玩家的回合
+    // Go to the next player's turn
     void moveToNextPlayerTurn();
 }

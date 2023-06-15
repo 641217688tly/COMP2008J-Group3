@@ -22,14 +22,14 @@ public final class GameEngine {
             }
         }.start();
 
-        // 在游戏开始后,执行startNewGame()方法来初始化一些数据和方法
+        // When the game starts, execute the startNewGame() method to initialize some data and methods
         game.startNewGame();
 
         int delay = 1000 / 60; // Delay for 60 updates per second
         Timer timer = new Timer(delay, null);
         timer.addActionListener(e -> {
             if (game.isGameOver()) {
-                // 启动一个新的计时器，5秒后退出程序
+                // Start a new timer and exit the program after 5 seconds
                 new Timer(10000, ex -> {
                     timer.stop();
                     exitGame();

@@ -13,24 +13,44 @@ import java.util.ArrayList;
 public class PropertyWildCard extends Card {
     public boolean reverseButtonSwitch = false;
     public PropertyWildCardType type;
-    public PropertyCardType currentType; //当前是哪一种PropertyCardType
+    public PropertyCardType currentType; // the state of the PropertyCardType
     private ImageIcon reversedCardImage;
     private PropertyWildCardListener propertyWildCardListener;
     private JButton reverseButton;
 
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> propertyWildCards = new ArrayList<>();
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.BLUE_GREEN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Blue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Green.jpg"), 4));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.GREEN_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Green.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Railroad.jpg"), 4));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.UTILITY_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad_Utility.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRailroadUtility_Railroad.jpg"), 2));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_RAILROAD, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_LightBlue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_Railroad.jpg"), 4));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_BROWN, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_LightBlue.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_Brown.jpg"), 1));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Orange.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Pink.jpg"), 2));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Orange.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Pink.jpg"), 2));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Yellow.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Red.jpg"), 3));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Yellow.jpg"), new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Red.jpg"), 3));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
-        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR, new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.BLUE_GREEN,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Blue.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardBlueGreen_Green.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.GREEN_RAILROAD,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Green.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardGreenRailroad_Railroad.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.UTILITY_RAILROAD,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardUtilityRailroad_Utility.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRailroadUtility_Railroad.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_RAILROAD,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_LightBlue.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueRailroad_Railroad.jpg"), 4));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.LIGHTBLUE_BROWN,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_LightBlue.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardLightBlueBrown_Brown.jpg"), 1));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Orange.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Pink.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.PINK_ORANGE,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Orange.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardPinkOrange_Pink.jpg"), 2));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Yellow.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Red.jpg"), 3));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.RED_YELLOW,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Yellow.jpg"),
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardRedYellow_Red.jpg"), 3));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
+        propertyWildCards.add(new PropertyWildCard(PropertyWildCardType.MULTI_COLOUR,
+                new ImageIcon("images/Card/PropertyWildCard/PropertyWildCardMultiColour.jpg"), 0));
         return propertyWildCards;
     }
 
@@ -43,7 +63,7 @@ public class PropertyWildCard extends Card {
         initButtons();
     }
 
-    public PropertyWildCard(PropertyWildCardType type, ImageIcon cardImage, int value) { //为多色卡设置的构造方法
+    public PropertyWildCard(PropertyWildCardType type, ImageIcon cardImage, int value) { // 为多色卡设置的构造方法
         super(cardImage, value);
         this.type = type;
         this.propertyWildCardListener = new PropertyWildCardListener();
@@ -55,7 +75,7 @@ public class PropertyWildCard extends Card {
         JButton button = new JButton("");
         button.setBounds(0, 0, cardHeight / 8, cardHeight / 8);
         Font buttonFont = new Font("Arial", Font.BOLD, 5);
-        button.setFont(buttonFont); // 设置按钮的字体和字体大小
+        button.setFont(buttonFont); // Sets the font and font size of the button
         button.addActionListener(propertyWildCardListener.reverseButtonListener(this));
         reverseButton = button;
         this.add(this.reverseButton);
@@ -100,19 +120,24 @@ public class PropertyWildCard extends Card {
                 currentType = (currentType == PropertyCardType.GREEN) ? PropertyCardType.BLUE : PropertyCardType.GREEN;
                 break;
             case GREEN_RAILROAD:
-                currentType = (currentType == PropertyCardType.GREEN) ? PropertyCardType.RAILROAD : PropertyCardType.GREEN;
+                currentType = (currentType == PropertyCardType.GREEN) ? PropertyCardType.RAILROAD
+                        : PropertyCardType.GREEN;
                 break;
             case UTILITY_RAILROAD:
-                currentType = (currentType == PropertyCardType.UTILITY) ? PropertyCardType.RAILROAD : PropertyCardType.UTILITY;
+                currentType = (currentType == PropertyCardType.UTILITY) ? PropertyCardType.RAILROAD
+                        : PropertyCardType.UTILITY;
                 break;
             case LIGHTBLUE_RAILROAD:
-                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.RAILROAD : PropertyCardType.LIGHTBLUE;
+                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.RAILROAD
+                        : PropertyCardType.LIGHTBLUE;
                 break;
             case LIGHTBLUE_BROWN:
-                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.BROWN : PropertyCardType.LIGHTBLUE;
+                currentType = (currentType == PropertyCardType.LIGHTBLUE) ? PropertyCardType.BROWN
+                        : PropertyCardType.LIGHTBLUE;
                 break;
             case PINK_ORANGE:
-                currentType = (currentType == PropertyCardType.ORANGE) ? PropertyCardType.PINK : PropertyCardType.ORANGE;
+                currentType = (currentType == PropertyCardType.ORANGE) ? PropertyCardType.PINK
+                        : PropertyCardType.ORANGE;
                 break;
             case RED_YELLOW:
                 currentType = (currentType == PropertyCardType.YELLOW) ? PropertyCardType.RED : PropertyCardType.YELLOW;
@@ -121,7 +146,7 @@ public class PropertyWildCard extends Card {
                 PropertyCardType[] allPropertyCardTypes = PropertyCardType.values();
                 for (int i = 0; i < allPropertyCardTypes.length; i++) {
                     if (allPropertyCardTypes[i] == currentType) {
-                        //TODO 可能存在BUG
+                        // TODO maybe a bug
                         currentType = allPropertyCardTypes[(i + 1) % allPropertyCardTypes.length];
                         break;
                     }
@@ -131,23 +156,24 @@ public class PropertyWildCard extends Card {
     }
 
     @Override
-    public void play() { //(被)使用
-        //play:放置房产牌
+    public void play() { // (Used)
+        // play: Place the property card
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile when this is
+                                                           // called
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing the component when this is called
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
                         owner.property.placePropertyCardAndShowTable(this);
                         owner.actionNumber = owner.actionNumber - 1;
@@ -158,22 +184,23 @@ public class PropertyWildCard extends Card {
     }
 
     @Override
-    public void deposit() { //(被)储蓄-需要更新银行
+    public void deposit() { // (Used) - Need to update the bank
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile when this is
+                                                           // called
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing the component when this is called
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
                         owner.bank.saveMoneyAndShowCards(this);
                         owner.actionNumber = owner.actionNumber - 1;
@@ -184,36 +211,37 @@ public class PropertyWildCard extends Card {
     }
 
     @Override
-    public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
+    public void discard() { // (Used) - Only to be called by the player in their own turn - Need to update
+                            // the player's HandCards or PlayerCardsPile state
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
                         break;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile when this is called
+                    owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                } else { // If the player is viewing the component when this is called
+                    owner.handCards.updateAndShowCards(); // Update HandCards directly
                 }
-                Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+                Game.cardsPile.recycleCardIntoDiscardPile(this); // Place the card into the discard pile
             }
         }
     }
 
     @Override
     public void move() {
-        //先判断自己所属的容器:
+        // First check the container it belongs to:
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.containsCard(this)) {
-                    if (owner.whetherViewComponent) { //玩家正在看HandCards
-                        //给HandCards内的空位置加上按钮
+                    if (owner.whetherViewComponent) { // Player is viewing HandCards
+                        // Add buttons to empty positions in HandCards
                         owner.handCards.addAndPaintHereButtons(this);
-                    } else { //玩家正在看PlayerCardsPile
-                        //给PlayerCardsPile内的空位置加上按钮
+                    } else { // Player is viewing PlayerCardsPile
+                        // Add buttons to empty positions in PlayerCardsPile
                         owner.playerCardsPile.addAndPaintHereButtons(this);
                     }
                 } else if (owner.bank.containsCard(this)) {
@@ -225,7 +253,7 @@ public class PropertyWildCard extends Card {
         }
     }
 
-    //-------绘制方法:
+    // -------Drawing methods:
 
     private void paintReverseButton() {
         if (reverseButtonSwitch) {
@@ -235,11 +263,10 @@ public class PropertyWildCard extends Card {
         }
     }
 
-    private void paintMULTICOLOURCardColour(Graphics g) { //为多色卡呈现其当前的Type
-        g.setColor(Color.RED); // 设置文本颜色
-        g.setFont(new Font("Arial", Font.BOLD, 18)); // 设置字体和大小
+    private void paintMULTICOLOURCardColour(Graphics g) { // Display the current Type of the multicolored card
+        g.setColor(Color.RED); // Set text color
+        g.setFont(new Font("Arial", Font.BOLD, 18)); // Set font and size
         g.drawString(currentType.toString(), Player.playerWidth / 6, 3 * Player.playerHeight / 8);
-
     }
 
     @Override

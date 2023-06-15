@@ -11,18 +11,21 @@ class CardsPileTest {
     public void testInitializeCardsPile() {
         CardsPile cardsPile = new CardsPile();
         cardsPile.initializeCardsPile();
-        // 确保抽牌堆已经初始化
+
+        // Ensure the draw pile has been initialized
         assertTrue(!cardsPile.drawPile.empty());
-        // 确保废牌堆为空
+
+        // Ensure the discard pile is empty
         assertTrue(cardsPile.discardPile.empty());
-        // 确保栈顶部的牌被设置为可视
+
+        // Ensure the top card of the draw pile is set to visible
         boolean isCardVisible = false;
         if (cardsPile.drawPile.peek().isCardDisplayable()) {
             isCardVisible = true;
         }
         assertTrue(isCardVisible);
 
-        // 确保抽牌堆中有 108 张牌
+        // Ensure the draw pile has 108 cards
         assertEquals(108, cardsPile.drawPile.size());
     }
 
@@ -31,17 +34,17 @@ class CardsPileTest {
         CardsPile cardsPile = new CardsPile();
         cardsPile.initializeCardsPile();
 
-        // 测试抽牌堆初始化后有牌
+        // Test that the draw pile has cards after initialization
         assertTrue(!cardsPile.drawPile.empty());
 
-        // 抽一张牌
+        // Draw a card
         Card[] drawnCard = cardsPile.drawCardFromDrawPile(1);
 
-        // 确保抽出的牌不为null，且数量为1
+        // Ensure the drawn card is not null and the quantity is 1
         assertNotNull(drawnCard);
         assertEquals(1, drawnCard.length);
 
-        // 确保抽牌堆中现在少了一张牌
+        // Ensure the draw pile has one less card now
         assertEquals(107, cardsPile.drawPile.size());
     }
 
@@ -50,16 +53,16 @@ class CardsPileTest {
         CardsPile cardsPile = new CardsPile();
         cardsPile.initializeCardsPile();
 
-        // 抽一张牌
+        // Draw a card
         Card[] drawnCard = cardsPile.drawCardFromDrawPile(1);
 
-        // 回收这张牌
+        // Recycle the card into the discard pile
         cardsPile.recycleCardIntoDiscardPile(drawnCard[0]);
 
-        // 确保废牌堆中现在有一张牌
+        // Ensure the discard pile now has one card
         assertEquals(1, cardsPile.discardPile.size());
 
-        // 确保这张牌是刚刚回收的那张
+        // Ensure the card in the discard pile is the one recycled
         assertSame(drawnCard[0], cardsPile.discardPile.peek());
     }
 

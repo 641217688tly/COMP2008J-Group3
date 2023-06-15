@@ -18,34 +18,44 @@ public class PropertyCard extends Card {
     public static ArrayList<Card> initializeCardsForCardsPile() {
         ArrayList<Card> propertyCards = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.BLUE, new ImageIcon("images/Card/PropertyCard/PropertyCardBlue.jpg"), 4));
+            propertyCards.add(new PropertyCard(PropertyCardType.BLUE,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardBlue.jpg"), 4));
         }
         for (int i = 0; i < 2; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.BROWN, new ImageIcon("images/Card/PropertyCard/PropertyCardBrown.jpg"), 1));
+            propertyCards.add(new PropertyCard(PropertyCardType.BROWN,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardBrown.jpg"), 1));
         }
         for (int i = 0; i < 2; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.UTILITY, new ImageIcon("images/Card/PropertyCard/PropertyCardUtility.jpg"), 2));
+            propertyCards.add(new PropertyCard(PropertyCardType.UTILITY,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardUtility.jpg"), 2));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.GREEN, new ImageIcon("images/Card/PropertyCard/PropertyCardGreen.jpg"), 4));
+            propertyCards.add(new PropertyCard(PropertyCardType.GREEN,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardGreen.jpg"), 4));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.YELLOW, new ImageIcon("images/Card/PropertyCard/PropertyCardYellow.jpg"), 3));
+            propertyCards.add(new PropertyCard(PropertyCardType.YELLOW,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardYellow.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.RED, new ImageIcon("images/Card/PropertyCard/PropertyCardRed.jpg"), 3));
+            propertyCards.add(new PropertyCard(PropertyCardType.RED,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardRed.jpg"), 3));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.ORANGE, new ImageIcon("images/Card/PropertyCard/PropertyCardOrange.jpg"), 2));
+            propertyCards.add(new PropertyCard(PropertyCardType.ORANGE,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardOrange.jpg"), 2));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.PINK, new ImageIcon("images/Card/PropertyCard/PropertyCardPink.jpg"), 2));
+            propertyCards.add(new PropertyCard(PropertyCardType.PINK,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardPink.jpg"), 2));
         }
         for (int i = 0; i < 3; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.LIGHTBLUE, new ImageIcon("images/Card/PropertyCard/PropertyCardLightBlue.jpg"), 1));
+            propertyCards.add(new PropertyCard(PropertyCardType.LIGHTBLUE,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardLightBlue.jpg"), 1));
         }
         for (int i = 0; i < 4; i++) {
-            propertyCards.add(new PropertyCard(PropertyCardType.RAILROAD, new ImageIcon("images/Card/PropertyCard/PropertyCardRailroad.jpg"), 2));
+            propertyCards.add(new PropertyCard(PropertyCardType.RAILROAD,
+                    new ImageIcon("images/Card/PropertyCard/PropertyCardRailroad.jpg"), 2));
         }
         return propertyCards;
     }
@@ -92,25 +102,25 @@ public class PropertyCard extends Card {
     }
 
     @Override
-    public void play() { //(被)使用
-        //play:放置房产牌
+    public void play() { // (Used)
+        // play: Place a property card
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing components
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
-                        //将牌存进房产中并刷新房产的状态
+                        // Place the card in the property and update the property's status
                         owner.property.placePropertyCardAndShowTable(this);
                         owner.actionNumber = owner.actionNumber - 1;
                     }
@@ -120,24 +130,24 @@ public class PropertyCard extends Card {
     }
 
     @Override
-    public void deposit() { //(被)储蓄-需要更新银行
+    public void deposit() { // (Used) - needs to update the bank
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.actionNumber > 0) {
                     if (owner.isInAction()) {
                         owner.oneTurnCardsBuffer.add(this);
-                        for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                        for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                             if (owner.cardsTable[i] == this) {
                                 owner.cardsTable[i] = null;
                                 break;
                             }
                         }
-                        if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                            owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                        } else { //如果被调用的时候玩家正在看的是组件
-                            owner.handCards.updateAndShowCards(); //直接更新HandCards
+                        if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                            owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                        } else { // If the player is viewing components
+                            owner.handCards.updateAndShowCards(); // Update HandCards directly
                         }
-                        //将牌存进银行并刷新银行的状态
+                        // Store the card in the bank and update the bank's status
                         owner.bank.saveMoneyAndShowCards(this);
                         owner.actionNumber = owner.actionNumber - 1;
                     }
@@ -147,37 +157,38 @@ public class PropertyCard extends Card {
     }
 
     @Override
-    public void discard() { //(被)丢弃-仅供处于自己回合的玩家调用-需要更新玩家的HandCards或PlayerCardsPile的状态
+    public void discard() { // (Used) - only called by the player during their turn - needs to update the
+                            // player's HandCards or PlayerCardsPile status
         if (owner != null) {
             if (owner.isPlayerTurn()) {
-                for (int i = 0; i < owner.cardsTable.length; i++) { //把牌从玩家上手清除
+                for (int i = 0; i < owner.cardsTable.length; i++) { // Remove the card from the player's hand
                     if (owner.cardsTable[i] == this) {
                         owner.cardsTable[i] = null;
                         break;
                     }
                 }
-                if (!owner.whetherViewComponent) { //如果被调用的时候玩家正在看的是PlayerCardsPile
-                    owner.playerCardsPile.updateAndShowCards(); //直接更新PlayerCardsPile
-                } else { //如果被调用的时候玩家正在看的是组件
-                    owner.handCards.updateAndShowCards(); //直接更新HandCards
+                if (!owner.whetherViewComponent) { // If the player is viewing PlayerCardsPile
+                    owner.playerCardsPile.updateAndShowCards(); // Update PlayerCardsPile directly
+                } else { // If the player is viewing components
+                    owner.handCards.updateAndShowCards(); // Update HandCards directly
                 }
-                //将牌扔进废牌堆
-                Game.cardsPile.recycleCardIntoDiscardPile(this); //把牌塞进牌堆的废牌区
+                // Place the card into the discard pile
+                Game.cardsPile.recycleCardIntoDiscardPile(this);
             }
         }
     }
 
     @Override
     public void move() {
-        //先判断自己所属的容器:
+        // First check the container the card belongs to:
         if (owner != null) {
             if (owner.isPlayerTurn()) {
                 if (owner.containsCard(this)) {
-                    if (owner.whetherViewComponent) { //玩家正在看HandCards
-                        //给HandCards内的空位置加上按钮
+                    if (owner.whetherViewComponent) { // The player is viewing HandCards
+                        // Add buttons to the empty positions in HandCards
                         owner.handCards.addAndPaintHereButtons(this);
-                    } else { //玩家正在看PlayerCardsPile
-                        //给PlayerCardsPile内的空位置加上按钮
+                    } else { // The player is viewing PlayerCardsPile
+                        // Add buttons to the empty positions in PlayerCardsPile
                         owner.playerCardsPile.addAndPaintHereButtons(this);
                     }
                 } else if (owner.bank.containsCard(this)) {
@@ -189,12 +200,12 @@ public class PropertyCard extends Card {
         }
     }
 
-    //-------绘制方法:
+    // Drawing methods:
 
     @Override
     public void paintCard(Graphics g) {
         if (isDisplayable) {
-            if (isCardFront) { //牌的正面
+            if (isCardFront) { // Front side of the card
                 g.drawImage(cardImage.getImage(), 0, 0, cardWidth, cardHeight, null);
             } else {
                 g.drawImage(cardBackImage.getImage(), 0, 0, cardWidth, cardHeight, null);

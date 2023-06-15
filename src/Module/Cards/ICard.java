@@ -2,11 +2,11 @@ package Module.Cards;
 
 public interface ICard {
 
-    void deposit(); //把牌当作Money存进银行
+    void deposit(); //Put the cards in the bank as Money
 
-    void play();//打牌
+    void play();//Playing cards
 
-    void discard();//弃牌
+    void discard();//Discard cards
 
-    void move();//移动牌
+    void move();//Moving cards
 }

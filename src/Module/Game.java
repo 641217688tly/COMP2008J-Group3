@@ -14,12 +14,12 @@ import java.util.List;
 public class Game implements IGame {
     public static int[] playersJPanelXCoordinate = {(ApplicationStart.screenWidth * 11) / 12, 0, (ApplicationStart.screenWidth * 2) / 12, (ApplicationStart.screenWidth * 9) / 12, (ApplicationStart.screenWidth * 11) / 12};
     public static int[] playersJPanelYCoordinate = {(ApplicationStart.screenHeight * 4) / 5, (ApplicationStart.screenHeight * 2) / 5, 0, 0, (ApplicationStart.screenHeight * 2) / 5};
-    public static CardsPile cardsPile = new CardsPile(); //中央牌区
-    public static ArrayList<Player> players = new ArrayList<>(); //所有的Player对象(Player对象中包含有Bank,Property,PlayerCards以及PlayerCardsPile这些组件)
+    public static CardsPile cardsPile = new CardsPile(); // Central card area
+    public static ArrayList<Player> players = new ArrayList<>(); // All Player objects (including Bank, Property, PlayerCards, and PlayerCardsPile components) 
     public boolean isMoveToNextTurn = false;
     private int counter = 1;
 
-    public void addPlayers(List<String> playerNames) { //用于在设置界面设置完玩家人数和姓名后创建所有的玩家对象并添加到Game类的players中
+    public void addPlayers(List<String> playerNames) { // Create all player objects and add them to the Game's players list after setting the number of players and their names in the setup interface
         Game.players.clear();
         for (int i = 0; i < playerNames.size(); i++) {
             Player player = new Player(playerNames.get(i), Player.images[i], Game.playersJPanelXCoordinate[i], Game.playersJPanelYCoordinate[i]);
@@ -29,10 +29,10 @@ public class Game implements IGame {
 
     @Override
     public void startNewGame() {
-        Game.players.get(0).setPlayerTurn(true); //从一号玩家开始开启回合
+        Game.players.get(0).setPlayerTurn(true); // Start the turn with player 1
         for (Player player : Game.players) {
-            player.drawCards(Game.cardsPile.drawCardFromDrawPile(5)); //回合开始时每个玩家都先领取五张牌
-            player.moveToNextTurn(); //设置回合次数,打开或关闭卡牌的按钮
+            player.drawCards(Game.cardsPile.drawCardFromDrawPile(5)); // Each player draws five cards at the start of their turn
+            player.moveToNextTurn(); // Set the turn count and open/close buttons for cards
         }
     }
 
@@ -44,8 +44,8 @@ public class Game implements IGame {
 
     @Override
     public void moveToNextPlayerTurn() {
-        if (Game.players.get(0).actionNumber == 0) { //玩家的行动次数为0
-            boolean isInteractionComplete = true; //判断玩家间的互动是否结束以及是否持有超过七张卡
+        if (Game.players.get(0).actionNumber == 0) { // If the player has no more actions left
+            boolean isInteractionComplete = true; // Check if the interaction between players is complete and if any player holds more than seven cards
             for (Player player : Game.players) {
                 if (player.interactivePlayers.size() > 0) {
                     isInteractionComplete = false;
@@ -57,10 +57,10 @@ public class Game implements IGame {
             }
             if (isInteractionComplete) {
                 Game.players.get(0).setPlayerTurn(false);
-                reDistributePlayersLocation(); //将会转动玩家以及玩家的数组
-                Game.players.get(0).setPlayerTurn(true); //为下一个玩家设置成是他的回合
+                reDistributePlayersLocation(); // Rotate players and update their positions in the array
+                Game.players.get(0).setPlayerTurn(true); // Set the turn to the next player
 
-                //补牌:
+                // Replenish cards:
                 int cardsCount = 0;
                 for (Card card : Game.players.get(0).cardsTable) {
                     if (card != null) {
@@ -81,12 +81,11 @@ public class Game implements IGame {
                     counter++;
                 }
 
-                isMoveToNextTurn = true;  // 开始显示下一回合的消息
+                isMoveToNextTurn = true; // Start displaying the message for the next turn
                 Timer timer = new Timer(3000, e -> {
-                    isMoveToNextTurn = false;  // 5秒后停止显示消息
-
+                    isMoveToNextTurn = false; // Stop displaying the message after 5 seconds
                 });
-                timer.setRepeats(false);  // 让计时器只运行一次
+                timer.setRepeats(false); // Run the timer only once
                 timer.start();
 
                 for (Player player : Game.players) {
@@ -123,5 +122,4 @@ public class Game implements IGame {
         }
         return false;
     }
-
 }

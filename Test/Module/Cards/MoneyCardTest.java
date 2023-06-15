@@ -18,8 +18,8 @@ public class MoneyCardTest {
 
     @BeforeEach
     public void setup() {
-        // 初始化游戏和玩家对象，以及一个MoneyCard
-        // 请根据你的项目情况进行修改
+        // Initialize the game and player objects, and a MoneyCard
+        // Please modify it according to your project
         game = new Game();
         game.addPlayers(Arrays.asList("Player1", "Player2"));
         game.startNewGame();
@@ -32,40 +32,40 @@ public class MoneyCardTest {
 
     @Test
     public void testDiscard() {
-        // 在开始时，moneyCard应该在玩家的手中
+        // At the beginning, the moneyCard should be in the player's hand
         assertEquals(moneyCard, player.cardsTable[0]);
 
-        // 测试丢弃卡牌
+        // Test discarding cards
         moneyCard.discard();
 
-        // 在丢弃后，moneyCard应该已经被从玩家手中移除
+        // After discarding, the moneyCard should have been removed from the player's hand
         assertNull(player.cardsTable[0]);
     }
 
     @Test
     public void testDeposit() {
-        // 在开始时，玩家的行动次数应该大于0
+        // At the beginning, the number of actions of the player should be greater than 0
         assertTrue(player.actionNumber > 0);
         int playerActionNumber = player.actionNumber;
         int moneyInBank = player.bank.calculateTotalAssetsInBank();
-        // 测试存钱
+        // Test saving money
         moneyCard.deposit();
 
-        // 在存钱后，玩家的行动次数应该减少
+        // After saving money, the number of actions a player takes should decrease
         assertTrue(player.actionNumber < playerActionNumber);
         assertTrue(moneyInBank < player.bank.calculateTotalAssetsInBank());
     }
 
     @Test
     public void testPlay() {
-        // 在开始时，玩家的行动次数应该大于0
+        // At the beginning, the number of actions of the player should be greater than 0
         assertTrue(player.actionNumber > 0);
         int playerActionNumber = player.actionNumber;
         int moneyInBank = player.bank.calculateTotalAssetsInBank();
-        // 测试存钱
+        //  Test saving money
         moneyCard.deposit();
 
-        // 在存钱后，玩家的行动次数应该减少
+        // After saving money, the number of actions a player takes should decrease
         assertTrue(player.actionNumber < playerActionNumber);
         assertTrue(moneyInBank < player.bank.calculateTotalAssetsInBank());
     }

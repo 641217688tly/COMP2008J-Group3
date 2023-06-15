@@ -22,10 +22,10 @@ class GameTest {
         game.addPlayers(playerNames);
         game.startNewGame();
 
-        // 确保游戏开始后，第一个玩家的回合开始
+        // Ensure that the turn of the first player begins after the game starts
         assertTrue(game.players.get(0).isPlayerTurn());
 
-        // 确保游戏开始后，所有玩家手中都有5张卡片
+        // Ensure that all players have 5 cards in hand after the game starts
         for (Player player : game.players) {
             assertEquals(5, player.numberOfHandCards());
         }
@@ -41,13 +41,16 @@ class GameTest {
         game.addPlayers(playerNames);
         game.startNewGame();
 
-        // 确保在游戏开始时，游戏没有结束
+        // Ensure the game is not over at the start of the game
         assertFalse(game.isGameOver());
 
-        //为player1添加足够多的房产卡以确保他达到游戏胜利的条件:
+        // Add enough property cards to player1 to ensure they meet the winning
+        // condition
         for (Card card : PropertyCard.initializeCardsForCardsPile()) {
             Game.players.get(0).property.placePropertyCardAndShowTable(card);
         }
+
         assertTrue(game.isGameOver());
     }
+
 }

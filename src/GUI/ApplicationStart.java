@@ -17,8 +17,8 @@ public class ApplicationStart extends JFrame {
     private SettingsScreen settingsScreen;
     private GameScreen gameScreen;
 
-    public static int screenWidth; // 屏幕的宽度
-    public static int screenHeight; // 屏幕的高度
+    public static int screenWidth; // Screen width
+    public static int screenHeight; // Screen height
 
     static {
         obtainScreenSize();
@@ -32,68 +32,66 @@ public class ApplicationStart extends JFrame {
 
     public ApplicationStart() {
         Game game = new Game();
-        setupMainPanel(); // 主面板
-        setupMenuScreen(); // 菜单栏
-        setupRulesScreen(); // 规则面板
-        setupGameScreen(game); // 游戏面板
-        setupSettingsScreen(game, gameScreen); // 设置面板
+        setupMainPanel();
+        setupMenuScreen();
+        setupRulesScreen();
+        setupGameScreen(game);
+        setupSettingsScreen(game, gameScreen);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setUndecorated(true); // 添加这一行来隐藏标题栏
+        setUndecorated(true); // Add this line to hide the title bar
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
-        device.setFullScreenWindow(this); // 添加这一行来设置全屏
+        device.setFullScreenWindow(this); // Add this line to set the application to full screen
     }
 
-    // 设置主面板（使用CardLayout）
+    // Set up the main panel using CardLayout
     private void setupMainPanel() {
         mainPanel = new JPanel(new CardLayout());
         setContentPane(mainPanel);
     }
 
-    // 设置菜单屏幕
+    // Set up the menu screen
     private void setupMenuScreen() {
         menuScreen = new MenuScreen(
                 new MenuScreenListener.RulesButtonListener(this),
                 new MenuScreenListener.SettingsButtonListener(this),
-                new MenuScreenListener.GameButtonListener(this)
-        );
+                new MenuScreenListener.GameButtonListener(this));
         mainPanel.add(menuScreen, "Menu");
     }
 
-    // 设置规则屏幕
+    // Set up the rules screen
     private void setupRulesScreen() {
         rulesScreen = new RulesScreen(new RulesScreenListener.BackButtonListener(this));
         mainPanel.add(rulesScreen, "Rules");
     }
 
-    // 设置设置屏幕
+    // Set up the settings screen
     private void setupSettingsScreen(Game game, GameScreen gameScreen) {
         settingsScreen = new SettingsScreen(
                 new SettingsScreenListener.BackButtonListener(this),
                 new ApplicationStartListener.ShowPanelActionListener(this, "Game"),
                 game,
-                gameScreen
-        );
+                gameScreen);
         mainPanel.add(settingsScreen, "Exit");
     }
 
-    // 设置游戏屏幕
+    // Set up the game screen
     private void setupGameScreen(Game game) {
         gameScreen = new GameScreen(game);
-        gameScreen.setFocusable(true); // 设置GameScreen能够获得焦点
+        gameScreen.setFocusable(true); // Set the game screen to be focusable
         mainPanel.add(gameScreen, "Game");
     }
 
-    // 显示指定名称的面板
+    // Show the panel with the specified name
     public void showPanel(String panelName) {
         CardLayout layout = (CardLayout) mainPanel.getLayout();
         layout.show(mainPanel, panelName);
     }
 
-
-    // 程序入口
+    // Entry point of the program
     public static void main(String[] args) {
         ApplicationStart newGame = new ApplicationStart();
     }
+
 }

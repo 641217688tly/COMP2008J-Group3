@@ -8,44 +8,46 @@ import java.io.File;
 import java.io.IOException;
 
 public class MenuScreen extends JPanel {
-    private Image menuScreenBackground; // 存储背景图像的变量
+    private Image menuScreenBackground; // Variable to store the background image
 
-    // 构造函数，初始化MenuScreen
-    public MenuScreen(ActionListener rulesButtonListener, ActionListener settingsButtonListener, ActionListener gameButtonListener) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // 设置布局为垂直排列的BoxLayout
-        loadAndSetBackgroundImage(); // 加载并设置背景图片
-        createAndAddButtons(rulesButtonListener, settingsButtonListener, gameButtonListener); // 创建并添加按钮
+    // Constructor to initialize the MenuScreen
+    public MenuScreen(ActionListener rulesButtonListener, ActionListener settingsButtonListener,
+            ActionListener gameButtonListener) {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Set the layout to a vertical BoxLayout
+        loadAndSetBackgroundImage(); // Load and set the background image
+        createAndAddButtons(rulesButtonListener, settingsButtonListener, gameButtonListener); // Create and add buttons
     }
 
-    // 加载并设置背景图片
+    // Load and set the background image
     private void loadAndSetBackgroundImage() {
         try {
-            // 从文件中读取背景图片
+            // Read the background image from a file
             menuScreenBackground = ImageIO.read(new File("images/GUI/MenuScreenBackground.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // 创建并添加按钮
-    private void createAndAddButtons(ActionListener rulesListener, ActionListener settingsListener, ActionListener gameListener) {
-        // 添加间距
+    // Create and add buttons
+    private void createAndAddButtons(ActionListener rulesListener, ActionListener settingsListener,
+            ActionListener gameListener) {
+        // Add spacing
         add(Box.createRigidArea(new Dimension(0, 100)));
-        // 创建并添加开始游戏按钮
+        // Create and add the Start Game button
         createAndAddStartGameButton(settingsListener);
-        // 添加间距
+        // Add spacing
         add(Box.createRigidArea(new Dimension(0, 100)));
-        // 创建并添加规则按钮
+        // Create and add the Rules button
         createAndAddRulesButton(rulesListener);
-        // 添加间距
+        // Add spacing
         add(Box.createRigidArea(new Dimension(0, 100)));
-        // 创建并添加退出按钮
+        // Create and add the Exit button
         createAndAddExitButton();
-        // 添加可调整大小的垂直间距，使组件保持居中
+        // Add vertically resizable glue to keep the components centered
         add(Box.createVerticalGlue());
     }
 
-    // 创建并添加开始游戏按钮
+    // Create and add the Start Game button
     private void createAndAddStartGameButton(ActionListener settingsListener) {
         JButton gameButton = new JButton("Start Game");
         gameButton.setMaximumSize(new Dimension(300, 500));
@@ -54,7 +56,7 @@ public class MenuScreen extends JPanel {
         add(gameButton);
     }
 
-    // 创建并添加规则按钮
+    // Create and add the Rules button
     private void createAndAddRulesButton(ActionListener rulesListener) {
         JButton rulesButton = new JButton("Rules");
         rulesButton.setMaximumSize(new Dimension(300, 500));
@@ -63,7 +65,7 @@ public class MenuScreen extends JPanel {
         add(rulesButton);
     }
 
-    // 创建并添加退出按钮
+    // Create and add the Exit button
     private void createAndAddExitButton() {
         JButton exitButton = new JButton("Exit");
         exitButton.setMaximumSize(new Dimension(300, 500));
@@ -73,16 +75,17 @@ public class MenuScreen extends JPanel {
     }
 
     private void drawBackground(Graphics g) {
-        if (menuScreenBackground != null) { // 如果背景图片已加载
-            // 在面板上绘制背景图片，使其填充整个面板
+        if (menuScreenBackground != null) { // If the background image is loaded
+            // Draw the background image on the panel, filling the entire panel
             g.drawImage(menuScreenBackground, 0, 0, ApplicationStart.screenWidth, ApplicationStart.screenHeight, this);
         }
     }
 
-    // 重写paintComponent方法以在面板上绘制背景图片
+    // Override the paintComponent method to draw the background image on the panel
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // 调用父类方法以确保正常绘制
+        super.paintComponent(g); // Call the parent class method to ensure normal painting
         drawBackground(g);
     }
+
 }

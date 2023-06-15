@@ -22,12 +22,12 @@ HandCards:
     3 cards of 4M, 2 cards of 5M, 1 card of 10M.
 */
 /*
-不同的回合中,卡牌的如下属性可能发生变化:
-1.位置: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight);
-2.正反面:isCardFront
-3.按钮的开关: 1.使用按钮的开关 2.储蓄按钮的开关 3.丢弃按钮的开关 (多色卡: 4.换色按钮的开关)
-4.是否可视: isDisplayable
-5.主人: owner
+From turn to turn, the following attributes may change:
+1.Position: this.setBounds(cardJPanelX, cardJPanelY, cardWidth, cardHeight)
+2. Front and back :isCardFront
+3. Switch of the button: 1. Switch of the use button 2. Switch of the save button 3. Discard button switch (multicolor card: 4. Change color button switch)
+4. Visual: isDisplayable
+5. The owner
 */
 
 package Module.Cards;
@@ -47,23 +47,23 @@ public abstract class Card extends JPanel implements ICard {
     protected int cardJPanelX;
     protected int cardJPanelY;
     public int value;
-    protected boolean isCardFront = false; //默认卡牌是背面的
-    protected boolean isDisplayable = false; //默认卡牌时不被绘制的
+    protected boolean isCardFront = false; //The default cards are backside
+    protected boolean isDisplayable = false; //Default cards are not drawn
     protected final ImageIcon cardBackImage = new ImageIcon("images/Card/CardsBack.jpg"); //卡牌的背面
-    protected ImageIcon cardImage; //卡牌的图片
+    protected ImageIcon cardImage; //Picture of the card
 
     protected CardListener cardListener;
-    protected JButton playButton; //使用按钮
-    protected JButton depositButton;//当做钱存进银行
-    protected JButton discardButton;//丢弃按钮
-    protected JButton moveButton; //移动卡牌的按钮
+    protected JButton playButton; //Using buttons
+    protected JButton depositButton;//Put it in the bank as money
+    protected JButton discardButton;//Discard button rows
+    protected JButton moveButton; //A button to move cards
     protected boolean playButtonSwitch = false;
     protected boolean depositButtonSwitch = false;
     protected boolean discardButtonSwitch = false;
     protected boolean moveButtonSwitch = false;
 
     public Card(ImageIcon image, int value) {
-        this.setLayout(null); // 需要手动设置每个组件的位置和大小
+        this.setLayout(null); // The position and size of each component need to be set manually
         setOpaque(false);
         this.cardImage = image;
         this.value = value;
@@ -86,12 +86,12 @@ public abstract class Card extends JPanel implements ICard {
         JButton button = new JButton(text);
         button.setBounds(x, y, buttonWidth, buttonHeight);
         Font buttonFont = new Font("Arial", Font.BOLD, 7);
-        button.setFont(buttonFont); // 设置按钮的字体和字体大小
+        button.setFont(buttonFont); // Sets the font and font size of the button
         button.addActionListener(listener);
         return button;
     }
 
-    //-------get和Set方法:
+    //-------get and set method
 
     public void setCardJPanelBounds(int cardJPanelX, int cardJPanelY) {
         this.cardJPanelX = cardJPanelX;
@@ -127,7 +127,7 @@ public abstract class Card extends JPanel implements ICard {
         this.moveButtonSwitch = moveButtonSwitch;
     }
 
-    //-------绘制方法:
+    //-------Drawing method:
 
     protected abstract void paintCard(Graphics g);
 
@@ -161,7 +161,7 @@ public abstract class Card extends JPanel implements ICard {
         } else {
             this.setVisible(false);
         }
-        controlButtons(); //不断刷新着纸牌的按钮的状态
+        controlButtons(); //The state of the button that constantly refreshes the card
         paintCard(g);
     }
 }
